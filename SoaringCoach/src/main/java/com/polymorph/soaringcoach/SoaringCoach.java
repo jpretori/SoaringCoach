@@ -13,7 +13,6 @@ public class SoaringCoach {
 	 * 
 	 */
 	public SoaringCoach() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
