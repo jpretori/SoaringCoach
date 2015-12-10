@@ -46,3 +46,10 @@ task copyToLib(type: Copy) {
 group 'com.polymorph.soaringcoach'
 version '1.0-SNAPSHOT'
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+        showStandardStreams = true
+    }
+}
+
