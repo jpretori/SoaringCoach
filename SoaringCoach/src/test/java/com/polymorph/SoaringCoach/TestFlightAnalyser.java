@@ -15,7 +15,7 @@ public class TestFlightAnalyser {
 
 	@Test
 	public void testFlightAnalyser() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
