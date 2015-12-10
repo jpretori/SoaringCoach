@@ -13,18 +13,17 @@ import java.io.FileOutputStream;
 @RestController
 public class FileUploadController {
 
-    @RequestMapping(value="/upload", method= RequestMethod.POST)
-    public @ResponseBody String handleFileUpload(
-            @RequestParam("file") MultipartFile file){
-        String name = "test11";
+    @RequestMapping(value="/upload", method=RequestMethod.POST)
+    public @ResponseBody String handleFileUpload(@RequestParam("name") String name,
+                                                 @RequestParam("file") MultipartFile file){
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream =
-                        new BufferedOutputStream(new FileOutputStream(new File(name + "-uploaded")));
+                        new BufferedOutputStream(new FileOutputStream(new File(name)));
                 stream.write(bytes);
                 stream.close();
-                return "You successfully uploaded " + name + " into " + name + "-uploaded !";
+                return "You successfully uploaded " + name + "!";
             } catch (Exception e) {
                 return "You failed to upload " + name + " => " + e.getMessage();
             }
