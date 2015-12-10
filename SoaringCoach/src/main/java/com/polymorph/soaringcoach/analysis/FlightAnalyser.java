@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FlightAnalyser {
 	ArrayList<String> igc_file = new ArrayList<>();
-	ArrayList<IGCPoint> = new ArrayList<>();
+	ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 	
 	public FlightAnalyser() {
 		//TODO replace dummy values with actual file read
@@ -24,8 +24,10 @@ public class FlightAnalyser {
 	}
 	
 	public double calcTotalDistance() {
-		
+		return 0; //TODO
 	}
 	
-	private double calcDistance()
+	private double calcDistance() {
+		return 0; //TODD
+	}
 }
