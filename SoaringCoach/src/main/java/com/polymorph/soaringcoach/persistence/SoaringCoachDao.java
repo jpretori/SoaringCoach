@@ -23,7 +23,7 @@ public class SoaringCoachDao {
         	System.err.println("SQLException: " + ex.getMessage());
         	System.err.println("SQLState: " + ex.getSQLState());
         	System.err.println("VendorError: " + ex.getErrorCode());
-        	throw new Exception("Problem connecting to database", ex);
+        	throw new Exception("Could not connect to database", ex);
         }
 	}
 	

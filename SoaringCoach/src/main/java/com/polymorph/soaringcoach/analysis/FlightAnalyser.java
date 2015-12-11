@@ -12,15 +12,12 @@ public class FlightAnalyser {
 	
 	public double calcTotalDistance() {
 		double total_dist = 0;
-		GNSSPoint point = null;
-		GNSSPoint prev_point = null;
-		for (String igc_line : igc_file) {
-			prev_point = point;
-			point = GNSSPoint.createGNSSPoint(igc_line);
-			igc_points.add(point);
+		GNSSPoint prev_pt = null;
+		for (GNSSPoint pt : igc_points) {
+			prev_pt = pt;
 			
-			if (point != null && prev_point != null) {
-				total_dist += point.distance(prev_point);
+			if (pt != null && prev_pt != null) {
+				total_dist += pt.distance(prev_pt);
 			}
 		}
 		return total_dist;
