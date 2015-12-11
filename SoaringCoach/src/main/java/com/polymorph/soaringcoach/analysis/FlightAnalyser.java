@@ -6,11 +6,8 @@ public class FlightAnalyser {
 	ArrayList<String> igc_file = new ArrayList<>();
 	ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 	
-	public FlightAnalyser() {
-		//TODO replace dummy values with actual file read
-		igc_file.add("B1751253339800S01924950EA0450004450");
-		igc_file.add("B1751263359917S01917417EA0449504445");
-		igc_file.add("B1751273402883S02029017EA0449004430");
+	public FlightAnalyser(ArrayList<GNSSPoint> file) {
+		igc_points = file;
 	}
 	
 	public double calcTotalDistance() {

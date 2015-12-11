@@ -57,19 +57,19 @@ public class GNSSPoint extends Point3d {
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
-	public String getAltitude_ok() {
+	public String getAltitudeOK() {
 		return altitude_ok;
 	}
 	public void setAltitude_ok(String altitude_ok) {
 		this.altitude_ok = altitude_ok;
 	}
-	public int getPressure_altitude() {
+	public int getPressureAltitude() {
 		return pressure_altitude;
 	}
 	public void setPressure_altitude(int pressure_altitude) {
 		this.pressure_altitude = pressure_altitude;
 	}
-	public int getGnss_altitude() {
+	public int getGnssAltitude() {
 		return gnss_altitude;
 	}
 	public void setGnss_altitude(int gnss_altitude) {

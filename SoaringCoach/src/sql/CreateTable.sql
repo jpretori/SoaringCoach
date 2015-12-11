@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `igc_b_record`;
+
 CREATE TABLE `igc_b_record` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `file_id` varchar(30) DEFAULT NULL,
@@ -10,4 +12,4 @@ CREATE TABLE `igc_b_record` (
   `other` varchar(512) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `file_id` (`file_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
