@@ -16,6 +16,81 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class GNSSPoint extends Point3d {
 	public LocalTime timestamp = new LocalTime();
+
+	private int id;
+	private String filename;
+	private String timestamp_string;
+	private String latitude;
+	private String longitude;
+	private String altitude_ok;
+	private int pressure_altitude;
+	private int gnss_altitude;
+	private String other;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getFilename() {
+		return filename;
+	}
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	public String getTimestamp() {
+		return timestamp_string;
+	}
+	public void setTimestamp(String timestamp) {
+		this.timestamp_string = timestamp;
+	}
+	public String getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+	public String getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+	public String getAltitude_ok() {
+		return altitude_ok;
+	}
+	public void setAltitude_ok(String altitude_ok) {
+		this.altitude_ok = altitude_ok;
+	}
+	public int getPressure_altitude() {
+		return pressure_altitude;
+	}
+	public void setPressure_altitude(int pressure_altitude) {
+		this.pressure_altitude = pressure_altitude;
+	}
+	public int getGnss_altitude() {
+		return gnss_altitude;
+	}
+	public void setGnss_altitude(int gnss_altitude) {
+		this.gnss_altitude = gnss_altitude;
+	}
+	public String getOther() {
+		return other;
+	}
+	public void setOther(String other) {
+		this.other = other;
+	}
+	
+	@Override
+	public String toString() {
+		return "id=[" + id + "] file=[" + filename + "] timestamp=[" + timestamp + "]";
+	}
+	
+	/**
+	 * Stub constructor
+	 */
+	private GNSSPoint() {}
 	
 	/**
 	 * Takes input like "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100"
@@ -23,37 +98,42 @@ public class GNSSPoint extends Point3d {
 	 * 
 	 * @param file_input
 	 */
-	public GNSSPoint(String file_input) {
+	public static GNSSPoint createGNSSPoint(String file_input) {
+		GNSSPoint pt = null;
+		
 		if (isValidGpsFix(file_input)) {
 			// It's a GPS fix record, so we can convert it.
 			
+			pt  = new GNSSPoint();
+			
 			//When the fix happened
 			DateTimeFormatter formatter = DateTimeFormat.forPattern("HHmmss");
-			timestamp = LocalTime.parse(file_input.substring(1, 7), formatter);
+			pt.timestamp = LocalTime.parse(file_input.substring(1, 7), formatter);
 			
 			//Latitude
 			String lat_deg = file_input.substring(7, 9);
 			String lat_min = file_input.substring(9, 14);
-			x = decimalizeDegrees(lat_deg, lat_min);
+			pt.x = decimalizeDegrees(lat_deg, lat_min);
 			if (file_input.substring(14, 15).equals("S")) {
-				x = -x;
+				pt.x = -pt.x;
 			}
 			
 			//Longitude
 			String lon_deg = file_input.substring(15, 18);
 			String lon_min = file_input.substring(18, 23);
-			y = decimalizeDegrees(lon_deg, lon_min);
+			pt.y = decimalizeDegrees(lon_deg, lon_min);
 			if (file_input.substring(23, 24).equals("W")) {
-				y = -y;
+				pt.y = -pt.y;
 			}
 			
 			//Altitude - use GNSS altitude, we're not sure of always having pressure altitude
 			String alt = file_input.substring(30, 35);
-			z = Double.parseDouble(alt);
+			pt.z = Double.parseDouble(alt);
 			
 		} else {
 			System.out.println("Discarded line: [" + file_input + "]");
 		}
+		return pt;
 	}
 
 	/**
@@ -63,7 +143,7 @@ public class GNSSPoint extends Point3d {
 	 * @param decimalized_minutes
 	 * @return Decimal value for latitude or long
 	 */
-	private Double decimalizeDegrees(String degrees, String decimalized_minutes) {
+	private static Double decimalizeDegrees(String degrees, String decimalized_minutes) {
 		double x_deg = Double.parseDouble(degrees);
 		double x_min = Double.parseDouble(decimalized_minutes) / 1000; //IGC format stores 1.234 as "1234"
 		x_min = x_min / 60; //converts from minutes to decimal degrees
@@ -75,7 +155,7 @@ public class GNSSPoint extends Point3d {
 	 * @param file_input
 	 * @return
 	 */
-	private boolean isValidGpsFix(String file_input) {
+	private static boolean isValidGpsFix(String file_input) {
 		//Chuck out nulls to avoid falling over ungracefully
 		if (file_input == null) {
 			return false;

@@ -18,7 +18,7 @@ public class TestGNSSPoint {
 
 	@Test
 	public void testGNSSPointNE() {
-		GNSSPoint pt = new GNSSPoint("B0948523340100N01925448EA00261002670080041315512952118-0065-7300100");
+		GNSSPoint pt = GNSSPoint.createGNSSPoint("B0948523340100N01925448EA00261002670080041315512952118-0065-7300100");
 		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("HHmmss");
 		
@@ -39,7 +39,7 @@ public class TestGNSSPoint {
 	
 	@Test
 	public void testGNSSPointSW() {
-		GNSSPoint pt = new GNSSPoint("B1648523340100S01925448WA00261002670080041315512952118-0065-7300100");
+		GNSSPoint pt = GNSSPoint.createGNSSPoint("B1648523340100S01925448WA00261002670080041315512952118-0065-7300100");
 		
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("HHmmss");
 		

@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
+
 public class SoaringCoachDao {
 	private Connection conn = null;
 	
@@ -25,10 +27,11 @@ public class SoaringCoachDao {
         }
 	}
 	
-	public void saveIgcBRecord(ArrayList<IgcBRecord> bo_list) {
+	public void saveIgcBRecord(ArrayList<GNSSPoint> bo_list) {
+		
 	}
 	
-	public ArrayList<IgcBRecord> getIgcBRecords(String fileID) {
+	public ArrayList<GNSSPoint> getIgcBRecords(String fileID) {
 		return null;
 	}
 }

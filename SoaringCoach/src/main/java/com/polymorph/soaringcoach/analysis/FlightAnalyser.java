@@ -19,7 +19,7 @@ public class FlightAnalyser {
 		GNSSPoint prev_point = null;
 		for (String igc_line : igc_file) {
 			prev_point = point;
-			point = new GNSSPoint(igc_line);
+			point = GNSSPoint.createGNSSPoint(igc_line);
 			igc_points.add(point);
 			
 			if (point != null && prev_point != null) {
