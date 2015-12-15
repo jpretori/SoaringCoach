@@ -14,11 +14,11 @@ public class FlightAnalyser {
 		double total_dist = 0;
 		GNSSPoint prev_pt = null;
 		for (GNSSPoint pt : igc_points) {
-			prev_pt = pt;
-			
+
 			if (pt != null && prev_pt != null) {
 				total_dist += pt.distance(prev_pt);
 			}
+			prev_pt = pt;
 		}
 		return total_dist;
 	}
