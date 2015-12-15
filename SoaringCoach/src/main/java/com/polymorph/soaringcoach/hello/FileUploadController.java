@@ -33,7 +33,7 @@ public class FileUploadController {
                 try (BufferedReader br = new BufferedReader(new FileReader(convFile))) {
                     String line;
                     while ((line = br.readLine()) != null) {
-                        gnssPoint = GNSSPoint.createGNSSPoint(line);
+                        gnssPoint = GNSSPoint.createGNSSPoint("", line);
                         if(gnssPoint != null){
                             gnssPointList.add(gnssPoint);
                         }
