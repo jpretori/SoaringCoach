@@ -1,4 +1,4 @@
-package com.polymorph.SoaringCoach;
+package com.polymorph.soaringcoach;
 
 import com.polymorph.soaringcoach.hello.Application;
 import org.junit.Before;

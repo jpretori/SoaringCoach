@@ -1,4 +1,4 @@
-package com.polymorph.SoaringCoach;
+package com.polymorph.soaringcoach;
 
 import static org.junit.Assert.*;
 

@@ -1,11 +1,13 @@
-package com.polymorph.SoaringCoach;
+package com.polymorph.soaringcoach;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.SoaringCoach;
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.persistence.SoaringCoachDao;
 
 public class TestSoaringCoachDao {
@@ -27,13 +29,13 @@ public class TestSoaringCoachDao {
 	}
 
 	@Test
-	public void testSaveIgcBRecord() {
-		//fail("Not yet implemented");
-	}
+	public void testSaveAndGetIgcBRecord() throws Exception {
+		ArrayList<GNSSPoint> points = new ArrayList<>();
+		points .add(GNSSPoint.createGNSSPoint("testfile", "B1751253339800S01924950EA0450004450"));
+		points.add(GNSSPoint.createGNSSPoint("testfile", "B1751263359917S01917417EA0449504445"));
+		points.add(GNSSPoint.createGNSSPoint("testfile", "B1751273402883S02029017EA0449004430"));
 
-	@Test
-	public void testGetIgcBRecords() {
-		//fail("Not yet implemented");
+		dao = new SoaringCoachDao();
+		dao.saveIgcBRecord(points);		
 	}
-
 }

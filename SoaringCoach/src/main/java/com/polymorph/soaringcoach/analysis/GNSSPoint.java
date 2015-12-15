@@ -98,7 +98,7 @@ public class GNSSPoint extends Point3d {
 	 * 
 	 * @param file_input
 	 */
-	public static GNSSPoint createGNSSPoint(String file_input) {
+	public static GNSSPoint createGNSSPoint(String filename, String file_input) {
 		GNSSPoint pt = null;
 		
 		if (isValidGpsFix(file_input)) {
@@ -176,25 +176,27 @@ public class GNSSPoint extends Point3d {
 	
 	public double distance(GNSSPoint pt2) {
 		
+		// Convert all from degrees to radians
 		double lat1 = this.x * Math.PI / 180;
 		double lon1 = this.y * Math.PI / 180;
-
 		double lat2 = pt2.x * Math.PI / 180;
 		double lon2 = pt2.y * Math.PI / 180;
 		
-		double R = 6371000; // Earth radius in metres
+		double earth_radius = 6371000; // Earth radius in metres
 
-		double a = Math.sin((lat2-lat1)/2) * Math.sin((lat2-lat1)/2) +
-		        Math.cos(lat1) * Math.cos(lat2) *
-		        Math.sin((lon2-lon1)/2) * Math.sin((lon2-lon1)/2);
+		//Haversine formula
+		double lat_midpoint = (lat2-lat1)/2;
+		double lon_midpoint = (lon2-lon1)/2;
+		double a = Math.sin(lat_midpoint) * Math.sin(lat_midpoint) +
+		        Math.cos(lat1) * Math.cos(lat2) * Math.sin(lon_midpoint) * Math.sin(lon_midpoint);
 		
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-		double d = R * c;
+		double d = earth_radius * c;
 		
 		return d;
 		
-		// Spherical law of cosines approximation - more performant, not as accurate
+		// Spherical law of cosines approximation - more simple, probably more performant, not as accurate
 		//return Math.acos(Math.sin(lat1)*Math.sin(lat2) + Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1)) * 6371000;
 	}
 }
