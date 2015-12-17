@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS `igc_b_record`;
 
 CREATE TABLE `igc_b_record` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `file_id` varchar(30) DEFAULT NULL,
-  `timestamp` varchar(6) DEFAULT NULL,
+  `file_id` varchar(80) DEFAULT NULL,
+  `timestamp` TIME DEFAULT NULL,
   `latitude` double DEFAULT NULL,
   `longitude` double DEFAULT NULL,
   `altitude_ok` char(1) DEFAULT NULL,

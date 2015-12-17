@@ -1,10 +1,12 @@
 package com.polymorph.soaringcoach.analysis;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.vecmath.Point3d;
 
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 
 /**
  * Uses the Point3d class as basis for calculations.  By convention:
@@ -14,77 +16,43 @@ import org.joda.time.format.DateTimeFormatter;
  * @author johanpretorius
  *
  */
-public class GNSSPoint extends Point3d {
-	public LocalTime timestamp = new LocalTime();
 
-	private int id;
-	private String filename;
-	private String timestamp_string;
-	private String latitude;
-	private String longitude;
-	private String altitude_ok;
-	private int pressure_altitude;
-	private int gnss_altitude;
-	private String other;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+public class GNSSPoint extends Point3d {
+	public GNSSPointData data = new GNSSPointData();
+
+
 	public String getFilename() {
-		return filename;
-	}
-	public void setFilename(String filename) {
-		this.filename = filename;
+		return data.getFilename();
 	}
 	public String getTimestamp() {
-		return timestamp_string;
+		SimpleDateFormat d = new SimpleDateFormat("HH:mm:ss");
+		String time = d.format(data.timestamp);
+
+		return time;
 	}
-	public void setTimestamp(String timestamp) {
-		this.timestamp_string = timestamp;
-	}
-	public String getLatitude() {
-		return latitude;
-	}
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
-	public String getLongitude() {
-		return longitude;
-	}
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
+	public double getLatitude() {
+		return x;
 	}
 	public String getAltitudeOK() {
-		return altitude_ok;
-	}
-	public void setAltitude_ok(String altitude_ok) {
-		this.altitude_ok = altitude_ok;
+		return data.getAltitudeOK();
 	}
 	public int getPressureAltitude() {
-		return pressure_altitude;
-	}
-	public void setPressure_altitude(int pressure_altitude) {
-		this.pressure_altitude = pressure_altitude;
-	}
-	public int getGnssAltitude() {
-		return gnss_altitude;
-	}
-	public void setGnss_altitude(int gnss_altitude) {
-		this.gnss_altitude = gnss_altitude;
+		return data.getPressureAltitude();
 	}
 	public String getOther() {
-		return other;
+		return data.getOther();
 	}
-	public void setOther(String other) {
-		this.other = other;
+	public double getLongitude() {
+		return y;
 	}
+	public int getGnssAltitude() {
+		return data.getGnssAltitude();
+	}
+
 	
 	@Override
 	public String toString() {
-		return "id=[" + id + "] file=[" + filename + "] timestamp=[" + timestamp + "]";
+		return "file=[" + data.filename + "] timestamp=[" + getTimestamp() + "]";
 	}
 	
 	/**
@@ -93,43 +61,65 @@ public class GNSSPoint extends Point3d {
 	private GNSSPoint() {}
 	
 	/**
-	 * Takes input like "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100"
-	 * and parses it into different fields
+	 * Create from what's loaded from the DB
+	 * 
+	 * @param filename
+	 * @param timestamp
+	 * @param latitude
+	 * @param longitude
+	 * @param altitude_ok
+	 * @param pressure_altitude
+	 * @param gnss_altitude
+	 * @param other
+	 * @return
+	 */
+	public static GNSSPoint createGNSSPoint(
+			String filename, Date timestamp, double latitude, double longitude,
+			String altitude_ok, int pressure_altitude, int gnss_altitude, String other) {
+		GNSSPoint pt = new GNSSPoint();
+		pt.data = new GNSSPointData();
+		
+		pt.data.setFilename(filename);
+		pt.data.setTimestamp(timestamp);
+		pt.x = latitude;
+		pt.y = longitude;
+		pt.data.setAltitudeOK(altitude_ok);
+		pt.data.setPressureAltitude(pressure_altitude);
+		pt.data.setGnssAltitude(gnss_altitude);
+		pt.data.setOther(other);
+		
+		return pt;
+	}
+	
+	/**
+	 * Takes input as received from IGC file 
+	 * (like "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100")
+	 * and parses it
 	 * 
 	 * @param file_input
 	 */
 	public static GNSSPoint createGNSSPoint(String filename, String file_input) {
+		GNSSPointData pt_data = null;
 		GNSSPoint pt = null;
 		
-		if (isValidGpsFix(file_input)) {
+		FixedFormatManager manager = new FixedFormatManagerImpl();
+		pt_data = manager.load(GNSSPointData.class, file_input);
+		
+		if (isValidGpsFix(file_input, pt_data)) {
 			// It's a GPS fix record, so we can convert it.
+			pt = new GNSSPoint();
+			pt_data.setFilename(filename);
+			pt.data = pt_data;
 			
-			pt  = new GNSSPoint();
-			
-			//When the fix happened
-			DateTimeFormatter formatter = DateTimeFormat.forPattern("HHmmss");
-			pt.timestamp = LocalTime.parse(file_input.substring(1, 7), formatter);
-			
-			//Latitude
-			String lat_deg = file_input.substring(7, 9);
-			String lat_min = file_input.substring(9, 14);
-			pt.x = decimalizeDegrees(lat_deg, lat_min);
-			if (file_input.substring(14, 15).equals("S")) {
+			pt.x = decimalizeDegrees(pt_data.latitude_degrees, pt_data.latitude_minutes);
+			if ("S".equals(pt_data.latitude_equator_ref)) {
 				pt.x = -pt.x;
 			}
 			
-			//Longitude
-			String lon_deg = file_input.substring(15, 18);
-			String lon_min = file_input.substring(18, 23);
-			pt.y = decimalizeDegrees(lon_deg, lon_min);
-			if (file_input.substring(23, 24).equals("W")) {
+			pt.y = decimalizeDegrees(pt_data.longitude_degrees, pt_data.longitude_minutes);
+			if ("W".equals(pt_data.longitude_greenwich_ref)) {
 				pt.y = -pt.y;
 			}
-			
-			//Altitude - use GNSS altitude, we're not sure of always having pressure altitude
-			String alt = file_input.substring(30, 35);
-			pt.z = Double.parseDouble(alt);
-			
 		} else {
 			System.out.println("Discarded line: [" + file_input + "]");
 		}
@@ -137,7 +127,7 @@ public class GNSSPoint extends Point3d {
 	}
 
 	/**
-	 * Takes e.g. Latitude (as given in IGC file, i.e. 521234 for 52*1.234') and 
+	 * Takes e.g. Latitude (as given in IGC file, i.e. 521234N for 52*1.234'N) and 
 	 * converts it to decimal format e.g. 52.10571
 	 * @param degrees
 	 * @param decimalized_minutes
@@ -155,19 +145,22 @@ public class GNSSPoint extends Point3d {
 	 * @param file_input
 	 * @return
 	 */
-	private static boolean isValidGpsFix(String file_input) {
+	private static boolean isValidGpsFix(String file_input, GNSSPointData pt) {
 		//Chuck out nulls to avoid falling over ungracefully
 		if (file_input == null) {
+			System.err.println("File input [null]");
 			return false;
 		}
 		
 		//Is it a "Body" record, i.e. tagged as a GPS fix
-		if (!file_input.substring(0, 1).equals("B")) {
+		if (!"B".equals(pt.getRecordType())) {
+			System.out.println("Not a 'B' record");
 			return false;
 		}
 
 		//Is it marked as a "valid" altitude
-		if (!file_input.substring(24, 25).equals("A")) {
+		if (!"A".equals(pt.getAltitudeOK())) {
+			System.out.println("Altitude validity flag not set to 'A'");
 			return false;
 		}
 		

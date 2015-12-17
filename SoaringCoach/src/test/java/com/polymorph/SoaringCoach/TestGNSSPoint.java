@@ -1,10 +1,11 @@
 package com.polymorph.soaringcoach;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,14 +18,14 @@ public class TestGNSSPoint {
 	}
 
 	@Test
-	public void testGNSSPointNE() {
+	public void testGNSSPointNE() throws ParseException {
 		GNSSPoint pt = GNSSPoint.createGNSSPoint("testfile", "B0948523340100N01925448EA00261002670080041315512952118-0065-7300100");
 		
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("HHmmss");
+		SimpleDateFormat d = new SimpleDateFormat("HHmmss");
 		
 		assertTrue(
 				"Timestamp not parsed correctly, expected [094852]", 
-				pt.timestamp.isEqual(LocalTime.parse("094852", formatter)));
+				pt.data.timestamp.equals(d.parse("094852")));
 		
 		assertEquals( 
 				33.66833333333333, 
@@ -38,14 +39,14 @@ public class TestGNSSPoint {
 	}
 	
 	@Test
-	public void testGNSSPointSW() {
+	public void testGNSSPointSW() throws ParseException {
 		GNSSPoint pt = GNSSPoint.createGNSSPoint("testfile", "B1648523340100S01925448WA00261002670080041315512952118-0065-7300100");
 		
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("HHmmss");
-		
+		SimpleDateFormat d = new SimpleDateFormat("HHmmss");
+
 		assertTrue(
 				"Timestamp not parsed correctly, expected [164852]", 
-				pt.timestamp.isEqual(LocalTime.parse("164852", formatter)));
+				pt.data.timestamp.equals(d.parse("164852")));
 		
 		assertEquals( 
 				-33.66833333333333, 
