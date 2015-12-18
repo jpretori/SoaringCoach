@@ -1,4 +1,4 @@
-package com.polymorph.soaringcoach.hello;
+package com.polymorph.soaringcoach.rest;
 
 import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;

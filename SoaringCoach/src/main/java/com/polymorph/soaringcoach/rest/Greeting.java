@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.polymorph.soaringcoach.hello;
+package com.polymorph.soaringcoach.rest;
 
 /**
  * @author johanpretorius

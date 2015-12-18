@@ -1,4 +1,4 @@
-package com.polymorph.soaringcoach.hello;
+package com.polymorph.soaringcoach.rest;
 
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.RequestMapping;

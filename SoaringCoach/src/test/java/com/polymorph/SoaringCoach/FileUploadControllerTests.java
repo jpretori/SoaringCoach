@@ -1,6 +1,5 @@
 package com.polymorph.soaringcoach;
 
-import com.polymorph.soaringcoach.hello.Application;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.polymorph.soaringcoach.rest.Application;
 
 import java.io.File;
 import java.io.FileInputStream;

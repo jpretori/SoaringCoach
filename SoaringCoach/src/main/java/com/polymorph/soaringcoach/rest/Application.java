@@ -1,4 +1,4 @@
-package com.polymorph.soaringcoach.hello;
+package com.polymorph.soaringcoach.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

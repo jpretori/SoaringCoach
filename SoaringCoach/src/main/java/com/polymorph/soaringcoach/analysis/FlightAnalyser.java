@@ -3,8 +3,7 @@ package com.polymorph.soaringcoach.analysis;
 import java.util.ArrayList;
 
 public class FlightAnalyser {
-	ArrayList<String> igc_file = new ArrayList<>();
-	ArrayList<GNSSPoint> igc_points = new ArrayList<>();
+	private ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 	
 	public FlightAnalyser(ArrayList<GNSSPoint> file) {
 		igc_points = file;
