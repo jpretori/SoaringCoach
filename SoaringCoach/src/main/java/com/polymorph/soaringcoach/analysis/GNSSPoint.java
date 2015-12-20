@@ -19,8 +19,28 @@ import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 
 public class GNSSPoint extends Point3d {
 	public GNSSPointData data = new GNSSPointData();
-
-
+	public double lat_radians = 0;
+	public double lon_radians = 0;
+	
+	/**
+	 * The track course from the previous point to this one
+	 */
+	public double track_course_deg = 0;
+	
+	/**
+	 * Number of seconds since the last point
+	 */
+	public long seconds_since_last_fix = 0;
+	
+	/**
+	 * Mostly, the previous point also had a track_course_deg value, meaning
+	 * there could be a delta between the two, i.e. the aircraft is turning.
+	 * <br>
+	 * Together with how long it was since the last fix was taken, this gives a
+	 * rate of turn in degrees per second.
+	 */
+	public double turn_rate;
+	
 	public String getFilename() {
 		return data.getFilename();
 	}
@@ -49,10 +69,11 @@ public class GNSSPoint extends Point3d {
 		return data.getGnssAltitude();
 	}
 
-	
 	@Override
 	public String toString() {
-		return "file=[" + data.filename + "] timestamp=[" + getTimestamp() + "]";
+		return "file=[" + data.filename + "] "
+				+ "timestamp=[" + getTimestamp() + "] "
+				+ "lat; long=[" + getLatitude() + "; " + getLongitude() + "]";
 	}
 	
 	/**
@@ -82,7 +103,9 @@ public class GNSSPoint extends Point3d {
 		pt.data.setFilename(filename);
 		pt.data.setTimestamp(timestamp);
 		pt.x = latitude;
+		pt.lat_radians = Math.toRadians(latitude);
 		pt.y = longitude;
+		pt.lon_radians = Math.toRadians(longitude);
 		pt.data.setAltitudeOK(altitude_ok);
 		pt.data.setPressureAltitude(pressure_altitude);
 		pt.data.setGnssAltitude(gnss_altitude);
@@ -100,29 +123,33 @@ public class GNSSPoint extends Point3d {
 	 */
 	public static GNSSPoint createGNSSPoint(String filename, String file_input) {
 		GNSSPointData pt_data = null;
-		GNSSPoint pt = null;
 		
 		FixedFormatManager manager = new FixedFormatManagerImpl();
 		pt_data = manager.load(GNSSPointData.class, file_input);
+		double decimalized_lat = -1000; //init to impossible values
+		double decimalized_lon = -1000;
 		
 		if (isValidGpsFix(file_input, pt_data)) {
 			// It's a GPS fix record, so we can convert it.
-			pt = new GNSSPoint();
 			pt_data.setFilename(filename);
-			pt.data = pt_data;
 			
-			pt.x = decimalizeDegrees(pt_data.latitude_degrees, pt_data.latitude_minutes);
+			decimalized_lat = decimalizeDegrees(pt_data.latitude_degrees, pt_data.latitude_minutes);
 			if ("S".equals(pt_data.latitude_equator_ref)) {
-				pt.x = -pt.x;
+				decimalized_lat = -decimalized_lat;
 			}
 			
-			pt.y = decimalizeDegrees(pt_data.longitude_degrees, pt_data.longitude_minutes);
+			decimalized_lon = decimalizeDegrees(pt_data.longitude_degrees, pt_data.longitude_minutes);
 			if ("W".equals(pt_data.longitude_greenwich_ref)) {
-				pt.y = -pt.y;
+				decimalized_lon = -decimalized_lon;
 			}
 		} else {
 			System.out.println("Discarded line: [" + file_input + "]");
 		}
+		
+		GNSSPoint pt = GNSSPoint.createGNSSPoint(
+				filename, pt_data.timestamp, decimalized_lat, decimalized_lon, pt_data.altitude_ok,
+				pt_data.pressure_altitude, pt_data.gnss_altitude, pt_data.other);
+		pt.data = pt_data;
 		return pt;
 	}
 

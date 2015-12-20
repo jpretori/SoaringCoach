@@ -1,14 +1,24 @@
 package com.polymorph.soaringcoach.analysis;
 
 import java.util.ArrayList;
+import java.util.Date;
+
+import com.polymorph.soaringcoach.analysis.Turns.FlightMode;
 
 public class FlightAnalyser {
+	private final int TURN_RATE_THRESHOLD = 4;
+	
 	private ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 	
 	public FlightAnalyser(ArrayList<GNSSPoint> file) {
 		igc_points = file;
 	}
 	
+	/**
+	 * Get the total distance flown over ground by adding together the 
+	 * distance between all points in the file.
+	 * @return total distance flown
+	 */
 	public double calcTotalDistance() {
 		double total_dist = 0;
 		GNSSPoint prev_pt = null;
@@ -20,5 +30,166 @@ public class FlightAnalyser {
 			prev_pt = pt;
 		}
 		return total_dist;
+	}
+
+	/**
+	 * Analyses the given fixes to find thermal turns and indicate how
+	 * well-banked they were, by highlighting how many seconds it took to
+	 * complete each turn
+	 * 
+	 * @return all turns and how many seconds each took.  If none were found, an empty array.
+	 * @throws Exception 
+	 */
+	public Turns calcTurnRates() throws Exception {
+		
+		Turns turns = new Turns();
+		
+		GNSSPoint p1 = null;
+
+		//If the aircraft is turning, at what heading did the turn start
+		double track_course_turn_start = 0;
+		FlightMode mode = FlightMode.CRUISING;
+		Date turn_start_time = null;
+		
+		for (GNSSPoint p2 : igc_points) {
+			
+			if (p1 != null && p2 != null) {
+				p2.track_course_deg = calculateTrackCourse(p1, p2);
+				
+				long duration = p2.data.timestamp.getTime() - p1.data.timestamp.getTime(); //in milliseconds
+				p2.seconds_since_last_fix = duration / 1000; 
+				
+				double track_course_delta = calcBearingChange(p1.track_course_deg, p2.track_course_deg);
+				p2.turn_rate = track_course_delta / p2.seconds_since_last_fix;
+				
+				switch (mode) {
+					case CRUISING:
+						//Detect mode change
+						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
+							mode = FlightMode.TURNING_RIGHT;
+							track_course_turn_start = p2.track_course_deg;
+							turn_start_time = p2.data.timestamp;
+						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
+							mode = FlightMode.TURNING_LEFT;
+							track_course_turn_start = p2.track_course_deg;
+							turn_start_time = p2.data.timestamp;
+						}
+						break;
+					case TURNING_LEFT: 
+						//Detect mode change
+						if (p2.turn_rate > -TURN_RATE_THRESHOLD) {
+							//Turning too slowly to still call this a thermal turn
+							mode = FlightMode.CRUISING;
+							turn_start_time = null;
+						}
+						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
+							//Switched turn direction
+							mode = FlightMode.TURNING_RIGHT;
+							track_course_turn_start = p2.track_course_deg;
+							turn_start_time = p2.data.timestamp;
+						}
+						
+						//TODO what about the edge case where p1 doesn't have track_course_deg 
+						//initialized because it's the first fix in the file.
+						
+						//Detect going past turn start course.  Only relevant if we're still turning.
+						double p1_bearing_to_turn_start = calcBearingChange(p1.track_course_deg, track_course_turn_start);
+						double p2_bearing_to_turn_start = calcBearingChange(p2.track_course_deg, track_course_turn_start);
+						if (mode == FlightMode.TURNING_LEFT &&
+								(p1_bearing_to_turn_start < 0) && (Math.abs(p1_bearing_to_turn_start) <= 90) &&
+								(p2_bearing_to_turn_start > 0) && (Math.abs(p2_bearing_to_turn_start) <= 90)) {
+							// This means we've just passed the course on which the turn started.
+							// So a full circle is accomplished!
+							long circle_duration = p2.data.timestamp.getTime() - turn_start_time.getTime();
+							circle_duration /= 1000; //In seconds, please...
+							TurnData turn = new TurnData(p2.data.timestamp, circle_duration);
+							turns.addTurn(turn);
+							turn_start_time = p2.data.timestamp;
+						}
+						break;
+					case TURNING_RIGHT:
+						//Detect mode change
+						if (p2.turn_rate < TURN_RATE_THRESHOLD) {
+							//Turning too slowly to still call this a thermal turn
+							mode = FlightMode.CRUISING;
+							turn_start_time = null;
+						}
+						if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
+							//Switched turn direction
+							mode = FlightMode.TURNING_LEFT;
+							track_course_turn_start = p2.track_course_deg;
+							turn_start_time = p2.data.timestamp;
+						}
+						
+						//TODO what about the edge case where p1 doesn't have track_course_deg 
+						//initialized because it's the first fix in the file.
+						
+						//Detect going past turn start course.  Only relevant if we're still turning.
+						p1_bearing_to_turn_start = calcBearingChange(p1.track_course_deg, track_course_turn_start);
+						p2_bearing_to_turn_start = calcBearingChange(p2.track_course_deg, track_course_turn_start);
+						if (mode == FlightMode.TURNING_RIGHT && 
+								(p1_bearing_to_turn_start > 0) && (Math.abs(p1_bearing_to_turn_start) <= 90) &&
+								(p2_bearing_to_turn_start < 0) && (Math.abs(p2_bearing_to_turn_start) <= 90)) {
+							// This means we've just passed the course on which the turn started.
+							// So a full circle is accomplished!
+							long circle_duration = p2.data.timestamp.getTime() - turn_start_time.getTime();
+							TurnData turn = new TurnData(p2.data.timestamp, circle_duration);
+							turns.addTurn(turn);
+							turn_start_time = p2.data.timestamp;
+						}
+						
+						break;
+					default: throw new Exception("Unexpected flight mode indicator [" + mode + "]");
+				}
+			}
+			
+			//transfer the pointer so we scan through the list looking at 2 adjacent points all the time
+			p1 = p2; 
+		}
+		
+		return turns;
+	}
+
+	/**
+	 * Helper to calculate the track course between two points
+	 * 
+	 * @param p1
+	 * @param p2
+	 * @return double - course in degrees
+	 */
+	protected double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
+		double y = Math.sin(p2.lon_radians - p1.lon_radians) * 
+				Math.cos(p2.lat_radians);
+		
+		double x = Math.cos(p1.lat_radians) * Math.sin(p2.lat_radians) -
+		        Math.sin(p1.lat_radians) * Math.cos(p2.lat_radians) *
+		        Math.cos(p2.lon_radians - p1.lon_radians);
+		
+		double track_radians = Math.atan2(y, x);
+		double track_degrees = Math.toDegrees(track_radians);
+		track_degrees = (track_degrees + 360) % 360;
+		return track_degrees;
+	}
+
+	/**
+	 * Helper to figure out the change in track course from one point's track course
+	 * to the next
+	 * 
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	private double calcBearingChange(double crs1, double crs2) {
+		
+		double d = Math.abs(crs2 - crs1) % 360;
+		
+		double r = d > 180 ? 360 - d : d;
+		
+		int sign = (crs1 - crs2 >= 0 && crs1 - crs2 <= 180) || 
+				(crs1 - crs2 <= -180 && crs1 - crs2 >= -360) ? 1 : -1;
+
+		r *= sign;
+		
+		return r;
 	}
 }

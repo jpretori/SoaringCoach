@@ -24,7 +24,7 @@ public class GNSSPointData {
 	public String other;
 
 	public GNSSPointData() {
-		this.timestamp = new Date();
+		this.timestamp = null;
 	}
 	
 	public String getFilename() {
