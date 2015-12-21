@@ -30,9 +30,9 @@ public class Thermal {
 	
 	/**
 	 * Calculates and returns the average turn rate over the entire set
-	 * @return
+	 * @return a long value - expecting people to get more value out of whole number seconds
 	 */
-	public double getAverageTurnRate() {
+	public long getAverageCircleDuration() {
 		double average_turn_rate = 0;
 		
 		for (Turn turnData : turns) {
@@ -40,6 +40,31 @@ public class Thermal {
 		}
 		average_turn_rate = average_turn_rate / turns.size();
 		
-		return average_turn_rate;
+		return Math.round(average_turn_rate);
+	}
+	
+	public String getTotalDuration() {
+		long total_seconds = 0;
+		
+		for (Turn turn : turns) {
+			total_seconds += turn.duration;
+		}
+		
+		long minutes = total_seconds / 60;
+		long seconds = total_seconds % 60;
+		
+		String time = minutes + ":" + seconds;
+		
+		return time;
+	}
+	
+	public long getTotalDurationSeconds() {
+		long total_seconds = 0;
+		
+		for (Turn turn : turns) {
+			total_seconds += turn.duration;
+		}
+		
+		return total_seconds;
 	}
 }
