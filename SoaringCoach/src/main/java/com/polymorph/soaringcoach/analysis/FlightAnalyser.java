@@ -3,9 +3,13 @@ package com.polymorph.soaringcoach.analysis;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.polymorph.soaringcoach.analysis.Turns.FlightMode;
-
 public class FlightAnalyser {
+	public enum FlightMode {
+		TURNING_LEFT, 
+		TURNING_RIGHT, 
+		CRUISING
+	}
+
 	private final int TURN_RATE_THRESHOLD = 4;
 	
 	private ArrayList<GNSSPoint> igc_points = new ArrayList<>();
@@ -33,16 +37,16 @@ public class FlightAnalyser {
 	}
 
 	/**
-	 * Analyses the given fixes to find thermal turns and indicate how
+	 * Analyses the given fixes to find full-circle turns and indicate how
 	 * well-banked they were, by highlighting how many seconds it took to
-	 * complete each turn
+	 * complete each turn.
 	 * 
 	 * @return all turns and how many seconds each took.  If none were found, an empty array.
 	 * @throws Exception 
 	 */
-	public Turns calcTurnRates() throws Exception {
+	public ArrayList<Turn> calculateTurnRates() throws Exception {
 		
-		Turns turns = new Turns();
+		ArrayList<Turn> turns = new ArrayList<Turn>();
 		
 		GNSSPoint p1 = null;
 
@@ -93,17 +97,25 @@ public class FlightAnalyser {
 						//initialized because it's the first fix in the file.
 						
 						//Detect going past turn start course.  Only relevant if we're still turning.
-						double p1_bearing_to_turn_start = calcBearingChange(p1.track_course_deg, track_course_turn_start);
-						double p2_bearing_to_turn_start = calcBearingChange(p2.track_course_deg, track_course_turn_start);
+						double p1_bearing_to_turn_start = 
+								calcBearingChange(p1.track_course_deg, track_course_turn_start);
+						
+						double p2_bearing_to_turn_start = 
+								calcBearingChange(p2.track_course_deg, track_course_turn_start);
+						
 						if (mode == FlightMode.TURNING_LEFT &&
-								(p1_bearing_to_turn_start < 0) && (Math.abs(p1_bearing_to_turn_start) <= 90) &&
-								(p2_bearing_to_turn_start > 0) && (Math.abs(p2_bearing_to_turn_start) <= 90)) {
+								(p1_bearing_to_turn_start < 0) && 
+								(Math.abs(p1_bearing_to_turn_start) <= 90) &&
+								(p2_bearing_to_turn_start > 0) && 
+								(Math.abs(p2_bearing_to_turn_start) <= 90)) {
 							// This means we've just passed the course on which the turn started.
 							// So a full circle is accomplished!
-							long circle_duration = p2.data.timestamp.getTime() - turn_start_time.getTime();
+							long circle_duration = 
+									p2.data.timestamp.getTime() - turn_start_time.getTime();
+							
 							circle_duration /= 1000; //In seconds, please...
-							TurnData turn = new TurnData(p2.data.timestamp, circle_duration);
-							turns.addTurn(turn);
+							Turn turn = new Turn(turn_start_time, circle_duration);
+							turns.add(turn);
 							turn_start_time = p2.data.timestamp;
 						}
 						break;
@@ -128,13 +140,18 @@ public class FlightAnalyser {
 						p1_bearing_to_turn_start = calcBearingChange(p1.track_course_deg, track_course_turn_start);
 						p2_bearing_to_turn_start = calcBearingChange(p2.track_course_deg, track_course_turn_start);
 						if (mode == FlightMode.TURNING_RIGHT && 
-								(p1_bearing_to_turn_start > 0) && (Math.abs(p1_bearing_to_turn_start) <= 90) &&
-								(p2_bearing_to_turn_start < 0) && (Math.abs(p2_bearing_to_turn_start) <= 90)) {
+								(p1_bearing_to_turn_start > 0) && 
+								(Math.abs(p1_bearing_to_turn_start) <= 90) &&
+								(p2_bearing_to_turn_start < 0) && 
+								(Math.abs(p2_bearing_to_turn_start) <= 90)) {
 							// This means we've just passed the course on which the turn started.
 							// So a full circle is accomplished!
-							long circle_duration = p2.data.timestamp.getTime() - turn_start_time.getTime();
-							TurnData turn = new TurnData(p2.data.timestamp, circle_duration);
-							turns.addTurn(turn);
+							long circle_duration = 
+									p2.data.timestamp.getTime() - turn_start_time.getTime();
+							circle_duration /= 1000; //In seconds, please...
+							
+							Turn turn = new Turn(turn_start_time, circle_duration);
+							turns.add(turn);
 							turn_start_time = p2.data.timestamp;
 						}
 						
@@ -150,6 +167,52 @@ public class FlightAnalyser {
 		return turns;
 	}
 
+	/**
+	 * Looks at all the turns identified by calculateTurnRates(), and identifies
+	 * which ones fit together into thermals. Also calculates some aggregates
+	 * for each thermal.
+	 * 
+	 * @return ArrayList<Thermal>
+	 * @throws Exception 
+	 */
+	public ArrayList<Thermal> calculateThermals() throws Exception {
+		ArrayList<Thermal> thermals = new ArrayList<>();
+		Thermal thermal = null;
+		Turn t1 = null;
+		ArrayList<Turn> turns = calculateTurnRates();
+		
+		for (Turn t2 : turns ) {
+			
+			if (t1 != null && t2 != null) {
+				
+				if ((t1.timestamp.getTime() + t1.duration*1000) == t2.timestamp.getTime()) {
+					//Turns are adjacent
+					
+					if (thermal == null) {
+						thermal = new Thermal(t1);
+						thermals.add(thermal);
+						t1.setIncludedInThermal();
+					} 
+					
+					thermal.addTurn(t2);
+					t2.setIncludedInThermal();
+				} else {
+					// Set thermal=null to make sure we initialize a new thermal
+					// next time two turns are adjacent 
+					thermal = null;
+				}
+				
+				if (!t1.isIncludedInThermal()) {
+					thermals.add(new Thermal(t1));
+					t1.setIncludedInThermal();
+				}
+			}
+			t1 = t2; // Switch over the pointer so we scan the list looking at two adjacent items
+		}
+		
+		return thermals;
+	}
+	
 	/**
 	 * Helper to calculate the track course between two points
 	 * 

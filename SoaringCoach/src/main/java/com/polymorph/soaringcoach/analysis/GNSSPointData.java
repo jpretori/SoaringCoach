@@ -51,7 +51,7 @@ public class GNSSPointData {
 		this.timestamp = timestamp;
 	}
 	
-	@Field(offset=8, length=2, align=Align.RIGHT, paddingChar='0')
+	@Field(offset=8, length=2, align=Align.RIGHT)
 	public String getLatitudeDegrees() {
 		return latitude_degrees;
 	}
@@ -59,7 +59,7 @@ public class GNSSPointData {
 		this.latitude_degrees = latitude_degrees;
 	}
 
-	@Field(offset=10, length=5, align=Align.RIGHT, paddingChar='0')
+	@Field(offset=10, length=5, align=Align.RIGHT)
 	public String getLatitudeMinutes() {
 		return latitude_minutes;
 	}
@@ -75,7 +75,7 @@ public class GNSSPointData {
 		this.latitude_equator_ref = latitude_equator_ref;
 	}
 
-	@Field(offset=16, length=3, align=Align.RIGHT, paddingChar='0')
+	@Field(offset=16, length=3, align=Align.RIGHT)
 	public String getLongitudeDegrees() {
 		return longitude_degrees;
 	}
@@ -83,7 +83,7 @@ public class GNSSPointData {
 		this.longitude_degrees = longitude_degrees;
 	}
 
-	@Field(offset=19, length=5, align=Align.RIGHT, paddingChar='0')
+	@Field(offset=19, length=5, align=Align.RIGHT)
 	public String getLongitudeMinutes() {
 		return longitude_minutes;
 	}

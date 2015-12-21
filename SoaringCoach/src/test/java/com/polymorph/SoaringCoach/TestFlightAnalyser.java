@@ -2,6 +2,7 @@ package com.polymorph.soaringcoach;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -10,8 +11,8 @@ import org.junit.Test;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.TurnData;
-import com.polymorph.soaringcoach.analysis.Turns;
+import com.polymorph.soaringcoach.analysis.Turn;
+import com.polymorph.soaringcoach.analysis.Thermal;
 
 public class TestFlightAnalyser {
 
@@ -208,9 +209,9 @@ public class TestFlightAnalyser {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110343308821S01911072EA016930179500309"));		
 		FlightAnalyser fa = new FlightAnalyser(points);
 		
-		Turns turns = fa.calcTurnRates();
+		ArrayList<Turn> turns = fa.calculateTurnRates();
 		
-		assertEquals("incorrect number of turns detected", 0, turns.getTurns().size());
+		assertEquals("number of turns", 0, turns.size());
 	}
 	
 	/**
@@ -324,29 +325,30 @@ public class TestFlightAnalyser {
 		
 		FlightAnalyser fa = new FlightAnalyser(points);
 		
-		Turns turns = fa.calcTurnRates();
+		ArrayList<Turn> turns = fa.calculateTurnRates();
 		
 		//Check # of turns
-		ArrayList<TurnData> turns_data_list = turns.getTurns();
-		assertEquals("incorrect number of turns detected", 4, turns_data_list.size());
+		assertEquals("incorrect number of turns detected", 4, turns.size());
 		
 		//Check individual turn durations
-		TurnData t1 = turns_data_list.get(0);
+		Turn t1 = turns.get(0);
 		assertEquals("first turn duration", 36, t1.duration);
 		
-		TurnData t2 = turns_data_list.get(1);
+		Turn t2 = turns.get(1);
 		assertEquals("second turn duration", 24, t2.duration);
 		
-		TurnData t3 = turns_data_list.get(2);
+		Turn t3 = turns.get(2);
 		assertEquals("third turn duration", 32, t3.duration);
 		
-		TurnData t4 = turns_data_list.get(3);
+		Turn t4 = turns.get(3);
 		assertEquals("fourth turn duration", 28, t4.duration);
-		
-		//Check average turn rate calc
-		assertEquals("average turn rate", 30.0, turns.getAverageTurnRate(), .01);
 	}
 	
+	/**
+	 * A set of points placed roughly in an octagon, with the first two points
+	 * creating a bearing of due north - allowing us to test the
+	 * <b>calculateTrackCourse</b> method in 8 major compass headings.
+	 */
 	@Test
 	public void testCalculateTrackCourse() {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
@@ -381,5 +383,47 @@ public class TestFlightAnalyser {
 		assertEquals(225.1, fa.calculateTrackCourse(p6, p7), 0.1);
 		assertEquals(270.0, fa.calculateTrackCourse(p7, p8), 0.1);
 		assertEquals(325.5, fa.calculateTrackCourse(p8, p9), 0.1);
+	}
+	
+	/**
+	 * Takes a section of a real IGC file with a number of thermals in evidence,
+	 * and ensures the thermals are picked up correctly.
+	 * @throws Exception 
+	 */
+	@Test
+	public void testThermalDetectionPositive() throws Exception {
+		
+		ArrayList<GNSSPoint> points = 
+				FlightAnalyserTestFacade.loadFromFile("src/test/resources/thermal_detection_positive_test.igc");
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(points);
+		
+		ArrayList<Thermal> thermals = fa.calculateThermals();
+		
+		assertEquals("number of thermals", 13, thermals.size());
+		
+		int[] num_circles_per_thermal = {
+					20,
+					2,
+					3,
+					10,
+					1,
+					1,
+					1,
+					1,
+					4,
+					2,
+					2,
+					1,
+					2
+				};
+		
+		for (int i = 0; i < thermals.size(); i++) {
+			Thermal t = thermals.get(i);
+			assertEquals(
+					"circles in thermal #" + i, 
+					num_circles_per_thermal[i], 
+					t.getTurns().size());
+		}
 	}
 }
