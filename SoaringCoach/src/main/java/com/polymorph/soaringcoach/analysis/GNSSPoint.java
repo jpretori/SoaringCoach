@@ -115,64 +115,64 @@ public class GNSSPoint extends Point3d {
 	}
 	
 	/**
-	 * Takes input as received from IGC file 
-	 * (like "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100")
+	 * Takes input as received from IGC file (like
+	 * "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100")
 	 * and parses it
 	 * 
 	 * @param file_input
+	 * @return properly initialised GNSSPoint instance, or null if there was a
+	 *         problem with the input (e.g. if the input isn't a B record)
 	 */
 	public static GNSSPoint createGNSSPoint(String filename, String file_input) {
 		GNSSPointData pt_data = null;
+		GNSSPoint pt = null;
 		
-		FixedFormatManager manager = new FixedFormatManagerImpl();
-		pt_data = manager.load(GNSSPointData.class, file_input);
-		double decimalized_lat = -1000; //init to impossible values
-		double decimalized_lon = -1000;
+		if (isValidBRecord(file_input)) {
+			
+			//Run fixedFormat4J to parse the line
+			FixedFormatManager manager = new FixedFormatManagerImpl();
+			pt_data = manager.load(GNSSPointData.class, file_input);
+			double decimalized_lat = -1000; //init to impossible values
+			double decimalized_lon = -1000;
 		
-		if (isValidGpsFix(file_input, pt_data)) {
-			// It's a GPS fix record, so we can convert it.
-			pt_data.setFilename(filename);
-			
-			decimalized_lat = decimalizeDegrees(pt_data.latitude_degrees, pt_data.latitude_minutes);
-			if ("S".equals(pt_data.latitude_equator_ref)) {
-				decimalized_lat = -decimalized_lat;
-			}
-			
-			decimalized_lon = decimalizeDegrees(pt_data.longitude_degrees, pt_data.longitude_minutes);
-			if ("W".equals(pt_data.longitude_greenwich_ref)) {
-				decimalized_lon = -decimalized_lon;
-			}
+			if (isValidGpsFix(pt_data)) {
+				
+				// It's a GPS fix record, so we can convert it.
+				pt_data.setFilename(filename);
+				
+				decimalized_lat = decimalizeDegrees(
+						pt_data.latitude_degrees, 
+						pt_data.latitude_minutes, 
+						pt_data.latitude_equator_ref);
+				
+				decimalized_lon = decimalizeDegrees(
+						pt_data.longitude_degrees, 
+						pt_data.longitude_minutes, 
+						pt_data.longitude_greenwich_ref);
+				
+				pt = GNSSPoint.createGNSSPoint(
+						filename,
+						pt_data.timestamp, 
+						decimalized_lat, 
+						decimalized_lon, 
+						pt_data.altitude_ok, 
+						pt_data.pressure_altitude, 
+						pt_data.gnss_altitude, 
+						pt_data.other);
+				
+				pt.data = pt_data;
+				
+			} else {
+				System.out.println("Discarded line: [" + file_input + "]");
+			} 
 		} else {
 			System.out.println("Discarded line: [" + file_input + "]");
 		}
-		
-		GNSSPoint pt = GNSSPoint.createGNSSPoint(
-				filename, pt_data.timestamp, decimalized_lat, decimalized_lon, pt_data.altitude_ok,
-				pt_data.pressure_altitude, pt_data.gnss_altitude, pt_data.other);
-		pt.data = pt_data;
+
 		return pt;
 	}
 
-	/**
-	 * Takes e.g. Latitude (as given in IGC file, i.e. 521234N for 52*1.234'N) and 
-	 * converts it to decimal format e.g. 52.10571
-	 * @param degrees
-	 * @param decimalized_minutes
-	 * @return Decimal value for latitude or long
-	 */
-	private static Double decimalizeDegrees(String degrees, String decimalized_minutes) {
-		double x_deg = Double.parseDouble(degrees);
-		double x_min = Double.parseDouble(decimalized_minutes) / 1000; //IGC format stores 1.234 as "1234"
-		x_min = x_min / 60; //converts from minutes to decimal degrees
-		return x_deg + x_min; //adds decimal part
-	}
-
-	/**
-	 * Checks if a line from the file is a valid GPS fix
-	 * @param file_input
-	 * @return
-	 */
-	private static boolean isValidGpsFix(String file_input, GNSSPointData pt) {
+	private static boolean isValidBRecord(String file_input) {
 		//Chuck out nulls to avoid falling over ungracefully
 		if (file_input == null) {
 			System.err.println("File input [null]");
@@ -180,11 +180,45 @@ public class GNSSPoint extends Point3d {
 		}
 		
 		//Is it a "Body" record, i.e. tagged as a GPS fix
-		if (!"B".equals(pt.getRecordType())) {
+		if (!"B".equals(file_input.substring(0, 1))) {
 			System.out.println("Not a 'B' record");
 			return false;
 		}
+		
+		//All checks passed
+		return true;
+	}
+	/**
+	 * Takes e.g. Latitude (as given in IGC file, i.e. 521234N for 52*1.234'N) and 
+	 * converts it to decimal format e.g. 52.10571
+	 * @param degrees
+	 * @param decimalized_minutes
+	 * @param coordinate_ref One from the set of [N, S, E, W]
+	 * @return Decimal value for latitude or long
+	 */
+	private static Double decimalizeDegrees(
+			String degrees, 
+			String decimalized_minutes, 
+			String coordinate_ref) {
+		
+		double x_deg = Double.parseDouble(degrees);
+		double x_min = Double.parseDouble(decimalized_minutes) / 1000; //IGC format stores 1.234 as "1234"
+		x_min = x_min / 60; //converts from minutes to decimal degrees
+		
+		double decimalized = x_deg + x_min; //adds decimal part
+		
+		if ("S".equals(coordinate_ref) || "W".equals(coordinate_ref)) {
+			decimalized = -decimalized;
+		}
+		
+		return decimalized;
+	}
 
+	/**
+	 * Checks if a line from the file is a valid GPS fix
+	 * @return
+	 */
+	private static boolean isValidGpsFix(GNSSPointData pt) {
 		//Is it marked as a "valid" altitude
 		if (!"A".equals(pt.getAltitudeOK())) {
 			System.out.println("Altitude validity flag not set to 'A'");

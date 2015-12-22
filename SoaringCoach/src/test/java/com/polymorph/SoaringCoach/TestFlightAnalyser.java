@@ -192,70 +192,21 @@ public class TestFlightAnalyser {
 		
 		assertEquals("number of thermals", 13, thermals.size());
 		
-		int[] num_circles_per_thermal = {
-				20,
-				2,
-				3,
-				10,
-				1,
-				1,
-				1,
-				1,
-				4,
-				2,
-				2,
-				1,
-				2
-		};
-		
-		int[] thermal_duration_seconds = {
-				537,
-				76,
-				101,
-				309,
-				42,
-				38,
-				27,
-				33,
-				135,
-				66,
-				51,
-				26,
-				51
-		};
-		
-		int[] thermal_average_circle_duration = {
-				27,
-				38,
-				34,
-				31,
-				42,
-				38,
-				27,
-				33,
-				34,
-				33,
-				26,
-				26,
-				26
-		};
-		
-		String[] thermal_duration_strings = {
-				"8:57",
-				"1:16",
-				"1:41",
-				"5:9",
-				"0:42",
-				"0:38",
-				"0:27",
-				"0:33",
-				"2:15",
-				"1:6",
-				"0:51",
-				"0:26",
-				"0:51"
-		};
-		
+		int[] num_circles_per_thermal = 
+			{ 20, 2, 3, 10, 1, 1, 1, 1, 4, 2, 2, 1, 2 };
+
+		int[] thermal_duration_seconds = 
+			{ 537, 76, 101, 309, 42, 38, 27, 33, 135, 66, 51, 26, 51 };
+
+		int[] thermal_average_circle_duration = 
+			{ 27, 38, 34, 31, 42, 38, 27, 33, 34, 33, 26, 26, 26 };
+
+		String[] thermal_duration_strings = 
+			{ 
+			"8:57", "1:16", "1:41", "5:9", "0:42", 
+			"0:38", "0:27", "0:33", "2:15", "1:6", 
+			"0:51", "0:26", "0:51" };
+
 		//Assert stuff about each thermal
 		for (int i = 0; i < thermals.size(); i++) {
 			Thermal t = thermals.get(i);

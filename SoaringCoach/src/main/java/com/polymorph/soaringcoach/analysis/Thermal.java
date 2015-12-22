@@ -1,6 +1,8 @@
 package com.polymorph.soaringcoach.analysis;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Thermal {
 	private ArrayList<Turn> turns;
@@ -66,5 +68,16 @@ public class Thermal {
 		}
 		
 		return total_seconds;
+	}
+	
+	@Override
+	public String toString() {
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+		Date first_turn_timestamp = turns.get(0).timestamp;
+		return 
+				"timestamp=["+df.format(first_turn_timestamp)+"], "
+				+ "duration=["+getTotalDuration()+"], "
+				+ "average circle duration=["+getAverageCircleDuration()+"], "
+				+ "number of circles=["+turns.size()+"]";
 	}
 }

@@ -2,6 +2,9 @@ package com.polymorph.soaringcoach.rest;
 
 import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
+import com.polymorph.soaringcoach.analysis.Thermal;
+import com.polymorph.soaringcoach.analysis.Turn;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,9 +44,37 @@ public class FileUploadController {
                 }
 
                 FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
-             double totalDistance =   flightAnalyser.calcTotalDistance();
+                double totalDistance =   flightAnalyser.calcTotalDistance();
 
-                return "Total Distance travelled = "+String.valueOf(totalDistance)+" metres";
+                ArrayList<Turn> turns = flightAnalyser.calculateTurnRates();
+                
+                int turn_count = turns.size();
+                
+                //get turn durations display string
+                String turn_details = "";
+                for (Turn turn : turns) {
+                	turn_details += "\t";
+					turn_details += turn.toString();
+					turn_details += "\n";
+				}
+                
+                ArrayList<Thermal> thermals = flightAnalyser.calculateThermals();
+                int thermal_count = thermals.size();
+                
+				String thermal_details = "";
+				for (Thermal thermal : thermals) {
+					thermal_details += "\t";
+					thermal_details += thermal.toString();
+					thermal_details += "\n";
+				}
+				
+				
+				return "Total Distance travelled = ["+String.valueOf(totalDistance)+"] metres.\n\n"
+					+ "Total thermals detected = ["+thermal_count+"]\n\n"
+                	+ "Total turns detected = ["+turn_count+"]\n\n\n\n"
+        			+ "Thermal details = \n"+thermal_details +"\n\n\n\n"
+                	+ "Turn details = \n"+turn_details+"\n\n";
+				
             } catch (Exception e) {
                 return "You failed to upload " + " => " + e.getMessage();
             }
