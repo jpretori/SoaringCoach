@@ -10,7 +10,9 @@ public class FlightAnalyser {
 		CRUISING
 	}
 
-	private final int TURN_RATE_THRESHOLD = 4;
+	// TURN_RATE_THRESHOLD is in degrees per second.  
+	// Turning faster than this constitutes a thermal turn.
+	private final int TURN_RATE_THRESHOLD = 4; 
 	
 	private ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 	

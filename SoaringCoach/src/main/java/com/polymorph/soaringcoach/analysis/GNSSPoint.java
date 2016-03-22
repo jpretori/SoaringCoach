@@ -119,7 +119,8 @@ public class GNSSPoint extends Point3d {
 	 * "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100")
 	 * and parses it
 	 * 
-	 * @param file_input
+	 * @param filename The name of the file, used to link this point to a particular flight for later retrieval of the flight.
+	 * @param file_input A line from the file
 	 * @return properly initialised GNSSPoint instance, or null if there was a
 	 *         problem with the input (e.g. if the input isn't a B record)
 	 */

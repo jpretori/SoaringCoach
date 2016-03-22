@@ -28,6 +28,15 @@ public class FileUploadController {
 
         if (!file.isEmpty()) {
             try {
+				// TODO perhaps move most of this logic into FlightAnalyser? It
+				// may be easier to work with this code (and the app), if the
+				// steps are something like:
+            	//
+            	// 1. Get file from user
+            	// 2. Throw file at FlightAnalyser, which persists it to the DB and kicks off calculation
+            	// 3. Get notified once calculation is complete.  Somehow tell the user about this event
+            	// 4. User either clicks on the flight or some refresh button to get updated aggregate stats
+            	
                 GNSSPoint gnssPoint;
                 File convFile = new File(file.getOriginalFilename());
                 convFile.createNewFile();
@@ -36,7 +45,7 @@ public class FileUploadController {
                 try (BufferedReader br = new BufferedReader(new FileReader(convFile))) {
                     String line;
                     while ((line = br.readLine()) != null) {
-                        gnssPoint = GNSSPoint.createGNSSPoint("", line);
+                        gnssPoint = GNSSPoint.createGNSSPoint(convFile.getName(), line);
                         if(gnssPoint != null){
                             gnssPointList.add(gnssPoint);
                         }
@@ -51,12 +60,12 @@ public class FileUploadController {
                 int turn_count = turns.size();
                 
                 //get turn durations display string
-                String turn_details = "";
-                for (Turn turn : turns) {
-                	turn_details += "\t";
-					turn_details += turn.toString();
-					turn_details += "\n";
-				}
+                //String turn_details = "";
+                //for (Turn turn : turns) {
+                //	turn_details += "\t";
+				//	turn_details += turn.toString();
+				//	turn_details += "\n";
+				//}
                 
                 ArrayList<Thermal> thermals = flightAnalyser.calculateThermals();
                 int thermal_count = thermals.size();
@@ -66,14 +75,21 @@ public class FileUploadController {
 					thermal_details += "\t";
 					thermal_details += thermal.toString();
 					thermal_details += "\n";
+					
+					for (Turn turn : thermal.getTurns()) {
+						thermal_details += "\t\t";
+						thermal_details += turn.toString();
+						thermal_details += "\n";
+					}
+					
+					thermal_details += "\n";
 				}
 				
 				
-				return "Total Distance travelled = ["+String.valueOf(totalDistance)+"] metres.\n\n"
+				return "Total Distance travelled = ["+String.valueOf(Math.round(totalDistance)/1000.0)+"] kilometers.\n\n"
 					+ "Total thermals detected = ["+thermal_count+"]\n\n"
-                	+ "Total turns detected = ["+turn_count+"]\n\n\n\n"
-        			+ "Thermal details = \n"+thermal_details +"\n\n\n\n"
-                	+ "Turn details = \n"+turn_details+"\n\n";
+                	+ "Total turns detected = ["+turn_count+"]\n\n"
+        			+ "Thermal details = \n"+thermal_details +"\n\n";
 				
             } catch (Exception e) {
                 return "You failed to upload " + " => " + e.getMessage();
