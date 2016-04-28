@@ -257,4 +257,8 @@ public class FlightAnalyser {
 		
 		return r;
 	}
+
+	protected void setIgcPoints(ArrayList<GNSSPoint> points) {
+		this.igc_points = points;
+	}
 }
