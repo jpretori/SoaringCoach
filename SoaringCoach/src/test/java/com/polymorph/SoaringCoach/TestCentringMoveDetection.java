@@ -183,10 +183,53 @@ public class TestCentringMoveDetection {
 	}
 
 	@Test
-	public void testCorrectionDetectionNoChanges() throws FileNotFoundException {
+	public void testCorrectionDetectionNoChanges() throws Exception {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
+				"src/test/resources/testCorrectionDetectionNoChanges.igc");
+		
+		boolean[] centring_move_conclusion = { false, false, false, false, false };
+		
+		CHECK_TWICE_RULE[] check_twice_rule_followed = {
+				CHECK_TWICE_RULE.NOT_APPLICABLE, 
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE};
+		
+		int[] altitude_change = { 4, -4, 0, 0, 0 };
+		
+		double[] climb_rate = { 0.2, -0.2, 0.0, 0.0, 0.0 };
+				
+		ArrayList<Thermal> thermals = fa.calculateThermals();
+		assertEquals(1, thermals.size());
+		
+		Thermal thermal = thermals.get(0);
+		
+		ArrayList<Circle> circles = thermal.getTurns();
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					centring_move_conclusion[i], 
+					circle.centeringCorrection());
+
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_rule_followed[i], 
+					circle.checkTwiceRuleFollowed());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					altitude_change[i], 
+					circle.getAltitudeChange());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					climb_rate[i], 
+					circle.getClimbRate(), 0.1);
+			i += 1;
+		}		
 	}
 
 	@Test
