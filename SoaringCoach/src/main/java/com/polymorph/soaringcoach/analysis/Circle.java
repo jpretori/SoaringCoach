@@ -9,6 +9,8 @@ public class Circle {
 	public Date timestamp;
 	public long duration;
 	private boolean included_in_thermal = false;
+	CHECK_TWICE_RULE check_twice_rule_followed = CHECK_TWICE_RULE.NOT_APPLICABLE;
+	private boolean centring_correction;
 
 	public Circle(Date timestamp, long duration) {
 		this.timestamp = timestamp;
@@ -30,8 +32,7 @@ public class Circle {
 	}
 
 	public boolean centeringCorrection() {
-		// TODO Auto-generated method stub
-		return false;
+		return centring_correction;
 	}
 
 	public CHECK_TWICE_RULE checkTwiceRuleFollowed() {
@@ -59,13 +60,11 @@ public class Circle {
 		return COMPASS_POINTS.N;
 	}
 
-	void setCorrectiveMoveDetected(boolean b) {
-		// TODO Auto-generated method stub
-		
+	void setCentringCorrection(boolean b) {
+		centring_correction = b;
 	}
 
 	public CHECK_TWICE_RULE getCheckTwiceRuleIndicator() {
-		// TODO Auto-generated method stub
-		return CHECK_TWICE_RULE.NOT_APPLICABLE;
+		return check_twice_rule_followed;
 	}
 }

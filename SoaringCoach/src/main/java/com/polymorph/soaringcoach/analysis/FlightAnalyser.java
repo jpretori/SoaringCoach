@@ -3,6 +3,8 @@ package com.polymorph.soaringcoach.analysis;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
+
 public class FlightAnalyser {
 	public enum FlightMode {
 		TURNING_LEFT, 
@@ -263,7 +265,18 @@ public class FlightAnalyser {
 	}
 
 	protected void checkTwiceRule(ArrayList<Circle> circles) {
-		// TODO Auto-generated method stub
-		
+		boolean previous_circle_correction = true;
+		for (Circle circle : circles) {
+			if (circle.centeringCorrection()) {
+				if (previous_circle_correction) {
+					circle.check_twice_rule_followed = CHECK_TWICE_RULE.NOT_FOLLOWED;
+				} else {
+					circle.check_twice_rule_followed = CHECK_TWICE_RULE.FOLLOWED;
+				}
+			} else {
+				circle.check_twice_rule_followed = CHECK_TWICE_RULE.NOT_APPLICABLE;
+			}
+			previous_circle_correction = circle.centeringCorrection();
+		}
 	}
 }

@@ -35,7 +35,7 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		
 		for (boolean b : testPattern) {
 			Circle c = new Circle(null, 20);
-			c.setCorrectiveMoveDetected(b);
+			c.setCentringCorrection(b);
 			circles.add(c);
 		}
 		
