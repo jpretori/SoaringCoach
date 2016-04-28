@@ -48,14 +48,14 @@ public class FlightAnalyser {
 	 */
 	public ArrayList<Circle> calculateTurnRates() throws Exception {
 		
-		ArrayList<Circle> turns = new ArrayList<Circle>();
+		ArrayList<Circle> circles = new ArrayList<Circle>();
 		
 		GNSSPoint p1 = null;
 
 		//If the aircraft is turning, at what heading did the turn start
 		double track_course_turn_start = 0;
 		FlightMode mode = FlightMode.CRUISING;
-		Date turn_start_time = null;
+		Date circle_start_time = null;
 		
 		for (GNSSPoint p2 : igc_points) {
 			
@@ -74,11 +74,11 @@ public class FlightAnalyser {
 						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
-							turn_start_time = p2.data.timestamp;
+							circle_start_time = p2.data.timestamp;
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
-							turn_start_time = p2.data.timestamp;
+							circle_start_time = p2.data.timestamp;
 						}
 						break;
 					case TURNING_LEFT: 
@@ -86,13 +86,13 @@ public class FlightAnalyser {
 						if (p2.turn_rate > -TURN_RATE_THRESHOLD) {
 							//Turning too slowly to still call this a thermal turn
 							mode = FlightMode.CRUISING;
-							turn_start_time = null;
+							circle_start_time = null;
 						}
 						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
-							turn_start_time = p2.data.timestamp;
+							circle_start_time = p2.data.timestamp;
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
@@ -113,12 +113,12 @@ public class FlightAnalyser {
 							// This means we've just passed the course on which the turn started.
 							// So a full circle is accomplished!
 							long circle_duration = 
-									p2.data.timestamp.getTime() - turn_start_time.getTime();
+									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							
 							circle_duration /= 1000; //In seconds, please...
-							Circle turn = new Circle(turn_start_time, circle_duration);
-							turns.add(turn);
-							turn_start_time = p2.data.timestamp;
+							Circle circle = new Circle(circle_start_time, circle_duration);
+							circles.add(circle);
+							circle_start_time = p2.data.timestamp;
 						}
 						break;
 					case TURNING_RIGHT:
@@ -126,13 +126,13 @@ public class FlightAnalyser {
 						if (p2.turn_rate < TURN_RATE_THRESHOLD) {
 							//Turning too slowly to still call this a thermal turn
 							mode = FlightMode.CRUISING;
-							turn_start_time = null;
+							circle_start_time = null;
 						}
 						if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
-							turn_start_time = p2.data.timestamp;
+							circle_start_time = p2.data.timestamp;
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
@@ -149,12 +149,12 @@ public class FlightAnalyser {
 							// This means we've just passed the course on which the turn started.
 							// So a full circle is accomplished!
 							long circle_duration = 
-									p2.data.timestamp.getTime() - turn_start_time.getTime();
+									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							circle_duration /= 1000; //In seconds, please...
 							
-							Circle turn = new Circle(turn_start_time, circle_duration);
-							turns.add(turn);
-							turn_start_time = p2.data.timestamp;
+							Circle turn = new Circle(circle_start_time, circle_duration);
+							circles.add(turn);
+							circle_start_time = p2.data.timestamp;
 						}
 						
 						break;
@@ -166,7 +166,7 @@ public class FlightAnalyser {
 			p1 = p2; 
 		}
 		
-		return turns;
+		return circles;
 	}
 
 	/**
@@ -180,36 +180,36 @@ public class FlightAnalyser {
 	public ArrayList<Thermal> calculateThermals() throws Exception {
 		ArrayList<Thermal> thermals = new ArrayList<>();
 		Thermal thermal = null;
-		Circle t1 = null;
-		ArrayList<Circle> turns = calculateTurnRates();
+		Circle c1 = null;
+		ArrayList<Circle> circles = calculateTurnRates();
 		
-		for (Circle t2 : turns ) {
+		for (Circle c2 : circles ) {
 			
-			if (t1 != null && t2 != null) {
+			if (c1 != null && c2 != null) {
 				
-				if ((t1.timestamp.getTime() + t1.duration*1000) == t2.timestamp.getTime()) {
+				if ((c1.timestamp.getTime() + c1.duration*1000) == c2.timestamp.getTime()) {
 					//Turns are adjacent
 					
 					if (thermal == null) {
-						thermal = new Thermal(t1);
+						thermal = new Thermal(c1);
 						thermals.add(thermal);
-						t1.setIncludedInThermal();
+						c1.setIncludedInThermal();
 					} 
 					
-					thermal.addTurn(t2);
-					t2.setIncludedInThermal();
+					thermal.addTurn(c2);
+					c2.setIncludedInThermal();
 				} else {
 					// Set thermal=null to make sure we initialize a new thermal
 					// next time two turns are adjacent 
 					thermal = null;
 				}
 				
-				if (!t1.isIncludedInThermal()) {
-					thermals.add(new Thermal(t1));
-					t1.setIncludedInThermal();
+				if (!c1.isIncludedInThermal()) {
+					thermals.add(new Thermal(c1));
+					c1.setIncludedInThermal();
 				}
 			}
-			t1 = t2; // Switch over the pointer so we scan the list looking at two adjacent items
+			c1 = c2; // Switch over the pointer so we scan the list looking at two adjacent items
 		}
 		
 		return thermals;
@@ -260,5 +260,10 @@ public class FlightAnalyser {
 
 	protected void setIgcPoints(ArrayList<GNSSPoint> points) {
 		this.igc_points = points;
+	}
+
+	protected void checkTwiceRule(ArrayList<Circle> circles) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -58,4 +58,14 @@ public class Circle {
 		// TODO Auto-generated method stub
 		return COMPASS_POINTS.N;
 	}
+
+	void setCorrectiveMoveDetected(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public CHECK_TWICE_RULE getCheckTwiceRuleIndicator() {
+		// TODO Auto-generated method stub
+		return CHECK_TWICE_RULE.NOT_APPLICABLE;
+	}
 }

@@ -29,7 +29,26 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		
 		super.setIgcPoints(igc_points);
 	}
-	
+
+	public ArrayList<Circle> runCheckTwiceLogic(boolean[] testPattern) {
+		ArrayList<Circle> circles = new ArrayList<Circle>();
+		
+		for (boolean b : testPattern) {
+			Circle c = new Circle(null, 20);
+			c.setCorrectiveMoveDetected(b);
+			circles.add(c);
+		}
+		
+		super.checkTwiceRule(circles);
+		
+		return circles;
+	}
+
+	public ArrayList<CircleStart> determineCircleStartValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public static ArrayList<GNSSPoint> loadFromFile(String filename) throws FileNotFoundException {
 		ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 		
@@ -39,10 +58,5 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		}
 		
 		return igc_points;
-	}
-
-	public ArrayList<CircleStart> determineCircleStartValues() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

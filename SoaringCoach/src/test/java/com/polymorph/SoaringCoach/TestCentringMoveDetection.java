@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.Thermal;
 import com.polymorph.soaringcoach.analysis.Circle;
 
@@ -310,38 +311,34 @@ public class TestCentringMoveDetection {
 	}
 
 	@Test
-	public void testCorrectiveMoveFinalConclusionDistance() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
-
-	@Test
-	public void testCorrectiveMoveFinalConclusionBearing() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
-
-	@Test
-	public void testCorrectiveMoveFinalConclusionBoth() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
-
-	@Test
-	public void testCorrectiveMoveFinalConclusionNeither() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
-
-	@Test
+	/**
+	 * Positive: Correctly determine that the check-twice rule has been followed when it was.
+	 * 
+	 * @throws FileNotFoundException
+	 */
 	public void testCheckTwiceRulePositive() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
+		
+		boolean[] testPattern = {false, true, false, true, false};
+
+		CHECK_TWICE_RULE[] check_twice_expected_results = {
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.FOLLOWED,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.FOLLOWED,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+		};
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_expected_results[i++], 
+					circle.getCheckTwiceRuleIndicator());
+		}
 	}
 
 	@Test
