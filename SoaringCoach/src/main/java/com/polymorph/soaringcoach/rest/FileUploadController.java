@@ -76,8 +76,9 @@ public class FileUploadController {
 					thermal_details += thermal.toString();
 					thermal_details += "\n";
 					
+					int i = 1;
 					for (Turn turn : thermal.getTurns()) {
-						thermal_details += "\t\t";
+						thermal_details += "\t\t" + i++ + ".  ";
 						thermal_details += turn.toString();
 						thermal_details += "\n";
 					}
@@ -86,9 +87,9 @@ public class FileUploadController {
 				}
 				
 				
-				return "Total Distance travelled = ["+String.valueOf(Math.round(totalDistance)/1000.0)+"] kilometers.\n\n"
+				return "Ground Track Distance = ["+String.valueOf(Math.round(totalDistance)/1000.0)+"] kilometers.\n\n"
 					+ "Total thermals detected = ["+thermal_count+"]\n\n"
-                	+ "Total turns detected = ["+turn_count+"]\n\n"
+                	+ "Total circles detected = ["+turn_count+"]\n\n"
         			+ "Thermal details = \n"+thermal_details +"\n\n";
 				
             } catch (Exception e) {

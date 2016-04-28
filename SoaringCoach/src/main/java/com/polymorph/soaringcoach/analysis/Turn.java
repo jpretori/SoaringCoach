@@ -1,6 +1,5 @@
 package com.polymorph.soaringcoach.analysis;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Turn {
@@ -14,9 +13,9 @@ public class Turn {
 	}
 	
 	public String toString() {
-		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-		return "timestamp=["+df.format(timestamp)+"], "
-				+ "duration=["+duration+"]";
+		String duration_s = duration < 10 ? "0" + String.valueOf(duration) : String.valueOf(duration);
+		
+		return "Duration (s) = ["+duration_s+"]";
 	}
 
 	public boolean isIncludedInThermal() {

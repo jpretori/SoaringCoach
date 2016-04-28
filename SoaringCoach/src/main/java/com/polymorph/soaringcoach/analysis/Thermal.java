@@ -55,7 +55,8 @@ public class Thermal {
 		long minutes = total_seconds / 60;
 		long seconds = total_seconds % 60;
 		
-		String time = minutes + ":" + seconds;
+		String time = minutes + ":" + (
+				seconds < 10 ? String.valueOf("0" + seconds) : String.valueOf(seconds));
 		
 		return time;
 	}
@@ -75,9 +76,9 @@ public class Thermal {
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 		Date first_turn_timestamp = turns.get(0).timestamp;
 		return 
-				"timestamp=["+df.format(first_turn_timestamp)+"], "
-				+ "duration=["+getTotalDuration()+"], "
-				+ "average circle duration=["+getAverageCircleDuration()+"], "
-				+ "number of circles=["+turns.size()+"]";
+				"Start Time = ["+df.format(first_turn_timestamp)+"], "
+				+ "Thermal Duration (min:sec) = ["+getTotalDuration()+"], "
+				+ "Average circle duration (s) = ["+getAverageCircleDuration()+"], "
+				+ "Number of circles = ["+turns.size()+"]";
 	}
 }

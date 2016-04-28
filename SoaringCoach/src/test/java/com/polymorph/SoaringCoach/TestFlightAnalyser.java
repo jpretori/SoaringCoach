@@ -203,8 +203,8 @@ public class TestFlightAnalyser {
 
 		String[] thermal_duration_strings = 
 			{ 
-			"8:57", "1:16", "1:41", "5:9", "0:42", 
-			"0:38", "0:27", "0:33", "2:15", "1:6", 
+			"8:57", "1:16", "1:41", "5:09", "0:42", 
+			"0:38", "0:27", "0:33", "2:15", "1:06", 
 			"0:51", "0:26", "0:51" };
 
 		//Assert stuff about each thermal
