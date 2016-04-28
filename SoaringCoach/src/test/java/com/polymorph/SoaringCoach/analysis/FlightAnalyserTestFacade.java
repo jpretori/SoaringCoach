@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.polymorph.soaringcoach.CircleStart;
-
 public class FlightAnalyserTestFacade extends FlightAnalyser {
 	
 	public FlightAnalyserTestFacade(ArrayList<GNSSPoint> file) {
@@ -34,7 +32,7 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		ArrayList<Circle> circles = new ArrayList<Circle>();
 		
 		for (boolean b : testPattern) {
-			Circle c = new Circle(null, 20);
+			Circle c = new Circle(null, 20, 0, 0, 0);
 			c.setCentringCorrection(b);
 			circles.add(c);
 		}
@@ -44,9 +42,8 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		return circles;
 	}
 
-	public ArrayList<CircleStart> determineCircleStartValues() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Circle> determineCircleStartValues() throws Exception {
+		return analyseCircling();
 	}
 
 	public static ArrayList<GNSSPoint> loadFromFile(String filename) throws FileNotFoundException {

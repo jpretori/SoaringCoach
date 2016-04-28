@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.polymorph.soaringcoach.analysis.Circle;
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.Thermal;
-import com.polymorph.soaringcoach.analysis.Circle;
 
 public class TestCentringMoveDetection {
 
@@ -20,7 +20,7 @@ public class TestCentringMoveDetection {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	public void testDetermineCircleStartNoWind() throws FileNotFoundException {
+	public void testDetermineCircleStartNoWind() throws Exception {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
 				"src/test/resources/DetermineCircleStartNoWind.igc");
 		
@@ -28,32 +28,36 @@ public class TestCentringMoveDetection {
 		
 		double[] circle_start_lon_expected = {3.877, 3.876816667, 3.876816667, 3.876816667};
 		
-		double[] circle_start_heading_expected = {81.8, 81.8, 81.8, 81.8};
+		double[] circle_start_heading_expected = {-1, 81.8, 81.8, 81.8};
 		
 		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:49", "10:44:11"};
 		
-		ArrayList<CircleStart> cs = fa.determineCircleStartValues();
+		ArrayList<Circle> circles = fa.determineCircleStartValues();
 		
 		int i = 0;
-		for (CircleStart circleStart : cs) {
+		for (Circle circle : circles) {
 			assertEquals(
+					"Circle at index " + i, 
 					circle_start_lat_expected[i], 
-					circleStart.getLatitude(), 
+					circle.getCircleStartLatitude(), 
 					0.00000001);
 			
 			assertEquals(
+					"Circle at index " + i, 
 					circle_start_lon_expected[i],
-					circleStart.getLongitude(),
+					circle.getCircleStartLongitude(),
 					0.00000001);
 			
 			assertEquals(
+					"Circle at index " + i, 
 					circle_start_heading_expected[i],
-					circleStart.getHeading(),
+					circle.getCircleDriftBearing(),
 					0.1);
 			
 			assertEquals(
+					"Circle at index " + i, 
 					circle_start_timestamp_expected[i],
-					circleStart.getTimestamp());
+					circle.getTimestamp());
 			
 			i += 1;
 		}
@@ -65,7 +69,7 @@ public class TestCentringMoveDetection {
 	 * circles with howling gale
 	 * 
 	 */
-	public void testDetermineCircleStartHowlingGale() throws FileNotFoundException {
+	public void testDetermineCircleStartHowlingGale() throws Exception {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
 				"src/test/resources/DetermineCircleStartHowlingGale.igc");
 		
@@ -73,32 +77,32 @@ public class TestCentringMoveDetection {
 
 		double[] circle_start_lon_expected = { 3.88011666666667, 3.88413333333333, 3.886, 3.88873333333333 };
 
-		double[] circle_start_heading_expected = { 80.5, 80.5, 80.5, 80.5 };
+		double[] circle_start_heading_expected = { -1, 80.0, 89.2, 77.0 };
 
 		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:16", "10:40:27", "10:40:38" };
 
-		ArrayList<CircleStart> cs = fa.determineCircleStartValues();
+		ArrayList<Circle> circles = fa.determineCircleStartValues();
 		
 		int i = 0;
-		for (CircleStart circleStart : cs) {
+		for (Circle circle : circles) {
 			assertEquals("Circle at index " + i, 
 					circle_start_lat_expected[i], 
-					circleStart.getLatitude(), 
+					circle.getCircleStartLatitude(), 
 					0.00000001);
 			
 			assertEquals("Circle at index " + i, 
 					circle_start_lon_expected[i],
-					circleStart.getLongitude(),
+					circle.getCircleStartLongitude(),
 					0.00000001);
 			
 			assertEquals("Circle at index " + i, 
 					circle_start_heading_expected[i],
-					circleStart.getHeading(),
+					circle.getCircleDriftBearing(),
 					0.1);
 			
 			assertEquals("Circle at index " + i, 
 					circle_start_timestamp_expected[i],
-					circleStart.getTimestamp());
+					circle.getTimestamp());
 			
 			i += 1;
 		}

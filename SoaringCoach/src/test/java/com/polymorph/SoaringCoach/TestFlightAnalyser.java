@@ -90,7 +90,7 @@ public class TestFlightAnalyser {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110343308821S01911072EA016930179500309"));		
 		FlightAnalyser fa = new FlightAnalyser(points);
 		
-		ArrayList<Circle> turns = fa.calculateTurnRates();
+		ArrayList<Circle> turns = fa.analyseCircling();
 		
 		assertEquals("number of turns", 0, turns.size());
 	}
@@ -115,7 +115,7 @@ public class TestFlightAnalyser {
 		
 		FlightAnalyser fa = new FlightAnalyser(points);
 		
-		ArrayList<Circle> turns = fa.calculateTurnRates();
+		ArrayList<Circle> turns = fa.analyseCircling();
 		
 		//Check # of turns
 		assertEquals("incorrect number of turns detected", 4, turns.size());

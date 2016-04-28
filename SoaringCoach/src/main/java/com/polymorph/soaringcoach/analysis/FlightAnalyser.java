@@ -48,7 +48,7 @@ public class FlightAnalyser {
 	 * @return all turns and how many seconds each took.  If none were found, an empty array.
 	 * @throws Exception 
 	 */
-	public ArrayList<Circle> calculateTurnRates() throws Exception {
+	public ArrayList<Circle> analyseCircling() throws Exception {
 		
 		ArrayList<Circle> circles = new ArrayList<Circle>();
 		
@@ -58,6 +58,10 @@ public class FlightAnalyser {
 		double track_course_turn_start = 0;
 		FlightMode mode = FlightMode.CRUISING;
 		Date circle_start_time = null;
+		double circle_start_latitude = 10000;
+		double circle_start_longitude = 10000;
+		double circle_drift_bearing = 10000;
+		Circle previous_circle = null;
 		
 		for (GNSSPoint p2 : igc_points) {
 			
@@ -77,10 +81,16 @@ public class FlightAnalyser {
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
 							circle_start_time = p2.data.timestamp;
+							circle_start_latitude = p2.getLatitude();
+							circle_start_longitude = p2.getLongitude();
+							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
 							circle_start_time = p2.data.timestamp;
+							circle_start_latitude = p2.getLatitude();
+							circle_start_longitude = p2.getLongitude();
+							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						break;
 					case TURNING_LEFT: 
@@ -95,6 +105,9 @@ public class FlightAnalyser {
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
 							circle_start_time = p2.data.timestamp;
+							circle_start_latitude = p2.getLatitude();
+							circle_start_longitude = p2.getLongitude();
+							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
@@ -118,9 +131,18 @@ public class FlightAnalyser {
 									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							
 							circle_duration /= 1000; //In seconds, please...
-							Circle circle = new Circle(circle_start_time, circle_duration);
+							Circle circle = new Circle(
+									circle_start_time, 
+									circle_duration,
+									circle_start_latitude, 
+									circle_start_longitude, 
+									circle_drift_bearing);
 							circles.add(circle);
 							circle_start_time = p2.data.timestamp;
+							circle_start_latitude = p2.getLatitude();
+							circle_start_longitude = p2.getLongitude();
+							previous_circle = circle;
+							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						break;
 					case TURNING_RIGHT:
@@ -135,6 +157,9 @@ public class FlightAnalyser {
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
 							circle_start_time = p2.data.timestamp;
+							circle_start_latitude = p2.getLatitude();
+							circle_start_longitude = p2.getLongitude();
+							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
@@ -154,9 +179,18 @@ public class FlightAnalyser {
 									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							circle_duration /= 1000; //In seconds, please...
 							
-							Circle turn = new Circle(circle_start_time, circle_duration);
-							circles.add(turn);
+							Circle circle = new Circle(
+									circle_start_time, 
+									circle_duration,
+									circle_start_latitude, 
+									circle_start_longitude, 
+									circle_drift_bearing);
+							circles.add(circle);
 							circle_start_time = p2.data.timestamp;
+							circle_start_latitude = p2.getLatitude();
+							circle_start_longitude = p2.getLongitude();
+							previous_circle = circle;
+							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						
 						break;
@@ -183,7 +217,7 @@ public class FlightAnalyser {
 		ArrayList<Thermal> thermals = new ArrayList<>();
 		Thermal thermal = null;
 		Circle c1 = null;
-		ArrayList<Circle> circles = calculateTurnRates();
+		ArrayList<Circle> circles = analyseCircling();
 		
 		for (Circle c2 : circles ) {
 			
@@ -218,11 +252,11 @@ public class FlightAnalyser {
 	}
 	
 	/**
-	 * Helper to calculate the track course between two points
+	 * Helper to calculate the bearing to get from p1 to p2
 	 * 
 	 * @param p1
 	 * @param p2
-	 * @return double - course in degrees
+	 * @return double - bearing in degrees
 	 */
 	protected double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
 		double y = Math.sin(p2.lon_radians - p1.lon_radians) * 
@@ -236,6 +270,21 @@ public class FlightAnalyser {
 		double track_degrees = Math.toDegrees(track_radians);
 		track_degrees = (track_degrees + 360) % 360;
 		return track_degrees;
+	}
+
+	/**
+	 * NPE-avoiding call-through to calculate bearing from a circle's start-point to another given point.
+	 * 
+	 * @param c
+	 * @param p2
+	 * @return
+	 */
+	private double calculateTrackCourse(Circle c, GNSSPoint p2) {
+		double course = -1;
+		if (c != null) {
+			course = calculateTrackCourse(c.getStartPoint(), p2);
+		}
+		return course;
 	}
 
 	/**

@@ -55,7 +55,7 @@ public class FileUploadController {
                 FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
                 double totalDistance =   flightAnalyser.calcTotalDistance();
 
-                ArrayList<Circle> turns = flightAnalyser.calculateTurnRates();
+                ArrayList<Circle> turns = flightAnalyser.analyseCircling();
                 
                 int turn_count = turns.size();
                 

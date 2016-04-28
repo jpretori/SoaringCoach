@@ -120,19 +120,19 @@ public class GNSSPoint extends Point3d {
 	 * and parses it
 	 * 
 	 * @param filename The name of the file, used to link this point to a particular flight for later retrieval of the flight.
-	 * @param file_input A line from the file
+	 * @param file_line A line from the file
 	 * @return properly initialised GNSSPoint instance, or null if there was a
 	 *         problem with the input (e.g. if the input isn't a B record)
 	 */
-	public static GNSSPoint createGNSSPoint(String filename, String file_input) {
+	public static GNSSPoint createGNSSPoint(String filename, String file_line) {
 		GNSSPointData pt_data = null;
 		GNSSPoint pt = null;
 		
-		if (isValidBRecord(file_input)) {
+		if (isValidBRecord(file_line)) {
 			
 			//Run fixedFormat4J to parse the line
 			FixedFormatManager manager = new FixedFormatManagerImpl();
-			pt_data = manager.load(GNSSPointData.class, file_input);
+			pt_data = manager.load(GNSSPointData.class, file_line);
 			double decimalized_lat = -1000; //init to impossible values
 			double decimalized_lon = -1000;
 		
@@ -164,10 +164,10 @@ public class GNSSPoint extends Point3d {
 				pt.data = pt_data;
 				
 			} else {
-				System.out.println("Discarded line: [" + file_input + "]");
+				System.out.println("Discarded line: [" + file_line + "]");
 			} 
 		} else {
-			System.out.println("Discarded line: [" + file_input + "]");
+			System.out.println("Discarded line: [" + file_line + "]");
 		}
 
 		return pt;

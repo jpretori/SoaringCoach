@@ -1,6 +1,9 @@
 package com.polymorph.soaringcoach.analysis;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
 import com.polymorph.soaringcoach.COMPASS_POINTS;
@@ -11,10 +14,28 @@ public class Circle {
 	private boolean included_in_thermal = false;
 	CHECK_TWICE_RULE check_twice_rule_followed = CHECK_TWICE_RULE.NOT_APPLICABLE;
 	private boolean centring_correction;
+	private double circle_start_latitude;
+	private double circle_start_longitude;
+	private double circle_drift_bearing;
 
-	public Circle(Date timestamp, long duration) {
+	/**
+	 * @param timestamp what time did the circle start (timestamp from IGC file)
+	 * @param duration how many seconds did it take to go all the way around
+	 * @param circle_start_latitude what latitude was the start position of the circle
+	 * @param circle_start_longitude what longitude was the start position of the circle
+	 * @param circle_drift_bearing whwere did this circle start compared to the previous one
+	 */
+	public Circle(
+			Date timestamp, 
+			long duration,
+			double circle_start_latitude,
+			double circle_start_longitude,
+			double circle_drift_bearing) {
 		this.timestamp = timestamp;
 		this.duration = duration;
+		this.circle_start_latitude = circle_start_latitude;
+		this.circle_start_longitude = circle_start_longitude;
+		this.circle_drift_bearing = circle_drift_bearing;
 	}
 	
 	public String toString() {
@@ -67,4 +88,30 @@ public class Circle {
 	public CHECK_TWICE_RULE getCheckTwiceRuleIndicator() {
 		return check_twice_rule_followed;
 	}
+	
+	public double getCircleStartLatitude() {
+		return circle_start_latitude;
+	}
+
+	public double getCircleStartLongitude() {
+		return circle_start_longitude;
+	}
+
+	public double getCircleDriftBearing() {
+		return circle_drift_bearing;
+	}
+
+	public String getTimestamp() {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+				
+		return sdf.format(timestamp);
+	}
+
+	public GNSSPoint getStartPoint() {
+		GNSSPoint start_point = GNSSPoint.createGNSSPoint(null, timestamp, circle_start_latitude,
+				circle_start_longitude, "A", 0, 0, null);
+		
+		return start_point ;
+	}
+
 }
