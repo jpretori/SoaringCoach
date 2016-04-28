@@ -342,44 +342,89 @@ public class TestCentringMoveDetection {
 	}
 
 	@Test
+	/**
+	 * Negative: Don't apply the check-twice rule logic when a corrective move didn't occur				
+	 * @throws FileNotFoundException
+	 */
 	public void testCheckTwiceRuleNotApplicable() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
+		
+		boolean[] testPattern = {false, false, false};
+
+		CHECK_TWICE_RULE[] check_twice_expected_results = {
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+		};
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_expected_results[i++], 
+					circle.getCheckTwiceRuleIndicator());
+		}
 	}
 
 	@Test
+	/**
+	 * Negative: Correctly determine that the check-twice rule was NOT followed when in fact it wasn't				
+	 * @throws FileNotFoundException
+	 */
 	public void testCheckTwiceRuleNegative() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
+		
+		boolean[] testPattern = {false, true, true, false};
+
+		CHECK_TWICE_RULE[] check_twice_expected_results = {
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.FOLLOWED,
+				CHECK_TWICE_RULE.NOT_FOLLOWED,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+		};
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_expected_results[i++], 
+					circle.getCheckTwiceRuleIndicator());
+		}
 	}
 
 	@Test
+	/**
+	 * Negative: Correctly determine that the check-twice rule was NOT followed
+	 * when the first circle in the thermal contains a corrective move.
+	 * 
+	 * @throws FileNotFoundException
+	 */
 	public void testCheckTwiceRuleFirstCircle() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
+		
+		boolean[] testPattern = {true, false, false};
 
-	@Test
-	public void testAltitudeChange() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
-
-	@Test
-	public void testClimbRatePositive() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
-	}
-
-	@Test
-	public void testClimbRateNegative() throws FileNotFoundException {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
+		CHECK_TWICE_RULE[] check_twice_expected_results = {
+				CHECK_TWICE_RULE.NOT_FOLLOWED,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+		};
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_expected_results[i++], 
+					circle.getCheckTwiceRuleIndicator());
+		}
 	}
 }
