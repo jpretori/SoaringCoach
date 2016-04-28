@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.analysis.Thermal;
+import com.polymorph.soaringcoach.analysis.Circle;
 
 public class TestCentringMoveDetection {
 
@@ -78,22 +80,22 @@ public class TestCentringMoveDetection {
 		
 		int i = 0;
 		for (CircleStart circleStart : cs) {
-			assertEquals(
+			assertEquals("Circle at index " + i, 
 					circle_start_lat_expected[i], 
 					circleStart.getLatitude(), 
 					0.00000001);
 			
-			assertEquals(
+			assertEquals("Circle at index " + i, 
 					circle_start_lon_expected[i],
 					circleStart.getLongitude(),
 					0.00000001);
 			
-			assertEquals(
+			assertEquals("Circle at index " + i, 
 					circle_start_heading_expected[i],
 					circleStart.getHeading(),
 					0.1);
 			
-			assertEquals(
+			assertEquals("Circle at index " + i, 
 					circle_start_timestamp_expected[i],
 					circleStart.getTimestamp());
 			
@@ -102,72 +104,172 @@ public class TestCentringMoveDetection {
 	}
 
 	@Test
-	public void testCorrectionDetectionDistanceChanged() {
+	/**
+	 * Positive: Correctly determine whether or not the fluctuations in distance
+	 * between a set of circles, indicate that a correction move has occurred
+	 * (only needs circle start fixes). This is about testing the calculations
+	 * that come up with the conclusion that there was a fluctuation in circle
+	 * drift in the sense of a change of drift direction. Also check that the
+	 * drift direction and distance indication is correct.
+	 */
+	public void testCorrectionDetectionDistanceChanged() throws Exception {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/CorrectionDetectionDistanceChanged.igc");
+		
+		boolean[] centring_move_conclusion = { false, false, false, true, false, false };
+		
+		CHECK_TWICE_RULE[] check_twice_rule_followed = {
+				CHECK_TWICE_RULE.NOT_APPLICABLE, 
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.FOLLOWED,
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.NOT_APPLICABLE};
+		
+		int[] altitude_change = { -6, -10, 20, 10, 9, 24 };
+		
+		double[] climb_rate = { -0.3, -0.5, 1.0, 0.5, 0.5, 1.2 };
+		
+		int[] circle_drift_distance = { 13, 6, 12, 49, 14, 9 };
+		
+		COMPASS_POINTS[] circle_drift_direction = {
+				COMPASS_POINTS.SE,
+				COMPASS_POINTS.SE,
+				COMPASS_POINTS.E,
+				COMPASS_POINTS.W,
+				COMPASS_POINTS.E,
+				COMPASS_POINTS.NE};
+		
+		ArrayList<Thermal> thermals = fa.calculateThermals();
+		assertEquals(1, thermals.size());
+		
+		Thermal thermal = thermals.get(0);
+		
+		ArrayList<Circle> circles = thermal.getTurns();
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					centring_move_conclusion[i], 
+					circle.centeringCorrection());
+
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_rule_followed[i], 
+					circle.checkTwiceRuleFollowed());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					altitude_change[i], 
+					circle.getAltitudeChange());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					climb_rate[i], 
+					circle.getClimbRate(), 0.1);
+			
+			assertEquals(
+					"Circle at index " + i, 
+					circle_drift_distance[i], 
+					circle.getDriftDistance());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					circle_drift_direction[i], 
+					circle.getDriftDirection());
+			i += 1;
+		}
+	}
+
+	@Test
+	public void testCorrectionDetectionNoChanges() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCorrectionDetectionNoChanges() {
+	public void testCorrectionDetectionBearingChanged() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCorrectionDetectionBearingChanged() {
+	public void testCorrectiveMoveFinalConclusionDistance() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCorrectiveMoveFinalConclusionDistance() {
+	public void testCorrectiveMoveFinalConclusionBearing() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCorrectiveMoveFinalConclusionBearing() {
+	public void testCorrectiveMoveFinalConclusionBoth() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCorrectiveMoveFinalConclusionBoth() {
+	public void testCorrectiveMoveFinalConclusionNeither() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCorrectiveMoveFinalConclusionNeither() {
+	public void testCheckTwiceRulePositive() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCheckTwiceRulePositive() {
+	public void testCheckTwiceRuleNotApplicable() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCheckTwiceRuleNotApplicable() {
+	public void testCheckTwiceRuleNegative() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCheckTwiceRuleNegative() {
+	public void testCheckTwiceRuleFirstCircle() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testCheckTwiceRuleFirstCircle() {
+	public void testAltitudeChange() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testAltitudeChange() {
+	public void testClimbRatePositive() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 
 	@Test
-	public void testClimbRatePositive() {
-		assertEquals(1, 2);
-	}
-
-	@Test
-	public void testClimbRateNegative() {
+	public void testClimbRateNegative() throws FileNotFoundException {
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+				"src/test/resources/.igc");
 		assertEquals(1, 2);
 	}
 }

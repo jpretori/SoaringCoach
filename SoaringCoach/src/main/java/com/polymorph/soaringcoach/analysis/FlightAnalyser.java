@@ -46,9 +46,9 @@ public class FlightAnalyser {
 	 * @return all turns and how many seconds each took.  If none were found, an empty array.
 	 * @throws Exception 
 	 */
-	public ArrayList<Turn> calculateTurnRates() throws Exception {
+	public ArrayList<Circle> calculateTurnRates() throws Exception {
 		
-		ArrayList<Turn> turns = new ArrayList<Turn>();
+		ArrayList<Circle> turns = new ArrayList<Circle>();
 		
 		GNSSPoint p1 = null;
 
@@ -116,7 +116,7 @@ public class FlightAnalyser {
 									p2.data.timestamp.getTime() - turn_start_time.getTime();
 							
 							circle_duration /= 1000; //In seconds, please...
-							Turn turn = new Turn(turn_start_time, circle_duration);
+							Circle turn = new Circle(turn_start_time, circle_duration);
 							turns.add(turn);
 							turn_start_time = p2.data.timestamp;
 						}
@@ -152,7 +152,7 @@ public class FlightAnalyser {
 									p2.data.timestamp.getTime() - turn_start_time.getTime();
 							circle_duration /= 1000; //In seconds, please...
 							
-							Turn turn = new Turn(turn_start_time, circle_duration);
+							Circle turn = new Circle(turn_start_time, circle_duration);
 							turns.add(turn);
 							turn_start_time = p2.data.timestamp;
 						}
@@ -180,10 +180,10 @@ public class FlightAnalyser {
 	public ArrayList<Thermal> calculateThermals() throws Exception {
 		ArrayList<Thermal> thermals = new ArrayList<>();
 		Thermal thermal = null;
-		Turn t1 = null;
-		ArrayList<Turn> turns = calculateTurnRates();
+		Circle t1 = null;
+		ArrayList<Circle> turns = calculateTurnRates();
 		
-		for (Turn t2 : turns ) {
+		for (Circle t2 : turns ) {
 			
 			if (t1 != null && t2 != null) {
 				

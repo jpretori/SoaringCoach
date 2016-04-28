@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.Turn;
+import com.polymorph.soaringcoach.analysis.Circle;
 import com.polymorph.soaringcoach.analysis.Thermal;
 
 public class TestFlightAnalyser {
@@ -90,7 +90,7 @@ public class TestFlightAnalyser {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110343308821S01911072EA016930179500309"));		
 		FlightAnalyser fa = new FlightAnalyser(points);
 		
-		ArrayList<Turn> turns = fa.calculateTurnRates();
+		ArrayList<Circle> turns = fa.calculateTurnRates();
 		
 		assertEquals("number of turns", 0, turns.size());
 	}
@@ -115,22 +115,22 @@ public class TestFlightAnalyser {
 		
 		FlightAnalyser fa = new FlightAnalyser(points);
 		
-		ArrayList<Turn> turns = fa.calculateTurnRates();
+		ArrayList<Circle> turns = fa.calculateTurnRates();
 		
 		//Check # of turns
 		assertEquals("incorrect number of turns detected", 4, turns.size());
 		
 		//Check individual turn durations
-		Turn t1 = turns.get(0);
+		Circle t1 = turns.get(0);
 		assertEquals("first turn duration", 36, t1.duration);
 		
-		Turn t2 = turns.get(1);
+		Circle t2 = turns.get(1);
 		assertEquals("second turn duration", 24, t2.duration);
 		
-		Turn t3 = turns.get(2);
+		Circle t3 = turns.get(2);
 		assertEquals("third turn duration", 32, t3.duration);
 		
-		Turn t4 = turns.get(3);
+		Circle t4 = turns.get(3);
 		assertEquals("fourth turn duration", 28, t4.duration);
 	}
 	

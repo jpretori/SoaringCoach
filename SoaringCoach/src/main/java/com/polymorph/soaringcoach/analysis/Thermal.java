@@ -5,28 +5,28 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Thermal {
-	private ArrayList<Turn> turns;
+	private ArrayList<Circle> turns;
 	
 	/**
 	 * Make a new thermal, ready to accept turns
 	 */
 	public Thermal() {
-		this.turns = new ArrayList<Turn>();
+		this.turns = new ArrayList<Circle>();
 	}
 
 	/**
 	 * Make a single-turn thermal.  Allows adding more turns if needed.
 	 */
-	public Thermal(Turn t) {
-		this.turns = new ArrayList<Turn>();
+	public Thermal(Circle t) {
+		this.turns = new ArrayList<Circle>();
 		turns.add(t);
 	}
 	
-	public void addTurn(Turn t) {
+	public void addTurn(Circle t) {
 		turns.add(t);
 	}
 	
-	public ArrayList<Turn> getTurns() {
+	public ArrayList<Circle> getTurns() {
 		return turns;
 	}
 	
@@ -37,7 +37,7 @@ public class Thermal {
 	public long getAverageCircleDuration() {
 		double average_turn_rate = 0;
 		
-		for (Turn turnData : turns) {
+		for (Circle turnData : turns) {
 			average_turn_rate += turnData.duration;
 		}
 		average_turn_rate = average_turn_rate / turns.size();
@@ -48,7 +48,7 @@ public class Thermal {
 	public String getTotalDuration() {
 		long total_seconds = 0;
 		
-		for (Turn turn : turns) {
+		for (Circle turn : turns) {
 			total_seconds += turn.duration;
 		}
 		
@@ -64,7 +64,7 @@ public class Thermal {
 	public long getTotalDurationSeconds() {
 		long total_seconds = 0;
 		
-		for (Turn turn : turns) {
+		for (Circle turn : turns) {
 			total_seconds += turn.duration;
 		}
 		

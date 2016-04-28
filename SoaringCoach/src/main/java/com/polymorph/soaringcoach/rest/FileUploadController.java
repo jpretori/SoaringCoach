@@ -3,7 +3,7 @@ package com.polymorph.soaringcoach.rest;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.Thermal;
-import com.polymorph.soaringcoach.analysis.Turn;
+import com.polymorph.soaringcoach.analysis.Circle;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +55,7 @@ public class FileUploadController {
                 FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
                 double totalDistance =   flightAnalyser.calcTotalDistance();
 
-                ArrayList<Turn> turns = flightAnalyser.calculateTurnRates();
+                ArrayList<Circle> turns = flightAnalyser.calculateTurnRates();
                 
                 int turn_count = turns.size();
                 
@@ -77,7 +77,7 @@ public class FileUploadController {
 					thermal_details += "\n";
 					
 					int i = 1;
-					for (Turn turn : thermal.getTurns()) {
+					for (Circle turn : thermal.getTurns()) {
 						thermal_details += "\t\t" + i++ + ".  ";
 						thermal_details += turn.toString();
 						thermal_details += "\n";
