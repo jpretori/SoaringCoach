@@ -233,10 +233,80 @@ public class TestCentringMoveDetection {
 	}
 
 	@Test
-	public void testCorrectionDetectionBearingChanged() throws FileNotFoundException {
+	/**
+	 * Positive: Correctly determine whether or not the fluctuations in bearing
+	 * between a set of circles, indicate that a correction move has occurred.
+	 * This is about testing the calculations that come up with the conclusion
+	 * that there was a fluctuation in circle drift in the sense of a change in
+	 * bearing. Also check that the drift direction and distance indication is
+	 * correct.
+	 * 
+	 * @throws Exception
+	 */
+	public void testCorrectionDetectionBearingChanged() throws Exception {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/.igc");
-		assertEquals(1, 2);
+				"src/test/resources/testCorrectionDetectionBearingChanged.igc");
+		
+		boolean[] centring_move_conclusion = { false, false, true, false };
+		
+		CHECK_TWICE_RULE[] check_twice_rule_followed = {
+				CHECK_TWICE_RULE.NOT_APPLICABLE, 
+				CHECK_TWICE_RULE.NOT_APPLICABLE,
+				CHECK_TWICE_RULE.FOLLOWED,
+				CHECK_TWICE_RULE.NOT_APPLICABLE};
+		
+		int[] altitude_change = { 0, 0, 0, 0 };
+		
+		double[] climb_rate = { 0.0, 0.0, 0.0, 0.0 };
+		
+		int[] circle_drift_distance = { 11, 18, 38, 13 };
+		
+		COMPASS_POINTS[] circle_drift_direction = {
+				COMPASS_POINTS.NW,
+				COMPASS_POINTS.N,
+				COMPASS_POINTS.S,
+				COMPASS_POINTS.NW};
+		
+		ArrayList<Thermal> thermals = fa.calculateThermals();
+		assertEquals(1, thermals.size());
+		
+		Thermal thermal = thermals.get(0);
+		
+		ArrayList<Circle> circles = thermal.getTurns();
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					centring_move_conclusion[i], 
+					circle.centeringCorrection());
+
+			assertEquals(
+					"Circle at index " + i, 
+					check_twice_rule_followed[i], 
+					circle.checkTwiceRuleFollowed());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					altitude_change[i], 
+					circle.getAltitudeChange());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					climb_rate[i], 
+					circle.getClimbRate(), 0.1);
+			
+			assertEquals(
+					"Circle at index " + i, 
+					circle_drift_distance[i], 
+					circle.getDriftDistance());
+			
+			assertEquals(
+					"Circle at index " + i, 
+					circle_drift_direction[i], 
+					circle.getDriftDirection());
+			i += 1;
+		}
 	}
 
 	@Test
