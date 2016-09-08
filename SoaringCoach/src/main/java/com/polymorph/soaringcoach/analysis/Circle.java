@@ -1,9 +1,7 @@
 package com.polymorph.soaringcoach.analysis;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
 import com.polymorph.soaringcoach.COMPASS_POINTS;
@@ -14,9 +12,16 @@ public class Circle {
 	private boolean included_in_thermal = false;
 	CHECK_TWICE_RULE check_twice_rule_followed = CHECK_TWICE_RULE.NOT_APPLICABLE;
 	private boolean centring_correction;
+	
 	private double circle_start_latitude;
 	private double circle_start_longitude;
-	private double circle_drift_bearing;
+	
+	public double circle_drift_bearing;
+	public double circle_drift_distance;
+
+	public COMPASS_POINTS correction_direction;
+	public double correction_bearing;
+	public double correction_distance;
 
 	/**
 	 * @param timestamp what time did the circle start (timestamp from IGC file)
@@ -56,11 +61,6 @@ public class Circle {
 		return centring_correction;
 	}
 
-	public CHECK_TWICE_RULE checkTwiceRuleFollowed() {
-		// TODO Auto-generated method stub
-		return CHECK_TWICE_RULE.NOT_APPLICABLE;
-	}
-
 	public int getAltitudeChange() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -71,14 +71,12 @@ public class Circle {
 		return 0;
 	}
 
-	public int getDriftDistance() {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getCorrectionDistance() {
+		return correction_distance;
 	}
 
-	public COMPASS_POINTS getDriftDirection() {
-		// TODO Auto-generated method stub
-		return COMPASS_POINTS.N;
+	public COMPASS_POINTS getCorrectionDirection() {
+		return correction_direction;
 	}
 
 	void setCentringCorrection(boolean b) {
@@ -100,6 +98,10 @@ public class Circle {
 	public double getCircleDriftBearing() {
 		return circle_drift_bearing;
 	}
+	
+	public double getCircleDriftDistance() {
+		return circle_drift_distance;
+	}
 
 	public String getTimestamp() {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
@@ -112,6 +114,32 @@ public class Circle {
 				circle_start_longitude, "A", 0, 0, null);
 		
 		return start_point ;
+	}
+
+	public void setCorrectionBearing(double correction_bearing) {
+		this.correction_bearing = correction_bearing;
+		if (correction_bearing >= 338 || correction_bearing <= 22) {
+			this.correction_direction = COMPASS_POINTS.N;
+		} else if (correction_bearing >= 23 && correction_bearing <= 67) {
+			this.correction_direction = COMPASS_POINTS.NE;
+		} else if (correction_bearing >= 68 && correction_bearing <= 112) {
+			this.correction_direction = COMPASS_POINTS.E;
+		} else if (correction_bearing >= 113 && correction_bearing <= 157) {
+			this.correction_direction = COMPASS_POINTS.SE;
+		} else if (correction_bearing >= 158 && correction_bearing <= 202) {
+			this.correction_direction = COMPASS_POINTS.S;
+		} else if (correction_bearing >= 203 && correction_bearing <= 247) {
+			this.correction_direction = COMPASS_POINTS.SW;
+		} else if (correction_bearing >= 248 && correction_bearing <= 292) {
+			this.correction_direction = COMPASS_POINTS.W;
+		} else if (correction_bearing >= 293 && correction_bearing <= 337) {
+			this.correction_direction = COMPASS_POINTS.NW;
+		}
+	}
+
+	public void setCorrectionDistance(double correction_distance) {
+		this.correction_distance = correction_distance;
+		
 	}
 
 }

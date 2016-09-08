@@ -10,7 +10,6 @@ import org.junit.Test;
 import com.polymorph.soaringcoach.analysis.Circle;
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.Thermal;
 
 public class TestCentringMoveDetection {
 
@@ -28,34 +27,35 @@ public class TestCentringMoveDetection {
 		
 		double[] circle_start_lon_expected = {3.877, 3.876816667, 3.876816667, 3.876816667};
 		
-		double[] circle_start_heading_expected = {-1, 81.8, 81.8, 81.8};
+		double[] circle_start_heading_expected = {-1, 286.0, 0.0, 0.0};
 		
-		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:49", "10:44:11"};
+		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:46", "10:44:05"};
 		
 		ArrayList<Circle> circles = fa.determineCircleStartValues();
+		assertEquals("Number of circles", 3, circles.size());
 		
 		int i = 0;
 		for (Circle circle : circles) {
 			assertEquals(
-					"Circle at index " + i, 
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
 					circle_start_lat_expected[i], 
 					circle.getCircleStartLatitude(), 
 					0.00000001);
 			
 			assertEquals(
-					"Circle at index " + i, 
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
 					circle_start_lon_expected[i],
 					circle.getCircleStartLongitude(),
 					0.00000001);
 			
 			assertEquals(
-					"Circle at index " + i, 
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
 					circle_start_heading_expected[i],
 					circle.getCircleDriftBearing(),
 					0.1);
 			
 			assertEquals(
-					"Circle at index " + i, 
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
 					circle_start_timestamp_expected[i],
 					circle.getTimestamp());
 			
@@ -82,6 +82,7 @@ public class TestCentringMoveDetection {
 		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:16", "10:40:27", "10:40:38" };
 
 		ArrayList<Circle> circles = fa.determineCircleStartValues();
+		assertEquals("Number of circles", 3, circles.size());
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -119,38 +120,32 @@ public class TestCentringMoveDetection {
 	 */
 	public void testCorrectionDetectionDistanceChanged() throws Exception {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
-				"src/test/resources/CorrectionDetectionDistanceChanged.igc");
+				"src/test/resources/testCorrectionDetectionDistanceChanged.igc");
 		
 		boolean[] centring_move_conclusion = { false, false, false, true, false, false };
 		
 		CHECK_TWICE_RULE[] check_twice_rule_followed = {
-				CHECK_TWICE_RULE.NOT_APPLICABLE, 
+				CHECK_TWICE_RULE.FOLLOWED, 
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 				CHECK_TWICE_RULE.FOLLOWED,
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 				CHECK_TWICE_RULE.NOT_APPLICABLE};
 		
-		int[] altitude_change = { -6, -10, 20, 10, 9, 24 };
+		int[] correction_vector_distance = { 13, 6, 12, 49, 14};
 		
-		double[] climb_rate = { -0.3, -0.5, 1.0, 0.5, 0.5, 1.2 };
-		
-		int[] circle_drift_distance = { 13, 6, 12, 49, 14, 9 };
-		
-		COMPASS_POINTS[] circle_drift_direction = {
-				COMPASS_POINTS.SE,
-				COMPASS_POINTS.SE,
-				COMPASS_POINTS.E,
+		COMPASS_POINTS[] correction_vector_direction = {
+				COMPASS_POINTS.N,
+				COMPASS_POINTS.N,
+				COMPASS_POINTS.N,
 				COMPASS_POINTS.W,
-				COMPASS_POINTS.E,
-				COMPASS_POINTS.NE};
+				COMPASS_POINTS.N,
+				COMPASS_POINTS.N};
 		
-		ArrayList<Thermal> thermals = fa.calculateThermals();
-		assertEquals(1, thermals.size());
+		ArrayList<Circle> circles = fa.analyseCircling();
+		assertEquals("Number of circles", 6, circles.size());
 		
-		Thermal thermal = thermals.get(0);
-		
-		ArrayList<Circle> circles = thermal.getTurns();
+		circles = fa.calculateCorrectionVectors(circles);
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -162,27 +157,18 @@ public class TestCentringMoveDetection {
 			assertEquals(
 					"Circle at index " + i, 
 					check_twice_rule_followed[i], 
-					circle.checkTwiceRuleFollowed());
+					circle.getCheckTwiceRuleIndicator());
 			
 			assertEquals(
 					"Circle at index " + i, 
-					altitude_change[i], 
-					circle.getAltitudeChange());
+					correction_vector_distance[i], 
+					circle.getCorrectionDistance(),
+					0.1);
 			
 			assertEquals(
 					"Circle at index " + i, 
-					climb_rate[i], 
-					circle.getClimbRate(), 0.1);
-			
-			assertEquals(
-					"Circle at index " + i, 
-					circle_drift_distance[i], 
-					circle.getDriftDistance());
-			
-			assertEquals(
-					"Circle at index " + i, 
-					circle_drift_direction[i], 
-					circle.getDriftDirection());
+					correction_vector_direction[i], 
+					circle.getCorrectionDirection());
 			i += 1;
 		}
 	}
@@ -205,12 +191,8 @@ public class TestCentringMoveDetection {
 		
 		double[] climb_rate = { 0.2, -0.2, 0.0, 0.0, 0.0 };
 				
-		ArrayList<Thermal> thermals = fa.calculateThermals();
-		assertEquals(1, thermals.size());
-		
-		Thermal thermal = thermals.get(0);
-		
-		ArrayList<Circle> circles = thermal.getTurns();
+		ArrayList<Circle> circles = fa.analyseCircling();
+		assertEquals("Number of circles", 5, circles.size());
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -222,7 +204,7 @@ public class TestCentringMoveDetection {
 			assertEquals(
 					"Circle at index " + i, 
 					check_twice_rule_followed[i], 
-					circle.checkTwiceRuleFollowed());
+					circle.getCheckTwiceRuleIndicator());
 			
 			assertEquals(
 					"Circle at index " + i, 
@@ -252,64 +234,61 @@ public class TestCentringMoveDetection {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
 				"src/test/resources/testCorrectionDetectionBearingChanged.igc");
 		
-		boolean[] centring_move_conclusion = { false, false, true, false };
+		boolean[] expect_centring_move_conclusion = { false, false, true, false };
 		
-		CHECK_TWICE_RULE[] check_twice_rule_followed = {
+		CHECK_TWICE_RULE[] expect_check_twice_rule_followed = {
 				CHECK_TWICE_RULE.NOT_APPLICABLE, 
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 				CHECK_TWICE_RULE.FOLLOWED,
 				CHECK_TWICE_RULE.NOT_APPLICABLE};
 		
-		int[] altitude_change = { 0, 0, 0, 0 };
+		int[] expect_altitude_change = { 0, 0, 0, 0 };
 		
-		double[] climb_rate = { 0.0, 0.0, 0.0, 0.0 };
+		double[] expect_climb_rate = { 0.0, 0.0, 0.0, 0.0 };
 		
-		int[] circle_drift_distance = { 11, 18, 38, 13 };
+		int[] expect_circle_drift_distance = { 11, 18, 38, 13 };
 		
-		COMPASS_POINTS[] circle_drift_direction = {
+		COMPASS_POINTS[] expect_circle_drift_direction = {
 				COMPASS_POINTS.NW,
 				COMPASS_POINTS.N,
 				COMPASS_POINTS.S,
 				COMPASS_POINTS.NW};
 		
-		ArrayList<Thermal> thermals = fa.calculateThermals();
-		assertEquals(1, thermals.size());
-		
-		Thermal thermal = thermals.get(0);
-		
-		ArrayList<Circle> circles = thermal.getTurns();
+		ArrayList<Circle> circles = fa.analyseCircling();
+		assertEquals("Number of circles", 4, circles.size());
 		
 		int i = 0;
 		for (Circle circle : circles) {
 			assertEquals(
 					"Circle at index " + i, 
-					centring_move_conclusion[i], 
+					expect_centring_move_conclusion[i], 
 					circle.centeringCorrection());
 
 			assertEquals(
 					"Circle at index " + i, 
-					check_twice_rule_followed[i], 
-					circle.checkTwiceRuleFollowed());
+					expect_check_twice_rule_followed[i], 
+					circle.getCheckTwiceRuleIndicator());
 			
 			assertEquals(
 					"Circle at index " + i, 
-					altitude_change[i], 
+					expect_altitude_change[i], 
 					circle.getAltitudeChange());
 			
 			assertEquals(
 					"Circle at index " + i, 
-					climb_rate[i], 
+					expect_climb_rate[i], 
 					circle.getClimbRate(), 0.1);
 			
 			assertEquals(
 					"Circle at index " + i, 
-					circle_drift_distance[i], 
-					circle.getDriftDistance());
+					expect_circle_drift_distance[i], 
+					circle.getCorrectionDistance(),
+					0.1);
 			
 			assertEquals(
 					"Circle at index " + i, 
-					circle_drift_direction[i], 
-					circle.getDriftDirection());
+					expect_circle_drift_direction[i], 
+					circle.getCorrectionDirection());
 			i += 1;
 		}
 	}

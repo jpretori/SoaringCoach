@@ -86,8 +86,8 @@ public class GNSSPoint extends Point3d {
 	 * 
 	 * @param filename
 	 * @param timestamp
-	 * @param latitude
-	 * @param longitude
+	 * @param latitude in degrees
+	 * @param longitude in degrees
 	 * @param altitude_ok
 	 * @param pressure_altitude
 	 * @param gnss_altitude

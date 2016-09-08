@@ -56,4 +56,8 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		
 		return igc_points;
 	}
+
+	public ArrayList<Circle> calculateCorrectionVectors(ArrayList<Circle> circles) {
+		return super.calculateCorrectionVectors(circles);
+	}
 }

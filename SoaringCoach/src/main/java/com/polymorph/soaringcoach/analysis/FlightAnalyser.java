@@ -16,6 +16,9 @@ public class FlightAnalyser {
 	// Turning faster than this constitutes a thermal turn.
 	private final int TURN_RATE_THRESHOLD = 4; 
 	
+	private final double MAX_AVERAGE_DEVIATION_DRIFT_DISTANCE = 10.0;
+	private final double MAX_AVERAGE_DEVIATION_DRIFT_BEARING = 5.0;
+	
 	private ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 	
 	public FlightAnalyser(ArrayList<GNSSPoint> file) {
@@ -83,14 +86,12 @@ public class FlightAnalyser {
 							circle_start_time = p2.data.timestamp;
 							circle_start_latitude = p2.getLatitude();
 							circle_start_longitude = p2.getLongitude();
-							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
 							circle_start_time = p2.data.timestamp;
 							circle_start_latitude = p2.getLatitude();
 							circle_start_longitude = p2.getLongitude();
-							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						break;
 					case TURNING_LEFT: 
@@ -107,7 +108,6 @@ public class FlightAnalyser {
 							circle_start_time = p2.data.timestamp;
 							circle_start_latitude = p2.getLatitude();
 							circle_start_longitude = p2.getLongitude();
-							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
@@ -131,6 +131,8 @@ public class FlightAnalyser {
 									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							
 							circle_duration /= 1000; //In seconds, please...
+							circle_drift_bearing = calculateTrackCourse(
+									previous_circle, circle_start_latitude, circle_start_longitude);
 							Circle circle = new Circle(
 									circle_start_time, 
 									circle_duration,
@@ -138,11 +140,10 @@ public class FlightAnalyser {
 									circle_start_longitude, 
 									circle_drift_bearing);
 							circles.add(circle);
-							circle_start_time = p2.data.timestamp;
-							circle_start_latitude = p2.getLatitude();
-							circle_start_longitude = p2.getLongitude();
+							circle_start_time = p1.data.timestamp;
+							circle_start_latitude = p1.getLatitude();
+							circle_start_longitude = p1.getLongitude();
 							previous_circle = circle;
-							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						break;
 					case TURNING_RIGHT:
@@ -159,7 +160,6 @@ public class FlightAnalyser {
 							circle_start_time = p2.data.timestamp;
 							circle_start_latitude = p2.getLatitude();
 							circle_start_longitude = p2.getLongitude();
-							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
@@ -179,6 +179,8 @@ public class FlightAnalyser {
 									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							circle_duration /= 1000; //In seconds, please...
 							
+							circle_drift_bearing = calculateTrackCourse(
+									previous_circle, circle_start_latitude, circle_start_longitude);  
 							Circle circle = new Circle(
 									circle_start_time, 
 									circle_duration,
@@ -186,11 +188,10 @@ public class FlightAnalyser {
 									circle_start_longitude, 
 									circle_drift_bearing);
 							circles.add(circle);
-							circle_start_time = p2.data.timestamp;
-							circle_start_latitude = p2.getLatitude();
-							circle_start_longitude = p2.getLongitude();
+							circle_start_time = p1.data.timestamp;
+							circle_start_latitude = p1.getLatitude();
+							circle_start_longitude = p1.getLongitude();
 							previous_circle = circle;
-							circle_drift_bearing = calculateTrackCourse(previous_circle, p2);
 						}
 						
 						break;
@@ -279,10 +280,11 @@ public class FlightAnalyser {
 	 * @param p2
 	 * @return
 	 */
-	private double calculateTrackCourse(Circle c, GNSSPoint p2) {
+	private double calculateTrackCourse(Circle c, double lat, double lon) {
 		double course = -1;
 		if (c != null) {
-			course = calculateTrackCourse(c.getStartPoint(), p2);
+			GNSSPoint p = GNSSPoint.createGNSSPoint(null, null, lat, lon, null, 0, 0, null);
+			course = calculateTrackCourse(c.getStartPoint(), p);
 		}
 		return course;
 	}
@@ -327,5 +329,101 @@ public class FlightAnalyser {
 			}
 			previous_circle_correction = circle.centeringCorrection();
 		}
+	}
+	
+	protected GNSSPoint calcDestinationPoint(GNSSPoint p1, double brng, double d) {
+		final double R = 6371000.0; //Earth mean radius in meters
+		
+		double latitude = Math.asin(Math.sin(p1.lat_radians) * Math.cos(d / R) +
+                Math.cos(p1.lat_radians) * Math.sin(d/R) * Math.cos(brng) );
+		
+		double longitude = p1.lon_radians + Math.atan2(Math.sin(brng) * Math.sin(d/R) * Math.cos(p1.lat_radians),
+                     Math.cos(d/R) - Math.sin(p1.lat_radians) * Math.sin(latitude));
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint(null, null, Math.toDegrees(latitude), Math.toDegrees(longitude), null, 0, 0, null);
+		
+		return p2;
+	}
+
+	/**
+	 * 		Iterate through circles and work out average circle drift distance
+		and average circle drift bearing, trimming away outliers until
+		average deviation is single digits for distance and <5 degrees for
+		direction
+<br><br>
+		Iterate through again - for each circle, calculate first where the
+		average distance and bearing indicates we would have started this
+		circle. While there, calculate the bearing and distance from this
+		expected circle start point to the actual start point. This is the
+		correction vector.
+
+	 * @param circles
+	 * @return
+	 */
+	ArrayList<Circle> calculateCorrectionVectors(ArrayList<Circle> circles) {
+
+		
+		Circle previous_circle = null;
+		double average_drift_distance = 0;
+		double average_drift_bearing = 0;
+		int i = 0;
+		for (Circle circle : circles) {
+			if (circle != null && previous_circle != null) {
+				
+				GNSSPoint p1 = previous_circle.getStartPoint();
+				GNSSPoint p2 = circle.getStartPoint();
+				
+				circle.circle_drift_bearing = calculateTrackCourse(p1, p2);
+				average_drift_bearing += circle.circle_drift_bearing;
+				
+				circle.circle_drift_distance = p1.distance(p2);
+				average_drift_distance += circle.circle_drift_distance;
+			}
+			
+			previous_circle = circle;
+			i += 1;
+		}
+		average_drift_distance = average_drift_distance / i;
+		average_drift_bearing = average_drift_bearing / i;
+
+		// Trim away distance and bearing values that fall outside the required
+		// average deviation parameters
+		previous_circle = null;
+		for (Circle circle : circles) {
+			if (circle != null && previous_circle != null) {
+				if (Math.abs(circle.getCircleDriftBearing() - average_drift_bearing) > MAX_AVERAGE_DEVIATION_DRIFT_BEARING ||
+						Math.abs(circle.getCircleDriftDistance() - average_drift_distance) > MAX_AVERAGE_DEVIATION_DRIFT_DISTANCE) {
+					
+					average_drift_bearing = average_drift_bearing * i;
+					average_drift_bearing -= circle.getCircleDriftBearing();
+					average_drift_distance = average_drift_distance * i;
+					average_drift_distance -= circle.getCircleDriftDistance();
+					i -= 1;
+					average_drift_bearing = average_drift_bearing / i;
+					average_drift_distance = average_drift_distance / i;
+				}
+			}
+			previous_circle = circle;
+		}
+		
+		// Now work out where the average drift makes us expect each circle, and
+		// work out the correction vector that takes us from that point to the
+		// one where the circle actually started
+		
+		for (Circle circle : circles) {
+			if (circle != null && previous_circle != null) {
+				GNSSPoint expected_circle_start_point = 
+						calcDestinationPoint(previous_circle.getStartPoint(), average_drift_bearing, average_drift_distance);
+				
+				double correction_bearing = calculateTrackCourse(expected_circle_start_point, circle.getStartPoint());
+				circle.setCorrectionBearing(correction_bearing);
+				
+				double correction_distance = expected_circle_start_point.distance(circle.getStartPoint());
+				circle.setCorrectionDistance(correction_distance);
+			}		
+			previous_circle = circle;
+		}
+		
+		return circles;
 	}
 }
