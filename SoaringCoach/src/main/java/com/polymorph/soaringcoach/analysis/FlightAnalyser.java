@@ -60,22 +60,15 @@ public class FlightAnalyser {
 		//If the aircraft is turning, at what heading did the turn start
 		double track_course_turn_start = 0;
 		FlightMode mode = FlightMode.CRUISING;
-		Date circle_start_time = null;
-		double circle_start_latitude = 10000;
-		double circle_start_longitude = 10000;
-		double circle_drift_bearing = 10000;
-		Circle previous_circle = null;
+		Circle circle = null;
+		boolean circle_completed = false;
 		
 		for (GNSSPoint p2 : igc_points) {
 			
 			if (p1 != null && p2 != null) {
 				p2.track_course_deg = calculateTrackCourse(p1, p2);
 				
-				long duration = p2.data.timestamp.getTime() - p1.data.timestamp.getTime(); //in milliseconds
-				p2.seconds_since_last_fix = duration / 1000; 
-				
-				double track_course_delta = calcBearingChange(p1.track_course_deg, p2.track_course_deg);
-				p2.turn_rate = track_course_delta / p2.seconds_since_last_fix;
+				p2.calcTurnRate(p1);
 				
 				switch (mode) {
 					case CRUISING:
@@ -83,15 +76,11 @@ public class FlightAnalyser {
 						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
-							circle_start_time = p2.data.timestamp;
-							circle_start_latitude = p2.getLatitude();
-							circle_start_longitude = p2.getLongitude();
+							circle = new Circle(p2);
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
-							circle_start_time = p2.data.timestamp;
-							circle_start_latitude = p2.getLatitude();
-							circle_start_longitude = p2.getLongitude();
+							circle = new Circle(p2);
 						}
 						break;
 					case TURNING_LEFT: 
@@ -99,51 +88,28 @@ public class FlightAnalyser {
 						if (p2.turn_rate > -TURN_RATE_THRESHOLD) {
 							//Turning too slowly to still call this a thermal turn
 							mode = FlightMode.CRUISING;
-							circle_start_time = null;
+							circle = null;
 						}
 						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
-							circle_start_time = p2.data.timestamp;
-							circle_start_latitude = p2.getLatitude();
-							circle_start_longitude = p2.getLongitude();
+							circle = new Circle(p2);
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
 						//initialized because it's the first fix in the file.
 						
 						//Detect going past turn start course.  Only relevant if we're still turning.
-						double p1_bearing_to_turn_start = 
-								calcBearingChange(p1.track_course_deg, track_course_turn_start);
+						circle_completed  = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
 						
-						double p2_bearing_to_turn_start = 
-								calcBearingChange(p2.track_course_deg, track_course_turn_start);
-						
-						if (mode == FlightMode.TURNING_LEFT &&
-								(p1_bearing_to_turn_start < 0) && 
-								(Math.abs(p1_bearing_to_turn_start) <= 90) &&
-								(p2_bearing_to_turn_start > 0) && 
-								(Math.abs(p2_bearing_to_turn_start) <= 90)) {
+						if (mode == FlightMode.TURNING_LEFT && circle_completed) {
 							// This means we've just passed the course on which the turn started.
 							// So a full circle is accomplished!
-							long circle_duration = 
-									p2.data.timestamp.getTime() - circle_start_time.getTime();
 							
-							circle_duration /= 1000; //In seconds, please...
-							circle_drift_bearing = calculateTrackCourse(
-									previous_circle, circle_start_latitude, circle_start_longitude);
-							Circle circle = new Circle(
-									circle_start_time, 
-									circle_duration,
-									circle_start_latitude, 
-									circle_start_longitude, 
-									circle_drift_bearing);
+							circle.setDuration(p2);
 							circles.add(circle);
-							circle_start_time = p1.data.timestamp;
-							circle_start_latitude = p1.getLatitude();
-							circle_start_longitude = p1.getLongitude();
-							previous_circle = circle;
+							circle = new Circle(p2); 
 						}
 						break;
 					case TURNING_RIGHT:
@@ -151,47 +117,28 @@ public class FlightAnalyser {
 						if (p2.turn_rate < TURN_RATE_THRESHOLD) {
 							//Turning too slowly to still call this a thermal turn
 							mode = FlightMode.CRUISING;
-							circle_start_time = null;
+							circle = null;
 						}
 						if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
-							circle_start_time = p2.data.timestamp;
-							circle_start_latitude = p2.getLatitude();
-							circle_start_longitude = p2.getLongitude();
+							circle = new Circle(p2);
 						}
 						
 						//TODO what about the edge case where p1 doesn't have track_course_deg 
 						//initialized because it's the first fix in the file.
 						
 						//Detect going past turn start course.  Only relevant if we're still turning.
-						p1_bearing_to_turn_start = calcBearingChange(p1.track_course_deg, track_course_turn_start);
-						p2_bearing_to_turn_start = calcBearingChange(p2.track_course_deg, track_course_turn_start);
-						if (mode == FlightMode.TURNING_RIGHT && 
-								(p1_bearing_to_turn_start > 0) && 
-								(Math.abs(p1_bearing_to_turn_start) <= 90) &&
-								(p2_bearing_to_turn_start < 0) && 
-								(Math.abs(p2_bearing_to_turn_start) <= 90)) {
+						circle_completed = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+						
+						if (circle_completed) {
 							// This means we've just passed the course on which the turn started.
 							// So a full circle is accomplished!
-							long circle_duration = 
-									p2.data.timestamp.getTime() - circle_start_time.getTime();
-							circle_duration /= 1000; //In seconds, please...
-							
-							circle_drift_bearing = calculateTrackCourse(
-									previous_circle, circle_start_latitude, circle_start_longitude);  
-							Circle circle = new Circle(
-									circle_start_time, 
-									circle_duration,
-									circle_start_latitude, 
-									circle_start_longitude, 
-									circle_drift_bearing);
+
+							circle.setDuration(p2);
 							circles.add(circle);
-							circle_start_time = p1.data.timestamp;
-							circle_start_latitude = p1.getLatitude();
-							circle_start_longitude = p1.getLongitude();
-							previous_circle = circle;
+							circle = new Circle(p2); 
 						}
 						
 						break;
@@ -204,6 +151,37 @@ public class FlightAnalyser {
 		}
 		
 		return circles;
+	}
+
+	boolean detectCircleCompleted(GNSSPoint p1, GNSSPoint p2, double track_course_turn_start, FlightMode mode) throws Exception {
+		boolean circle_completed = false;
+		double p1_bearing_to_turn_start = 
+				calcBearingChange(p1.track_course_deg, track_course_turn_start);
+		
+		double p2_bearing_to_turn_start = 
+				calcBearingChange(p2.track_course_deg, track_course_turn_start);
+
+		boolean p1_bearing_delta_below_90 = Math.abs(p1_bearing_to_turn_start) <= 90;
+		boolean p2_bearing_delta_below_90 = Math.abs(p2_bearing_to_turn_start) <= 90;
+		
+		switch (mode) {
+			case TURNING_LEFT:
+			boolean p1_bearing_delta_negative = p1_bearing_to_turn_start < 0;
+			boolean p2_bearing_delta_positive = p2_bearing_to_turn_start > 0;
+			
+			circle_completed = p1_bearing_delta_negative && p1_bearing_delta_below_90 &&
+						p2_bearing_delta_positive && p2_bearing_delta_below_90;
+			break;
+			case TURNING_RIGHT:
+				circle_completed = (p1_bearing_to_turn_start > 0) && p1_bearing_delta_below_90 &&
+						(p2_bearing_to_turn_start < 0) && p2_bearing_delta_below_90;
+			break;
+			default: 
+				circle_completed = false;
+			break;
+		}
+		
+		return circle_completed;
 	}
 
 	/**
@@ -259,7 +237,7 @@ public class FlightAnalyser {
 	 * @param p2
 	 * @return double - bearing in degrees
 	 */
-	protected double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
+	static double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
 		double y = Math.sin(p2.lon_radians - p1.lon_radians) * 
 				Math.cos(p2.lat_radians);
 		
@@ -280,7 +258,7 @@ public class FlightAnalyser {
 	 * @param p2
 	 * @return
 	 */
-	private double calculateTrackCourse(Circle c, double lat, double lon) {
+	static double calculateTrackCourse(Circle c, double lat, double lon) {
 		double course = -1;
 		if (c != null) {
 			GNSSPoint p = GNSSPoint.createGNSSPoint(null, null, lat, lon, null, 0, 0, null);
@@ -297,7 +275,7 @@ public class FlightAnalyser {
 	 * @param p2
 	 * @return
 	 */
-	private double calcBearingChange(double crs1, double crs2) {
+	static double calcBearingChange(double crs1, double crs2) {
 		
 		double d = Math.abs(crs2 - crs1) % 360;
 		

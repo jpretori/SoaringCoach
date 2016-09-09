@@ -77,7 +77,7 @@ public class GNSSPoint extends Point3d {
 	}
 	
 	/**
-	 * Stub constructor
+	 * Private stub constructor - force use of parameterized creation methods
 	 */
 	private GNSSPoint() {}
 	
@@ -253,5 +253,16 @@ public class GNSSPoint extends Point3d {
 		
 		// Spherical law of cosines approximation - more simple, probably more performant, not as accurate
 		//return Math.acos(Math.sin(lat1)*Math.sin(lat2) + Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1)) * 6371000;
+	}
+	
+	/**
+	 * Calculates and stores the number of seconds since the last fix, as well as the turn rate in degrees/second.
+	 * @param p1 the preceding fix
+	 */
+	public void calcTurnRate(GNSSPoint p1) {
+		this.seconds_since_last_fix = (this.data.timestamp.getTime() - p1.data.timestamp.getTime())/1000;
+		
+		double track_course_delta = FlightAnalyser.calcBearingChange(p1.track_course_deg, this.track_course_deg);
+		this.turn_rate = track_course_delta / this.seconds_since_last_fix;
 	}
 }

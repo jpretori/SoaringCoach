@@ -5,15 +5,26 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
+
 public class FlightAnalyserTestFacade extends FlightAnalyser {
 	
 	public FlightAnalyserTestFacade(ArrayList<GNSSPoint> file) {
 		super(file);
 	}
 
-	public double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
-		return super.calculateTrackCourse(p1, p2);
+	public static double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
+		return FlightAnalyser.calculateTrackCourse(p1, p2);
 	}
+	
+	public static double calculateTrackCourse(Circle c, double lat, double lon) {
+		return FlightAnalyser.calculateTrackCourse(c, lat, lon);
+	}
+	
+	public boolean detectCircleCompleted(GNSSPoint p1, GNSSPoint p2, double track_course_turn_start, FlightMode mode) throws Exception {
+		return super.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+	}
+
 	
 	public FlightAnalyserTestFacade(String filename) throws FileNotFoundException  {
 		super(null);

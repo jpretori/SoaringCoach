@@ -24,6 +24,17 @@ public class Circle {
 	public double correction_distance;
 
 	/**
+	 * @param p the GPS fix at which the circle starts
+	 * 
+	 */
+	public Circle(GNSSPoint p) {
+		this.timestamp = p.data.timestamp;
+		this.circle_start_latitude = p.getLatitude();
+		this.circle_start_longitude = p.getLongitude();		
+	}
+	
+	
+	/**
 	 * @param timestamp what time did the circle start (timestamp from IGC file)
 	 * @param duration how many seconds did it take to go all the way around
 	 * @param circle_start_latitude what latitude was the start position of the circle
@@ -140,6 +151,17 @@ public class Circle {
 	public void setCorrectionDistance(double correction_distance) {
 		this.correction_distance = correction_distance;
 		
+	}
+
+	/**
+	 * 
+	 * @param p the last point in the circle, which by comparison to the start timestamp will determine the duration
+	 */
+	public void setDuration(GNSSPoint p) {
+		this.duration = 
+				p.data.timestamp.getTime() - this.timestamp.getTime();
+		
+		this.duration /= 1000; //In seconds, please...	
 	}
 
 }

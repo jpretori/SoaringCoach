@@ -13,6 +13,7 @@ import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.Circle;
 import com.polymorph.soaringcoach.analysis.Thermal;
+import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class TestFlightAnalyser {
 
@@ -140,9 +141,7 @@ public class TestFlightAnalyser {
 	 * <b>calculateTrackCourse</b> method in 8 major compass headings.
 	 */
 	@Test
-	public void testCalculateTrackCourse() {
-		ArrayList<GNSSPoint> points = new ArrayList<>();
-		
+	public void testCalculateTrackCourseTwoPoints() {
 		GNSSPoint p1 = GNSSPoint.createGNSSPoint("testfile", "B1106503311122S01912340EA0144601541Start");
 		GNSSPoint p2 = GNSSPoint.createGNSSPoint("testfile", "B1106523311022S01912340EA0144601541N");
 		GNSSPoint p3 = GNSSPoint.createGNSSPoint("testfile", "B1106543310922S01912470EA0144601541NE");
@@ -153,26 +152,49 @@ public class TestFlightAnalyser {
 		GNSSPoint p8 = GNSSPoint.createGNSSPoint("testfile", "B1107043311238S01912450EA0144601541W");
 		GNSSPoint p9 = GNSSPoint.createGNSSPoint("testfile", "B1107043311138S01912368EA0144601541NW");
 		
-		points.add(p1);
-		points.add(p2);
-		points.add(p3);
-		points.add(p4);
-		points.add(p5);
-		points.add(p6);
-		points.add(p7);
-		points.add(p8);
-		points.add(p9);
+		assertEquals(0.0, FlightAnalyserTestFacade.calculateTrackCourse(p1, p2), 0.1);
+		assertEquals(47.4, FlightAnalyserTestFacade.calculateTrackCourse(p2, p3), 0.1);
+		assertEquals(90.0, FlightAnalyserTestFacade.calculateTrackCourse(p3, p4), 0.1);
+		assertEquals(144.2, FlightAnalyserTestFacade.calculateTrackCourse(p4, p5), 0.1);
+		assertEquals(180.0, FlightAnalyserTestFacade.calculateTrackCourse(p5, p6), 0.1);
+		assertEquals(225.1, FlightAnalyserTestFacade.calculateTrackCourse(p6, p7), 0.1);
+		assertEquals(270.0, FlightAnalyserTestFacade.calculateTrackCourse(p7, p8), 0.1);
+		assertEquals(325.5, FlightAnalyserTestFacade.calculateTrackCourse(p8, p9), 0.1);
+	}
+	
+	/**
+	 * A set of points placed roughly in an octagon, with the first two points
+	 * creating a bearing of due north - allowing us to test the
+	 * <b>calculateTrackCourse</b> method in 8 major compass headings.
+	 */
+	@Test
+	public void testCalculateTrackCourseCircleLatLong() {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("testfile", "B1106503311122S01912340EA0144601541Start");
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("testfile", "B1106523311022S01912340EA0144601541N");
+		GNSSPoint p3 = GNSSPoint.createGNSSPoint("testfile", "B1106543310922S01912470EA0144601541NE");
+		GNSSPoint p4 = GNSSPoint.createGNSSPoint("testfile", "B1106563310922S01912570EA0144601541E");
+		GNSSPoint p5 = GNSSPoint.createGNSSPoint("testfile", "B1106583311038S01912670EA0144601541SE");
+		GNSSPoint p6 = GNSSPoint.createGNSSPoint("testfile", "B1107003311138S01912670EA0144601541S");
+		GNSSPoint p7 = GNSSPoint.createGNSSPoint("testfile", "B1107023311238S01912550EA0144601541SW");
+		GNSSPoint p8 = GNSSPoint.createGNSSPoint("testfile", "B1107043311238S01912450EA0144601541W");
+		GNSSPoint p9 = GNSSPoint.createGNSSPoint("testfile", "B1107043311138S01912368EA0144601541NW");
 		
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(points);
-		
-		assertEquals(0.0, fa.calculateTrackCourse(p1, p2), 0.1);
-		assertEquals(47.4, fa.calculateTrackCourse(p2, p3), 0.1);
-		assertEquals(90.0, fa.calculateTrackCourse(p3, p4), 0.1);
-		assertEquals(144.2, fa.calculateTrackCourse(p4, p5), 0.1);
-		assertEquals(180.0, fa.calculateTrackCourse(p5, p6), 0.1);
-		assertEquals(225.1, fa.calculateTrackCourse(p6, p7), 0.1);
-		assertEquals(270.0, fa.calculateTrackCourse(p7, p8), 0.1);
-		assertEquals(325.5, fa.calculateTrackCourse(p8, p9), 0.1);
+		assertEquals(0.0, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p1), p2.getLatitude(), p2.getLongitude()), 0.1);
+		assertEquals(47.4, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p2), p3.getLatitude(), p3.getLongitude()), 0.1);
+		assertEquals(90.0, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p3), p4.getLatitude(), p4.getLongitude()), 0.1);
+		assertEquals(144.2, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p4), p5.getLatitude(), p5.getLongitude()), 0.1);
+		assertEquals(180.0, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p5), p6.getLatitude(), p6.getLongitude()), 0.1);
+		assertEquals(225.1, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p6), p7.getLatitude(), p7.getLongitude()), 0.1);
+		assertEquals(270.0, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p7), p8.getLatitude(), p8.getLongitude()), 0.1);
+		assertEquals(325.5, FlightAnalyserTestFacade.calculateTrackCourse(
+				new Circle(p8), p9.getLatitude(), p9.getLongitude()), 0.1);
 	}
 	
 	/**
@@ -231,5 +253,84 @@ public class TestFlightAnalyser {
 					thermal_duration_strings[i],
 					t.getTotalDuration());
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testCalcDestinationPoint() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testCalculateCorrectionVectors() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testCheckTwiceRule() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedCruising() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
+	
+	/**
+	 * @throws Exception 
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedTurningLeftPositive() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 90;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 11, 11, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_LEFT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(true, result);
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedTurningLeftNegative() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedTurningRightPositive() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedTurningRightNegative() {
+		assertEquals("No test implemented yet", 1, 2);
 	}
 }
