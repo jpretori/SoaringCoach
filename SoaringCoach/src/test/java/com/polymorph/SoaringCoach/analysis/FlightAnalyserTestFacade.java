@@ -25,6 +25,9 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		return super.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
 	}
 
+	public static double calcBearingChange(double crs1, double crs2) {
+		return FlightAnalyser.calcBearingChange(crs1, crs2);
+	}
 	
 	public FlightAnalyserTestFacade(String filename) throws FileNotFoundException  {
 		super(null);

@@ -59,5 +59,29 @@ public class TestGNSSPoint {
 				0.0009);
 	}
 
+	@Test
+	public void testDecimalizeDegrees() {
+		assertEquals("Not implemented yet", 1, 2);
+	}
+
+	@Test
+	public void testValidBRecord() {
+		assertEquals("Not implemented yet", 1, 2);
+	}
+
+	@Test
+	public void testValidGPSFix() {
+		assertEquals("Not implemented yet", 1, 2);
+	}
+
+	@Test
+	public void testCalcTurnRate() {
+		assertEquals("Not implemented yet", 1, 2);
+	}
+
+	@Test
+	public void testDistance() {
+		assertEquals("Not implemented yet", 1, 2);
+	}
 
 }

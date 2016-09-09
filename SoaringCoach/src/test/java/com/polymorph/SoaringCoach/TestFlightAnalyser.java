@@ -100,7 +100,7 @@ public class TestFlightAnalyser {
 	 * This set of fixes includes: <br>
 	 * - an S-turn (i.e. half a circle left, immediately followed by half a
 	 * circle right)<br>
-	 * - four separate full circles strung together, all in the same direction
+	 * - four separate full circles strung together, all in the same turn direction
 	 * <br>
 	 * - part of a circle at the end of the series<br>
 	 * Having several circles immediately following each other, also tests the
@@ -267,25 +267,43 @@ public class TestFlightAnalyser {
 	 * 
 	 */
 	@Test
-	public void testCalculateCorrectionVectors() {
-		assertEquals("No test implemented yet", 1, 2);
+	public void testDetectCircleCompletedFirstPoint() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, -33.143883333333335, 19.18305, null, 0, 0, null);
+		p1.track_course_deg = 290.17718;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, -33.144266666666667, 19.182, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 290.17718; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_LEFT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(false, result);
 	}
 	
-	
 	/**
+	 * @throws Exception 
 	 * 
 	 */
 	@Test
-	public void testCheckTwiceRule() {
-		assertEquals("No test implemented yet", 1, 2);
-	}
-	
-	/**
-	 * 
-	 */
-	@Test
-	public void testDetectCircleCompletedCruising() {
-		assertEquals("No test implemented yet", 1, 2);
+	public void testDetectCircleCompletedCruising() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 90;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 10, 11, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.CRUISING;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(false, result);	
 	}
 	
 	/**
@@ -295,7 +313,7 @@ public class TestFlightAnalyser {
 	@Test
 	public void testDetectCircleCompletedTurningLeftPositive() throws Exception {
 		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
-		p1.track_course_deg = 90;
+		p1.track_course_deg = 100;
 		
 		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 11, 11, null, 0, 0, null);
 		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
@@ -311,26 +329,148 @@ public class TestFlightAnalyser {
 	}
 	
 	/**
+	 * Turning the wrong way through ref heading. Expect it to say the circle is not completed
+	 * @throws Exception 
 	 * 
 	 */
 	@Test
-	public void testDetectCircleCompletedTurningLeftNegative() {
-		assertEquals("No test implemented yet", 1, 2);
+	public void testDetectCircleCompletedTurningLeftNegativeWrongDirection() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 90;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 9, 9, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_LEFT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(false, result);
 	}
 
 	/**
+	 * Turning the right way but not through the ref heading. Expect it to say the circle is not completed.
+	 * @throws Exception 
 	 * 
 	 */
 	@Test
-	public void testDetectCircleCompletedTurningRightPositive() {
-		assertEquals("No test implemented yet", 1, 2);
+	public void testDetectCircleCompletedTurningLeftNegativeNotRefHdg() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 270;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 9, 9, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_LEFT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(false, result);
 	}
 
 	/**
+	 * @throws Exception 
 	 * 
 	 */
 	@Test
-	public void testDetectCircleCompletedTurningRightNegative() {
-		assertEquals("No test implemented yet", 1, 2);
+	public void testDetectCircleCompletedTurningRightPositive() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 80;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 9, 11, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_RIGHT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(true, result);
+	}
+
+	/**
+	 * Turning the wrong way through ref heading. Expect it to say the circle is not completed
+	 * @throws Exception 
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedTurningRightNegativeWrongDirection() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 90;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 11, 11, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_RIGHT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(false, result);
+	}
+
+	/**
+	 * Turning the right way but not through the ref heading. Expect it to say the circle is not completed.
+	 * @throws Exception 
+	 * 
+	 */
+	@Test
+	public void testDetectCircleCompletedTurningRightNegativeNotRefHdg() throws Exception {
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, 10, 10, null, 0, 0, null);
+		p1.track_course_deg = 270;
+		
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint("test", null, 11, 9, null, 0, 0, null);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		
+		double track_course_turn_start = 90; //started circle heading east
+		FlightMode mode = FlightMode.TURNING_RIGHT;
+		
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		
+		boolean result = fa.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+		
+		assertEquals(false, result);
+	}
+
+	/**
+	 * Test in 30deg increments all the way around the compass, towards the left.
+	 */
+	@Test
+	public void testCalculateBearingChangeLeft() {
+		double[] crs = {0, 330, 300, 270, 240, 210, 180, 150, 120, 90, 60, 30, 0, 330, 300};
+		
+		double c1 = -1;
+		for (double c2 : crs) {
+			if (c1 >= 0) {
+				assertEquals(-30, FlightAnalyserTestFacade.calcBearingChange(c1, c2), 0.0001);
+			}
+			c1 = c2;
+		}
+	}
+
+	/**
+	 * Test in 30deg increments all the way around the compass, towards the right.
+	 */
+	@Test
+	public void testCalculateBearingChangeRight() {
+		double[] crs = {0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 0, 30, 60};
+		
+		double c1 = -1;
+		for (double c2 : crs) {
+			if (c1 >= 0) {
+				assertEquals(30, FlightAnalyserTestFacade.calcBearingChange(c1, c2), 0.0001);
+			}
+			c1 = c2;
+		}
 	}
 }

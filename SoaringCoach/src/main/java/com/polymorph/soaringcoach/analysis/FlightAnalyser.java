@@ -57,8 +57,7 @@ public class FlightAnalyser {
 		
 		GNSSPoint p1 = null;
 
-		//If the aircraft is turning, at what heading did the turn start
-		double track_course_turn_start = 0;
+		double track_course_turn_start = 0; //If the aircraft is turning, at what heading did the turn start
 		FlightMode mode = FlightMode.CRUISING;
 		Circle circle = null;
 		boolean circle_completed = false;
@@ -85,62 +84,53 @@ public class FlightAnalyser {
 						break;
 					case TURNING_LEFT: 
 						//Detect mode change
-						if (p2.turn_rate > -TURN_RATE_THRESHOLD) {
+						if (Math.abs(p2.turn_rate) < TURN_RATE_THRESHOLD) {
 							//Turning too slowly to still call this a thermal turn
 							mode = FlightMode.CRUISING;
 							circle = null;
-						}
-						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
+						} else if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_RIGHT;
 							track_course_turn_start = p2.track_course_deg;
 							circle = new Circle(p2);
-						}
-						
-						//TODO what about the edge case where p1 doesn't have track_course_deg 
-						//initialized because it's the first fix in the file.
-						
-						//Detect going past turn start course.  Only relevant if we're still turning.
-						circle_completed  = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
-						
-						if (mode == FlightMode.TURNING_LEFT && circle_completed) {
-							// This means we've just passed the course on which the turn started.
-							// So a full circle is accomplished!
+						} else {
+							//Detect going past turn start course.  Only relevant if we're still turning.
+							circle_completed  = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
 							
-							circle.setDuration(p2);
-							circles.add(circle);
-							circle = new Circle(p2); 
+							if (circle_completed) {
+								// This means we've just passed the course on which the turn started.
+								// So a full circle is accomplished!
+								
+								circle.setDuration(p2);
+								circles.add(circle);
+								circle = new Circle(p2); 
+							}
 						}
 						break;
 					case TURNING_RIGHT:
 						//Detect mode change
-						if (p2.turn_rate < TURN_RATE_THRESHOLD) {
+						if (Math.abs(p2.turn_rate) < TURN_RATE_THRESHOLD) {
 							//Turning too slowly to still call this a thermal turn
 							mode = FlightMode.CRUISING;
 							circle = null;
-						}
-						if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
+						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_LEFT;
 							track_course_turn_start = p2.track_course_deg;
 							circle = new Circle(p2);
+						} else {
+							//Detect going past turn start course.  Only relevant if we're still turning.
+							circle_completed = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+							
+							if (circle_completed) {
+								// This means we've just passed the course on which the turn started.
+								// So a full circle is accomplished!
+	
+								circle.setDuration(p2);
+								circles.add(circle);
+								circle = new Circle(p2); 
+							}
 						}
-						
-						//TODO what about the edge case where p1 doesn't have track_course_deg 
-						//initialized because it's the first fix in the file.
-						
-						//Detect going past turn start course.  Only relevant if we're still turning.
-						circle_completed = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
-						
-						if (circle_completed) {
-							// This means we've just passed the course on which the turn started.
-							// So a full circle is accomplished!
-
-							circle.setDuration(p2);
-							circles.add(circle);
-							circle = new Circle(p2); 
-						}
-						
 						break;
 					default: throw new Exception("Unexpected flight mode indicator [" + mode + "]");
 				}
@@ -154,13 +144,42 @@ public class FlightAnalyser {
 	}
 
 	boolean detectCircleCompleted(GNSSPoint p1, GNSSPoint p2, double track_course_turn_start, FlightMode mode) throws Exception {
-		boolean circle_completed = false;
+		//attempt 3
+		double p2_turn_start_course_delta = track_course_turn_start - p2.track_course_deg;
+		double p1_turn_start_course_delta = track_course_turn_start - p1.track_course_deg;
+		
+		if (mode == FlightMode.TURNING_LEFT) {
+			return (p1_turn_start_course_delta < 0) && (p2_turn_start_course_delta >= 0);
+		} else if (mode == FlightMode.TURNING_RIGHT) {
+			return (p1_turn_start_course_delta > 0) && (p2_turn_start_course_delta <= 0);
+		}
+		else {
+			return false;
+		}
+		
+		
+		//attempt 2
+		/*
+		//boolean circle_completed = false;
 		double p1_bearing_to_turn_start = 
 				calcBearingChange(p1.track_course_deg, track_course_turn_start);
 		
 		double p2_bearing_to_turn_start = 
 				calcBearingChange(p2.track_course_deg, track_course_turn_start);
 
+		double p1_signum = Math.signum(p1_bearing_to_turn_start);
+		boolean p1_neg_or_zero = (p1_signum < 0) || (mode == FlightMode.TURNING_RIGHT && p1_signum == 0);
+		
+		double p2_signum = Math.signum(p2_bearing_to_turn_start);
+		boolean p2_neg_or_zero = (p2_signum < 0) || (mode == FlightMode.TURNING_LEFT && p2_signum == 0);
+		
+		boolean passed_ref_hdg = p1_neg_or_zero ^ p2_neg_or_zero;
+		
+		return passed_ref_hdg;
+		*/
+		
+		//attempt 1
+/*		
 		boolean p1_bearing_delta_below_90 = Math.abs(p1_bearing_to_turn_start) <= 90;
 		boolean p2_bearing_delta_below_90 = Math.abs(p2_bearing_to_turn_start) <= 90;
 		
@@ -182,6 +201,8 @@ public class FlightAnalyser {
 		}
 		
 		return circle_completed;
+		
+*/
 	}
 
 	/**
@@ -276,7 +297,22 @@ public class FlightAnalyser {
 	 * @return
 	 */
 	static double calcBearingChange(double crs1, double crs2) {
+		//attempt 2
+		double r = crs2 - crs1;
 		
+		if (Math.abs(r) >= 180) {
+			if (crs2 < crs1) {
+				r += 360;
+			} 
+			else {
+				r -= 360;
+			}
+		}
+
+		return r;
+		
+		//attempt 1
+		/*
 		double d = Math.abs(crs2 - crs1) % 360;
 		
 		double r = d > 180 ? 360 - d : d;
@@ -287,6 +323,7 @@ public class FlightAnalyser {
 		r *= sign;
 		
 		return r;
+		*/
 	}
 
 	protected void setIgcPoints(ArrayList<GNSSPoint> points) {
