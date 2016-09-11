@@ -57,7 +57,7 @@ public class Circle {
 	public String toString() {
 		String duration_s = duration < 10 ? "0" + String.valueOf(duration) : String.valueOf(duration);
 		
-		return "Duration (s) = ["+duration_s+"]";
+		return "Timestamp = [" + this.getTimestamp() + "]; Duration (s) = ["+duration_s+"]";
 	}
 
 	public boolean isIncludedInThermal() {

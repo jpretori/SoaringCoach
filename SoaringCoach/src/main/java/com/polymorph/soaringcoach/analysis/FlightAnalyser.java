@@ -148,6 +148,10 @@ public class FlightAnalyser {
 		double p2_turn_start_course_delta = track_course_turn_start - p2.track_course_deg;
 		double p1_turn_start_course_delta = track_course_turn_start - p1.track_course_deg;
 		
+		//Account for track_course_turn_start being close to North, and p1 & p2 track courses being either side of North
+		if (p2_turn_start_course_delta > 180) { p2_turn_start_course_delta -= 360; }
+		if (p1_turn_start_course_delta > 180) { p1_turn_start_course_delta -= 360; }
+		
 		if (mode == FlightMode.TURNING_LEFT) {
 			return (p1_turn_start_course_delta < 0) && (p2_turn_start_course_delta >= 0);
 		} else if (mode == FlightMode.TURNING_RIGHT) {
@@ -224,7 +228,7 @@ public class FlightAnalyser {
 			if (c1 != null && c2 != null) {
 				
 				if ((c1.timestamp.getTime() + c1.duration*1000) == c2.timestamp.getTime()) {
-					//Turns are adjacent
+					//Turns are adjacent so add both to the thermal if we're starting a new record - otherwise just add c2
 					
 					if (thermal == null) {
 						thermal = new Thermal(c1);
@@ -240,6 +244,7 @@ public class FlightAnalyser {
 					thermal = null;
 				}
 				
+				//c1 and c2 were not adjacent, check if we have a 1-circle thermal
 				if (!c1.isIncludedInThermal()) {
 					thermals.add(new Thermal(c1));
 					c1.setIncludedInThermal();
@@ -377,7 +382,6 @@ public class FlightAnalyser {
 	 */
 	ArrayList<Circle> calculateCorrectionVectors(ArrayList<Circle> circles) {
 
-		
 		Circle previous_circle = null;
 		double average_drift_distance = 0;
 		double average_drift_bearing = 0;

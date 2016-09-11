@@ -410,4 +410,12 @@ public class TestCentringMoveDetection {
 					circle.getCheckTwiceRuleIndicator());
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testCalcDestinationPoint() {
+		assertEquals("No test implemented yet", 1, 2);
+	}
 }

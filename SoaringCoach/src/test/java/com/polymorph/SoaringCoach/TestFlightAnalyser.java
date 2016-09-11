@@ -259,14 +259,6 @@ public class TestFlightAnalyser {
 	 * 
 	 */
 	@Test
-	public void testCalcDestinationPoint() {
-		assertEquals("No test implemented yet", 1, 2);
-	}
-	
-	/**
-	 * 
-	 */
-	@Test
 	public void testDetectCircleCompletedFirstPoint() throws Exception {
 		GNSSPoint p1 = GNSSPoint.createGNSSPoint("test", null, -33.143883333333335, 19.18305, null, 0, 0, null);
 		p1.track_course_deg = 290.17718;
