@@ -21,10 +21,6 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		return FlightAnalyser.calculateTrackCourse(c, lat, lon);
 	}
 	
-	public boolean detectCircleCompleted(GNSSPoint p1, GNSSPoint p2, double track_course_turn_start, FlightMode mode) throws Exception {
-		return super.detectCircleCompleted(p1, p2, track_course_turn_start, mode);
-	}
-
 	public static double calcBearingChange(double crs1, double crs2) {
 		return FlightAnalyser.calcBearingChange(crs1, crs2);
 	}

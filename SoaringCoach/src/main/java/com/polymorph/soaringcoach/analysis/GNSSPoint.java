@@ -25,7 +25,7 @@ public class GNSSPoint extends Point3d {
 	/**
 	 * The track course from the previous point to this one
 	 */
-	public double track_course_deg = 0;
+	public double track_course_deg = -400;
 	
 	/**
 	 * Number of seconds since the last point
@@ -259,10 +259,12 @@ public class GNSSPoint extends Point3d {
 	 * Calculates and stores the number of seconds since the last fix, as well as the turn rate in degrees/second.
 	 * @param p1 the preceding fix
 	 */
-	public void calcTurnRate(GNSSPoint p1) {
+	public void resolve(GNSSPoint p1) {
 		this.seconds_since_last_fix = (this.data.timestamp.getTime() - p1.data.timestamp.getTime())/1000;
 		
-		double track_course_delta = FlightAnalyser.calcBearingChange(p1.track_course_deg, this.track_course_deg);
-		this.turn_rate = track_course_delta / this.seconds_since_last_fix;
+		if (p1.track_course_deg > -400) { // if it's still -400, it wasn't initialised - so p1 is the first point in the file
+			double track_course_delta = FlightAnalyser.calcBearingChange(p1.track_course_deg, this.track_course_deg);
+			this.turn_rate = track_course_delta / this.seconds_since_last_fix;
+		}
 	}
 }

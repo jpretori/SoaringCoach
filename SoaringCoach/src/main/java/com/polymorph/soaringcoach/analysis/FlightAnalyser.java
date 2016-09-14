@@ -57,29 +57,25 @@ public class FlightAnalyser {
 		
 		GNSSPoint p1 = null;
 
-		double track_course_turn_start = 0; //If the aircraft is turning, at what heading did the turn start
 		FlightMode mode = FlightMode.CRUISING;
 		Circle circle = null;
-		boolean circle_completed = false;
 		
 		for (GNSSPoint p2 : igc_points) {
 			
 			if (p1 != null && p2 != null) {
 				p2.track_course_deg = calculateTrackCourse(p1, p2);
 				
-				p2.calcTurnRate(p1);
+				p2.resolve(p1);
 				
 				switch (mode) {
 					case CRUISING:
 						//Detect mode change
 						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_RIGHT;
-							track_course_turn_start = p2.track_course_deg;
-							circle = new Circle(p2);
+							circle = new Circle(p1, p2, mode);
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							mode = FlightMode.TURNING_LEFT;
-							track_course_turn_start = p2.track_course_deg;
-							circle = new Circle(p2);
+							circle = new Circle(p1, p2, mode);
 						}
 						break;
 					case TURNING_LEFT: 
@@ -91,19 +87,18 @@ public class FlightAnalyser {
 						} else if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_RIGHT;
-							track_course_turn_start = p2.track_course_deg;
-							circle = new Circle(p2);
+							circle = new Circle(p1, p2, circle);
 						} else {
 							//Detect going past turn start course.  Only relevant if we're still turning.
-							circle_completed  = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+							circle.detectCircleCompleted(p2);
 							
-							if (circle_completed) {
+							if (circle.circle_completed) {
 								// This means we've just passed the course on which the turn started.
 								// So a full circle is accomplished!
 								
 								circle.setDuration(p2);
 								circles.add(circle);
-								circle = new Circle(p2); 
+								circle = new Circle(p1, p2, mode); 
 							}
 						}
 						break;
@@ -116,19 +111,18 @@ public class FlightAnalyser {
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_LEFT;
-							track_course_turn_start = p2.track_course_deg;
-							circle = new Circle(p2);
+							circle = new Circle(p1, p2, circle);
 						} else {
 							//Detect going past turn start course.  Only relevant if we're still turning.
-							circle_completed = detectCircleCompleted(p1, p2, track_course_turn_start, mode);
+							circle.detectCircleCompleted(p2);
 							
-							if (circle_completed) {
+							if (circle.circle_completed) {
 								// This means we've just passed the course on which the turn started.
 								// So a full circle is accomplished!
 	
 								circle.setDuration(p2);
 								circles.add(circle);
-								circle = new Circle(p2); 
+								circle = new Circle(p1, p2, mode); 
 							}
 						}
 						break;
@@ -141,72 +135,6 @@ public class FlightAnalyser {
 		}
 		
 		return circles;
-	}
-
-	boolean detectCircleCompleted(GNSSPoint p1, GNSSPoint p2, double track_course_turn_start, FlightMode mode) throws Exception {
-		//attempt 3
-		double p2_turn_start_course_delta = track_course_turn_start - p2.track_course_deg;
-		double p1_turn_start_course_delta = track_course_turn_start - p1.track_course_deg;
-		
-		//Account for track_course_turn_start being close to North, and p1 & p2 track courses being either side of North
-		if (p2_turn_start_course_delta > 180) { p2_turn_start_course_delta -= 360; }
-		if (p1_turn_start_course_delta > 180) { p1_turn_start_course_delta -= 360; }
-		
-		if (mode == FlightMode.TURNING_LEFT) {
-			return (p1_turn_start_course_delta < 0) && (p2_turn_start_course_delta >= 0);
-		} else if (mode == FlightMode.TURNING_RIGHT) {
-			return (p1_turn_start_course_delta > 0) && (p2_turn_start_course_delta <= 0);
-		}
-		else {
-			return false;
-		}
-		
-		
-		//attempt 2
-		/*
-		//boolean circle_completed = false;
-		double p1_bearing_to_turn_start = 
-				calcBearingChange(p1.track_course_deg, track_course_turn_start);
-		
-		double p2_bearing_to_turn_start = 
-				calcBearingChange(p2.track_course_deg, track_course_turn_start);
-
-		double p1_signum = Math.signum(p1_bearing_to_turn_start);
-		boolean p1_neg_or_zero = (p1_signum < 0) || (mode == FlightMode.TURNING_RIGHT && p1_signum == 0);
-		
-		double p2_signum = Math.signum(p2_bearing_to_turn_start);
-		boolean p2_neg_or_zero = (p2_signum < 0) || (mode == FlightMode.TURNING_LEFT && p2_signum == 0);
-		
-		boolean passed_ref_hdg = p1_neg_or_zero ^ p2_neg_or_zero;
-		
-		return passed_ref_hdg;
-		*/
-		
-		//attempt 1
-/*		
-		boolean p1_bearing_delta_below_90 = Math.abs(p1_bearing_to_turn_start) <= 90;
-		boolean p2_bearing_delta_below_90 = Math.abs(p2_bearing_to_turn_start) <= 90;
-		
-		switch (mode) {
-			case TURNING_LEFT:
-			boolean p1_bearing_delta_negative = p1_bearing_to_turn_start < 0;
-			boolean p2_bearing_delta_positive = p2_bearing_to_turn_start > 0;
-			
-			circle_completed = p1_bearing_delta_negative && p1_bearing_delta_below_90 &&
-						p2_bearing_delta_positive && p2_bearing_delta_below_90;
-			break;
-			case TURNING_RIGHT:
-				circle_completed = (p1_bearing_to_turn_start > 0) && p1_bearing_delta_below_90 &&
-						(p2_bearing_to_turn_start < 0) && p2_bearing_delta_below_90;
-			break;
-			default: 
-				circle_completed = false;
-			break;
-		}
-		
-		return circle_completed;
-		
-*/
 	}
 
 	/**
