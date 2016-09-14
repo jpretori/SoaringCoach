@@ -87,7 +87,7 @@ public class FlightAnalyser {
 						} else if (p2.turn_rate > TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_RIGHT;
-							circle = new Circle(p1, p2, circle);
+							circle = new Circle(p1, p2, mode);
 						} else {
 							//Detect going past turn start course.  Only relevant if we're still turning.
 							circle.detectCircleCompleted(p2);
@@ -98,7 +98,7 @@ public class FlightAnalyser {
 								
 								circle.setDuration(p2);
 								circles.add(circle);
-								circle = new Circle(p1, p2, mode); 
+								circle = new Circle(p1, p2, circle); 
 							}
 						}
 						break;
@@ -111,7 +111,7 @@ public class FlightAnalyser {
 						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
 							//Switched turn direction
 							mode = FlightMode.TURNING_LEFT;
-							circle = new Circle(p1, p2, circle);
+							circle = new Circle(p1, p2, mode);
 						} else {
 							//Detect going past turn start course.  Only relevant if we're still turning.
 							circle.detectCircleCompleted(p2);
@@ -122,7 +122,7 @@ public class FlightAnalyser {
 	
 								circle.setDuration(p2);
 								circles.add(circle);
-								circle = new Circle(p1, p2, mode); 
+								circle = new Circle(p1, p2, circle); 
 							}
 						}
 						break;

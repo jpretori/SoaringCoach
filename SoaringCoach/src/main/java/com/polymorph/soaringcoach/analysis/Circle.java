@@ -72,6 +72,7 @@ public class Circle {
 	 */
 	public Circle(GNSSPoint p1, GNSSPoint p2, Circle previous_circle) {
 		this(p1, p2, previous_circle.turn_direction);
+		this.circle_start_course = previous_circle.circle_start_course;
 	}
 
 
@@ -206,7 +207,7 @@ public class Circle {
 				 deg_course_change_since_start = angle_inverse;
 			 }
 		} else {
-			deg_course_change_since_start += (p.turn_rate * p.seconds_since_last_fix);
+			deg_course_change_since_start += Math.abs(p.turn_rate * p.seconds_since_last_fix);
 		}
 		
 		circle_completed = Math.abs(deg_course_change_since_start) >= 360;

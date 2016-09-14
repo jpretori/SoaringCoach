@@ -161,18 +161,24 @@ public class TestDetectCircleCompleted {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1121323338354S01932733EA0144601541testCirclingDetection"));
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1121343338291S01932813EA0144601541testCirclingDetection"));
 		
-		CircleTestFacade c = new CircleTestFacade(points.get(0), points.get(1), FlightMode.TURNING_RIGHT);
+		GNSSPoint p2 = points.get(1);
+		GNSSPoint p1 = points.get(0);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		p2.resolve(p1);
 		
+		CircleTestFacade c = null;
+		p1 = null;
+		p2 = null;
 		int circle_count = 0;
-		GNSSPoint p1 = null;
-		GNSSPoint p2 = null;
-		for (int i = 2; i < points.size(); i++) {
+		for (int i = 1; i < points.size(); i++) {
 			p2 = points.get(i);
 			
 			if (p1 != null && p2 != null) {
 				p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
-				
+				if (c == null) {
+					c = new CircleTestFacade(p1, p2, FlightMode.TURNING_RIGHT);
+				}
 				if (c.detectCircleCompleted(p2)) { 
 					circle_count++;
 					c = new CircleTestFacade(p1, p2, c);
@@ -214,18 +220,24 @@ public class TestDetectCircleCompleted {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1121323338354S01932733EA0144601541testCirclingDetection"));
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1121343338291S01932813EA0144601541testCirclingDetection"));
 		
-		CircleTestFacade c = new CircleTestFacade(points.get(0), points.get(1), FlightMode.TURNING_RIGHT);
+		GNSSPoint p2 = points.get(1);
+		GNSSPoint p1 = points.get(0);
+		p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
+		p2.resolve(p1);
 		
+		CircleTestFacade c = null;
+		p1 = null;
+		p2 = null;
 		int circle_count = 0;
-		GNSSPoint p1 = null;
-		GNSSPoint p2 = null;
-		for (int i = 2; i < points.size(); i++) {
+		for (int i = 1; i < points.size(); i++) {
 			p2 = points.get(i);
 			
 			if (p1 != null && p2 != null) {
 				p2.track_course_deg = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
-				
+				if (c == null) {
+					c = new CircleTestFacade(p1, p2, FlightMode.TURNING_RIGHT);
+				}
 				if (c.detectCircleCompleted(p2)) { 
 					circle_count++;
 					c = new CircleTestFacade(p1, p2, c);
