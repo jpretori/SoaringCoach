@@ -79,7 +79,7 @@ public class GNSSPoint extends Point3d {
 	/**
 	 * Private stub constructor - force use of parameterized creation methods
 	 */
-	private GNSSPoint() {}
+	protected GNSSPoint() {}
 	
 	/**
 	 * Create from what's loaded from the DB
@@ -173,10 +173,10 @@ public class GNSSPoint extends Point3d {
 		return pt;
 	}
 
-	private static boolean isValidBRecord(String file_input) {
+	protected static boolean isValidBRecord(String file_input) {
 		//Chuck out nulls to avoid falling over ungracefully
 		if (file_input == null) {
-			System.err.println("File input [null]");
+			System.err.println("GNSSPoint.isValidBRecord() - File input [null]");
 			return false;
 		}
 		
@@ -197,7 +197,7 @@ public class GNSSPoint extends Point3d {
 	 * @param coordinate_ref One from the set of [N, S, E, W]
 	 * @return Decimal value for latitude or long
 	 */
-	private static Double decimalizeDegrees(
+	protected static Double decimalizeDegrees(
 			String degrees, 
 			String decimalized_minutes, 
 			String coordinate_ref) {
@@ -219,7 +219,7 @@ public class GNSSPoint extends Point3d {
 	 * Checks if a line from the file is a valid GPS fix
 	 * @return
 	 */
-	private static boolean isValidGpsFix(GNSSPointData pt) {
+	protected static boolean isValidGpsFix(GNSSPointData pt) {
 		//Is it marked as a "valid" altitude
 		if (!"A".equals(pt.getAltitudeOK())) {
 			System.out.println("Altitude validity flag not set to 'A'");
@@ -229,6 +229,11 @@ public class GNSSPoint extends Point3d {
 		return true; //All checks passed
 	}
 	
+	/**
+	 * Calculates great circle distance to another point. 
+	 * @param pt2
+	 * @return answer in meters
+	 */
 	public double distance(GNSSPoint pt2) {
 		
 		// Convert all from degrees to radians
