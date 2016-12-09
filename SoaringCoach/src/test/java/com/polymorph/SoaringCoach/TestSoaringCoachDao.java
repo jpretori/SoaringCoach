@@ -22,7 +22,7 @@ public class TestSoaringCoachDao {
 	public void setUp() throws Exception {
 	}
 
-	@Test
+	//@Test
 	public void testSoaringCoachDao() {
 		try {
 			Connection connection = DaoFactory.getConnection();
@@ -33,7 +33,7 @@ public class TestSoaringCoachDao {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testSaveAndGetIgcBRecord() throws Exception {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
 		UUID filename_uuid = UUID.randomUUID();

@@ -230,7 +230,6 @@ public class FlightAnalyser {
 	 * @return
 	 */
 	static double calcBearingChange(double crs1, double crs2) {
-		//attempt 2
 		double r = crs2 - crs1;
 		
 		if (Math.abs(r) >= 180) {
@@ -243,20 +242,6 @@ public class FlightAnalyser {
 		}
 
 		return r;
-		
-		//attempt 1
-		/*
-		double d = Math.abs(crs2 - crs1) % 360;
-		
-		double r = d > 180 ? 360 - d : d;
-		
-		int sign = (crs1 - crs2 >= 0 && crs1 - crs2 <= 180) || 
-				(crs1 - crs2 <= -180 && crs1 - crs2 >= -360) ? 1 : -1;
-
-		r *= sign;
-		
-		return r;
-		*/
 	}
 
 	protected void setIgcPoints(ArrayList<GNSSPoint> points) {
@@ -297,13 +282,14 @@ public class FlightAnalyser {
 	 * 		Iterate through circles and work out average circle drift distance
 		and average circle drift bearing, trimming away outliers until
 		average deviation is single digits for distance and <5 degrees for
-		direction
+		direction.  This gets us a trend of circle drift direction & distance, 
+		which approximates wind direction.
 <br><br>
 		Iterate through again - for each circle, calculate first where the
 		average distance and bearing indicates we would have started this
 		circle. While there, calculate the bearing and distance from this
 		expected circle start point to the actual start point. This is the
-		correction vector.
+		correction vector, i.e. pilot or turbulence induced changes to circle drift.
 
 	 * @param circles
 	 * @return

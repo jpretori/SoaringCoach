@@ -115,7 +115,7 @@ public class TestCentringMoveDetection {
 	 * between a set of circles, indicate that a correction move has occurred
 	 * (only needs circle start fixes). This is about testing the calculations
 	 * that come up with the conclusion that there was a fluctuation in circle
-	 * drift in the sense of a change of drift direction. Also check that the
+	 * drift in the sense of a change of drift rate. Also check that the
 	 * drift direction and distance indication is correct.
 	 */
 	public void testCorrectionDetectionDistanceChanged() throws Exception {
@@ -143,7 +143,7 @@ public class TestCentringMoveDetection {
 				COMPASS_POINTS.N};
 		
 		ArrayList<Circle> circles = fa.analyseCircling();
-		assertEquals("Number of circles", 6, circles.size());
+		assertEquals("Number of circles", 5, circles.size());
 		
 		circles = fa.calculateCorrectionVectors(circles);
 		

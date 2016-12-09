@@ -236,7 +236,7 @@ public class TestFlightAnalyser {
 			assertEquals(
 					"circle count in thermal #" + i, 
 					num_circles_per_thermal[i], 
-					t.getTurns().size());
+					t.getCircles().size());
 			
 			assertEquals(
 					"thermal #"+i+" total duration seconds",

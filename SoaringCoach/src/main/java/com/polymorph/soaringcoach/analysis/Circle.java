@@ -28,9 +28,10 @@ public class Circle {
 	public double deg_course_change_since_start = 0;
 	public boolean circle_completed = false;
 	public FlightMode turn_direction = FlightMode.CRUISING;
+	
+	public PolarVector drift_vector = null;
 
 	/**
-	 * @param p the GPS fix at which the circle starts
 	 * @param p1 GNSS Point.  Must be resolved.
 	 * @param p2 GNSS Point.  Must be resolved.
 	 * @param mode 
@@ -67,6 +68,7 @@ public class Circle {
 	
 	/**
 	 * Facilitates making a second (and subsequent) circle in the same thermal, while keeping a constant reference heading
+	 * @param p1
 	 * @param p2
 	 * @param previous_circle
 	 */

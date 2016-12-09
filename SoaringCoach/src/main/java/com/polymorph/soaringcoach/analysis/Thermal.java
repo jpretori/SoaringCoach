@@ -5,29 +5,30 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Thermal {
-	private ArrayList<Circle> turns;
+	public ArrayList<Circle> circles;
+	public PolarVector wind = null;
 	
 	/**
 	 * Make a new thermal, ready to accept turns
 	 */
 	public Thermal() {
-		this.turns = new ArrayList<Circle>();
+		this.circles = new ArrayList<Circle>();
 	}
 
 	/**
-	 * Make a single-turn thermal.  Allows adding more turns if needed.
+	 * Make a single-circle thermal.  Allows adding more circles if needed.
 	 */
 	public Thermal(Circle t) {
-		this.turns = new ArrayList<Circle>();
-		turns.add(t);
+		this.circles = new ArrayList<Circle>();
+		circles.add(t);
 	}
 	
 	public void addTurn(Circle t) {
-		turns.add(t);
+		circles.add(t);
 	}
 	
-	public ArrayList<Circle> getTurns() {
-		return turns;
+	public ArrayList<Circle> getCircles() {
+		return circles;
 	}
 	
 	/**
@@ -35,21 +36,21 @@ public class Thermal {
 	 * @return a long value - expecting people to get more value out of whole number seconds
 	 */
 	public long getAverageCircleDuration() {
-		double average_turn_rate = 0;
+		double avg_circle_duration = 0;
 		
-		for (Circle turnData : turns) {
-			average_turn_rate += turnData.duration;
+		for (Circle c : circles) {
+			avg_circle_duration += c.duration;
 		}
-		average_turn_rate = average_turn_rate / turns.size();
+		avg_circle_duration = avg_circle_duration / circles.size();
 		
-		return Math.round(average_turn_rate);
+		return Math.round(avg_circle_duration);
 	}
 	
 	public String getTotalDuration() {
 		long total_seconds = 0;
 		
-		for (Circle turn : turns) {
-			total_seconds += turn.duration;
+		for (Circle c : circles) {
+			total_seconds += c.duration;
 		}
 		
 		long minutes = total_seconds / 60;
@@ -64,8 +65,8 @@ public class Thermal {
 	public long getTotalDurationSeconds() {
 		long total_seconds = 0;
 		
-		for (Circle turn : turns) {
-			total_seconds += turn.duration;
+		for (Circle c : circles) {
+			total_seconds += c.duration;
 		}
 		
 		return total_seconds;
@@ -74,11 +75,11 @@ public class Thermal {
 	@Override
 	public String toString() {
 		SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-		Date first_turn_timestamp = turns.get(0).timestamp;
+		Date first_circle_timestamp = circles.get(0).timestamp;
 		return 
-				"Start Time = ["+df.format(first_turn_timestamp)+"], "
+				"Start Time = ["+df.format(first_circle_timestamp)+"], "
 				+ "Thermal Duration (min:sec) = ["+getTotalDuration()+"], "
 				+ "Average circle duration (s) = ["+getAverageCircleDuration()+"], "
-				+ "Number of circles = ["+turns.size()+"]";
+				+ "Number of circles = ["+circles.size()+"]";
 	}
 }

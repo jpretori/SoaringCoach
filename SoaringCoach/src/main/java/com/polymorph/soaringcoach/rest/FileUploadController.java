@@ -77,7 +77,7 @@ public class FileUploadController {
 					thermal_details += "\n";
 					
 					int i = 1;
-					for (Circle turn : thermal.getTurns()) {
+					for (Circle turn : thermal.getCircles()) {
 						thermal_details += "\t\t" + i++ + ".  ";
 						thermal_details += turn.toString();
 						thermal_details += "\n";
