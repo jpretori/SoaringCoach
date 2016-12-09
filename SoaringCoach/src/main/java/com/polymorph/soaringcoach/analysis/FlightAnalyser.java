@@ -31,16 +31,7 @@ public class FlightAnalyser {
 	 * @return total distance flown
 	 */
 	public double calcTotalDistance() {
-		double total_dist = 0;
-		GNSSPoint prev_pt = null;
-		for (GNSSPoint pt : igc_points) {
-
-			if (pt != null && prev_pt != null) {
-				total_dist += pt.distance(prev_pt);
-			}
-			prev_pt = pt;
-		}
-		return total_dist;
+		return 0;
 	}
 
 	/**

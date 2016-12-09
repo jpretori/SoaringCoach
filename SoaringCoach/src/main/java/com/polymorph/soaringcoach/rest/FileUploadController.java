@@ -1,16 +1,22 @@
 package com.polymorph.soaringcoach.rest;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.polymorph.soaringcoach.analysis.Circle;
+import com.polymorph.soaringcoach.analysis.Flight;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.Thermal;
-import com.polymorph.soaringcoach.analysis.Circle;
-
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.util.LineInputStream;
 
 /**
  * Created by russel on 15/12/10.
@@ -37,23 +43,26 @@ public class FileUploadController {
             	// 3. Get notified once calculation is complete.  Somehow tell the user about this event
             	// 4. User either clicks on the flight or some refresh button to get updated aggregate stats
             	
+            	
                 GNSSPoint gnssPoint;
-                File convFile = new File(file.getOriginalFilename());
-                convFile.createNewFile();
-                FileOutputStream fos = new FileOutputStream(convFile);
-                fos.write(file.getBytes());
-                try (BufferedReader br = new BufferedReader(new FileReader(convFile))) {
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        gnssPoint = GNSSPoint.createGNSSPoint(convFile.getName(), line);
-                        if(gnssPoint != null){
-                            gnssPointList.add(gnssPoint);
-                        }
-                    }
-                }
+                
+                String line;
+                InputStream is = file.getInputStream();
+                LineInputStream lis = new LineInputStream(is);
+                try {
+	                while ((line = lis.readLine()) != null) {
+	                    gnssPoint = GNSSPoint.createGNSSPoint(file.getName(), line);
+	                    if(gnssPoint != null) {
+	                        gnssPointList.add(gnssPoint);
+	                    }
+	                }
+	            } finally {
+	            	lis.close();
+	            }
 
                 FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
-                double totalDistance =   flightAnalyser.calcTotalDistance();
+                
+                double totalDistance = flightAnalyser.calcTotalDistance();
 
                 ArrayList<Circle> turns = flightAnalyser.analyseCircling();
                 

@@ -26,44 +26,6 @@ public class TestFlightAnalyser {
 		//fail("Not yet implemented");
 	}
 
-	@Test
-	public void testCalcTotalDistanceFewPointsFarApart() {
-		ArrayList<GNSSPoint> points = new ArrayList<>();
-		
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B0945003339755S01924837EA0450004550FAWC"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1005003359832S01917153EA0450004550Villiersdorp"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1045003402828S02028435EA0450004550FASX"));
-		
-		FlightAnalyser fa = new FlightAnalyser(points);
-		assertEquals(148673, fa.calcTotalDistance(), 1);
-	}
-
-	@Test
-	public void testCalcTotalDistanceFewPointsMediumDistance() {
-		ArrayList<GNSSPoint> points = new ArrayList<>();
-		
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B0905003339778S01924835EA0450003450FAWC"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B0910003335963S01928400EA0450003450Quarry"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B0915003341230S01925350EA0450003450Nekkies"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B0920003343993S01921747EA0450003450Vic Peak"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B0925003339778S01924835EA0450003450FAWC"));
-		
-		FlightAnalyser fa = new FlightAnalyser(points);
-		assertEquals(36497, fa.calcTotalDistance(), 1);
-	}
-
-
-	@Test
-	public void testCalcTotalDistanceManyPointsVeryClose() throws FileNotFoundException {
-		ArrayList<GNSSPoint> points = new ArrayList<>();
-		
-		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/slow_movement_north.igc");
-		
-		FlightAnalyser fa = new FlightAnalyser(points);
-		assertEquals(206, fa.calcTotalDistance(), 1);
-	}
-	
 	/**
 	 * Test with a set of points that make up an S turn, without ever quite completing a circle 
 	 * @throws Exception
