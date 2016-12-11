@@ -2,18 +2,16 @@ package com.polymorph.soaringcoach;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.analysis.FlightAnalyser;
+import com.polymorph.soaringcoach.analysis.Circle;
+import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.Circle;
 import com.polymorph.soaringcoach.analysis.Thermal;
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class TestFlightAnalyser {
 
@@ -26,76 +24,6 @@ public class TestFlightAnalyser {
 		//fail("Not yet implemented");
 	}
 
-	/**
-	 * Test with a set of points that make up an S turn, without ever quite completing a circle 
-	 * @throws Exception
-	 */
-	@Test
-	public void testCirclingDetectionDiscard() throws Exception {
-		ArrayList<GNSSPoint> points = new ArrayList<>();
-		
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109303308755S01911128EA016190171900308"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109343308702S01911090EA016310173200309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109383308653S01911048EA016440174100308"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109423308633S01910983EA016480174500309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109463308656S01910920EA016440174200309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109503308709S01910895EA016450174400309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109543308763S01910919EA016540175200309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1109583308800S01910973EA016570175800309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110023308849S01911007EA016660176900309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110063308901S01910995EA016840178700308"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110103308929S01910941EA016900179400309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110143308914S01910879EA016920179500309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110183308865S01910851EA016910179300309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110223308810S01910877EA016860178800308"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110263308782S01910943EA016860178700307"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110303308788S01911014EA016880178900309"));
-		points.add(GNSSPoint.createGNSSPoint("testfile", "B1110343308821S01911072EA016930179500309"));		
-		FlightAnalyser fa = new FlightAnalyser(points);
-		
-		ArrayList<Circle> turns = fa.analyseCircling();
-		
-		assertEquals("number of turns", 0, turns.size());
-	}
-	
-	/**
-	 * This set of fixes includes: <br>
-	 * - an S-turn (i.e. half a circle left, immediately followed by half a
-	 * circle right)<br>
-	 * - four separate full circles strung together, all in the same turn direction
-	 * <br>
-	 * - part of a circle at the end of the series<br>
-	 * Having several circles immediately following each other, also tests the
-	 * modulus arithmetic around 360/0 degrees.
-	 * @throws Exception 
-	 */
-	@Test
-	public void testCirclingAnalysisPositive() throws Exception {
-		ArrayList<GNSSPoint> points = new ArrayList<>();
-		
-		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/circling_detection.igc");
-		
-		FlightAnalyser fa = new FlightAnalyser(points);
-		
-		ArrayList<Circle> turns = fa.analyseCircling();
-		
-		//Check # of turns
-		assertEquals("incorrect number of circles detected", 4, turns.size());
-		
-		//Check individual turn durations
-		Circle t1 = turns.get(0);
-		assertEquals("first circle duration", 36, t1.duration);
-		
-		Circle t2 = turns.get(1);
-		assertEquals("second circle duration", 20, t2.duration);
-		
-		Circle t3 = turns.get(2);
-		assertEquals("third circle duration", 32, t3.duration);
-		
-		Circle t4 = turns.get(3);
-		assertEquals("fourth circle duration", 28, t4.duration);
-	}
 	
 	/**
 	 * A set of points placed roughly in an octagon, with the first two points

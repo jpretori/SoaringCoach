@@ -52,10 +52,6 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		return circles;
 	}
 
-	public ArrayList<Circle> determineCircleStartValues() throws Exception {
-		return analyseCircling();
-	}
-
 	public static ArrayList<GNSSPoint> loadFromFile(String filename) throws FileNotFoundException {
 		ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 		
@@ -69,5 +65,10 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 
 	public ArrayList<Circle> calculateCorrectionVectors(ArrayList<Circle> circles) {
 		return super.calculateCorrectionVectors(circles);
+	}
+
+	public ArrayList<Circle> determineCircleStartValues() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

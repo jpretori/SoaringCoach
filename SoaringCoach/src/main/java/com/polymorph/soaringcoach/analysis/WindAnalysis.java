@@ -30,7 +30,7 @@ public class WindAnalysis implements IAnalysis {
 		}
 		
 		if (flight.thermals == null) {
-			throw new AnalysisException("Thermal array is null - cannot analyse flight as pre-conditions are not met");
+			throw new AnalysisException("Thermal array is null - cannot perform wind analysis until thermal analysis is completed");
 		}
 		
 		for (Thermal t : flight.thermals) {

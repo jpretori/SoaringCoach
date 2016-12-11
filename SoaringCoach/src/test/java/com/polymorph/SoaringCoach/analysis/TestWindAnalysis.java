@@ -211,12 +211,7 @@ public class TestWindAnalysis {
 	public void testHasBeenRun() throws AnalysisException {
 		Flight f = new Flight();
 		f.thermals = new ArrayList<>();
-		
-		assertEquals(false, wa.hasBeenRun(f));
-
-		wa.performAnalysis(f);
-		
-		assertEquals(true, wa.hasBeenRun(f));
+		TestUtilities.testHasBeenRun(wa, f);
 	}
 
 }

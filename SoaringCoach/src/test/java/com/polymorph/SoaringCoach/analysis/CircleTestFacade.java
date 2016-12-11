@@ -10,8 +10,8 @@ public class CircleTestFacade extends Circle {
 	public CircleTestFacade(GNSSPoint p1, GNSSPoint p2, CircleTestFacade c) {
 		super(p1, p2, c);
 	}
-
-	public boolean detectCircleCompleted(GNSSPoint p) throws Exception {
-		return super.detectCircleCompleted(p);
+	
+	public boolean detectCircleCompleted(GNSSPoint p) {
+		return false;
 	}
 }

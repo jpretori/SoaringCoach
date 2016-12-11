@@ -194,9 +194,8 @@ public class Circle {
 	 * 
 	 * @param p
 	 * @return
-	 * @throws Exception
 	 */
-	boolean detectCircleCompleted(GNSSPoint p) throws Exception {
+	boolean detectCircleCompleted(GNSSPoint p) {
 		//attempt 4: moved to Circle class
 		if (deg_course_change_since_start == 0) {
 			//Work out the smallest angle between the circle start course & the track course leading to p

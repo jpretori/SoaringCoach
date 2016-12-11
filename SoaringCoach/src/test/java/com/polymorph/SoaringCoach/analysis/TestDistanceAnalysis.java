@@ -78,15 +78,8 @@ public class TestDistanceAnalysis {
 
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
-		Flight f = new Flight();
-		
-		assertFalse(f.is_distance_analysis_complete);
-		
 		DistanceAnalysis da = new DistanceAnalysis();
-		
-		da.performAnalysis(f);
-		
-		assertTrue(f.is_distance_analysis_complete);
+		TestUtilities.testHasBeenRun(da, null);
 	}
 
 }
