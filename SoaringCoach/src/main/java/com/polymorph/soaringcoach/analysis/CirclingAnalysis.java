@@ -2,6 +2,8 @@ package com.polymorph.soaringcoach.analysis;
 
 import java.util.ArrayList;
 
+import com.polymorph.soaringcoach.Circle;
+import com.polymorph.soaringcoach.Flight;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 /**

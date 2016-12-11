@@ -1,10 +1,11 @@
-package com.polymorph.soaringcoach.analysis;
+package com.polymorph.soaringcoach;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
-import com.polymorph.soaringcoach.COMPASS_POINTS;
+import com.polymorph.soaringcoach.analysis.FlightAnalyser;
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
+import com.polymorph.soaringcoach.analysis.PolarVector;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class Circle {
@@ -122,6 +123,10 @@ public class Circle {
 		return check_twice_rule_followed;
 	}
 	
+	public void setCheckTwiceRuleIndicator(CHECK_TWICE_RULE check_twice_rule_followed) {
+		this.check_twice_rule_followed = check_twice_rule_followed;
+	}
+	
 	public double getCircleStartLatitude() {
 		return circle_start_latitude;
 	}
@@ -195,8 +200,7 @@ public class Circle {
 	 * @param p
 	 * @return
 	 */
-	boolean detectCircleCompleted(GNSSPoint p) {
-		//attempt 4: moved to Circle class
+	public boolean detectCircleCompleted(GNSSPoint p) {
 		if (deg_course_change_since_start == 0) {
 			//Work out the smallest angle between the circle start course & the track course leading to p
 			 double angle = Math.abs(circle_start_course - p.track_course_deg);
@@ -214,79 +218,6 @@ public class Circle {
 		circle_completed = Math.abs(deg_course_change_since_start) >= 360;
 		
 		return circle_completed;
-		
-		//attempt 3
-		/*
-		double p2_turn_start_course_delta = track_course_turn_start - p2.track_course_deg;
-		double p1_turn_start_course_delta = track_course_turn_start - p1.track_course_deg;
-		
-		//Account for track_course_turn_start being close to North, and p1 & p2 track courses being either side of North
-		
-		if (mode == FlightMode.TURNING_LEFT) {
-			if (track_course_turn_start > 180) {
-				if (p1_turn_start_course_delta > 180) { p1_turn_start_course_delta -= 360; }
-			} else {
-				if (p2_turn_start_course_delta < -180) { p2_turn_start_course_delta += 360; }
-			}
-			return (p1_turn_start_course_delta < 0) && (p2_turn_start_course_delta >= 0);
-		} else if (mode == FlightMode.TURNING_RIGHT) {
-			if (track_course_turn_start > 180) {
-				if (p2_turn_start_course_delta > 180) { p2_turn_start_course_delta -= 360; }
-			} else {
-				if (p1_turn_start_course_delta < -180) { p1_turn_start_course_delta += 360; }
-			}
-			return (p1_turn_start_course_delta > 0) && (p2_turn_start_course_delta <= 0);
-		}
-		else {
-			return false;
-		}
-		*/
-		
-		//attempt 2
-		/*
-		//boolean circle_completed = false;
-		double p1_bearing_to_turn_start = 
-				calcBearingChange(p1.track_course_deg, track_course_turn_start);
-		
-		double p2_bearing_to_turn_start = 
-				calcBearingChange(p2.track_course_deg, track_course_turn_start);
-
-		double p1_signum = Math.signum(p1_bearing_to_turn_start);
-		boolean p1_neg_or_zero = (p1_signum < 0) || (mode == FlightMode.TURNING_RIGHT && p1_signum == 0);
-		
-		double p2_signum = Math.signum(p2_bearing_to_turn_start);
-		boolean p2_neg_or_zero = (p2_signum < 0) || (mode == FlightMode.TURNING_LEFT && p2_signum == 0);
-		
-		boolean passed_ref_hdg = p1_neg_or_zero ^ p2_neg_or_zero;
-		
-		return passed_ref_hdg;
-		*/
-		
-		//attempt 1
-/*		
-		boolean p1_bearing_delta_below_90 = Math.abs(p1_bearing_to_turn_start) <= 90;
-		boolean p2_bearing_delta_below_90 = Math.abs(p2_bearing_to_turn_start) <= 90;
-		
-		switch (mode) {
-			case TURNING_LEFT:
-			boolean p1_bearing_delta_negative = p1_bearing_to_turn_start < 0;
-			boolean p2_bearing_delta_positive = p2_bearing_to_turn_start > 0;
-			
-			circle_completed = p1_bearing_delta_negative && p1_bearing_delta_below_90 &&
-						p2_bearing_delta_positive && p2_bearing_delta_below_90;
-			break;
-			case TURNING_RIGHT:
-				circle_completed = (p1_bearing_to_turn_start > 0) && p1_bearing_delta_below_90 &&
-						(p2_bearing_to_turn_start < 0) && p2_bearing_delta_below_90;
-			break;
-			default: 
-				circle_completed = false;
-			break;
-		}
-		
-		return circle_completed;
-		
-*/
 	}
 
 }

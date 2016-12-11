@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import javax.vecmath.Vector2d;
 
+import com.polymorph.soaringcoach.Circle;
+import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.Thermal;
+
 /**
  * Works out the wind direction and speed (in m/s) for each thermal. Done by
  * calculating the direction and distance that each circle in the thermal

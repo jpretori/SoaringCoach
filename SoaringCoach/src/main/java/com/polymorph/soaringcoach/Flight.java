@@ -1,6 +1,8 @@
-package com.polymorph.soaringcoach.analysis;
+package com.polymorph.soaringcoach;
 
 import java.util.ArrayList;
+
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
 
 /**
  * Contains any and all detail about the flight, including the raw data as well

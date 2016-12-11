@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.polymorph.soaringcoach.Flight;
+
 public class TestDistanceAnalysis {
 
 	@Test

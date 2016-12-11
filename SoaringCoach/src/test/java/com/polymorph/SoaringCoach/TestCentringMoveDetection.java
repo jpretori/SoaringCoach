@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.analysis.Circle;
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 

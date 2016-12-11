@@ -7,12 +7,12 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import com.polymorph.soaringcoach.Circle;
+import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.Thermal;
 import com.polymorph.soaringcoach.analysis.AnalysisException;
-import com.polymorph.soaringcoach.analysis.Circle;
-import com.polymorph.soaringcoach.analysis.Flight;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.Thermal;
 import com.polymorph.soaringcoach.analysis.WindAnalysis;
 
 public class TestWindAnalysis {

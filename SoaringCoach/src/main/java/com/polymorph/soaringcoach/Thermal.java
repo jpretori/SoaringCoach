@@ -1,8 +1,10 @@
-package com.polymorph.soaringcoach.analysis;
+package com.polymorph.soaringcoach;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import com.polymorph.soaringcoach.analysis.PolarVector;
 
 public class Thermal {
 	public ArrayList<Circle> circles;

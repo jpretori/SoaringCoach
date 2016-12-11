@@ -1,5 +1,7 @@
 package com.polymorph.soaringcoach.analysis;
 
+import com.polymorph.soaringcoach.Flight;
+
 /**
  * Works out the task distance, flight distance, as well as the track deviation percentage
  * 

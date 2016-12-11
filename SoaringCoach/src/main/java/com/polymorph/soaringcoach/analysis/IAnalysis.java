@@ -1,5 +1,7 @@
 package com.polymorph.soaringcoach.analysis;
 
+import com.polymorph.soaringcoach.Flight;
+
 /**
  * IAnalysis defines the interface contract for analysis processes that the
  * Flight gets put through. Each such implementation has as purpose to produce

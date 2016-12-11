@@ -3,6 +3,8 @@ package com.polymorph.soaringcoach.analysis;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.polymorph.soaringcoach.Flight;
+
 public class TestUtilities {
 	
 	public static void testHasBeenRun(IAnalysis a, Flight f) throws AnalysisException {

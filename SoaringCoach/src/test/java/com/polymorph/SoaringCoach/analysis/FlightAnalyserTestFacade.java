@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.polymorph.soaringcoach.Circle;
+import com.polymorph.soaringcoach.CircleTestFacade;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class FlightAnalyserTestFacade extends FlightAnalyser {
@@ -42,7 +44,7 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		ArrayList<Circle> circles = new ArrayList<Circle>();
 		
 		for (boolean b : testPattern) {
-			Circle c = new Circle(null, 20, 0, 0, 0);
+			CircleTestFacade c = new CircleTestFacade(null, 20, 0, 0, 0);
 			c.setCentringCorrection(b);
 			circles.add(c);
 		}

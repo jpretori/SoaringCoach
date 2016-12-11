@@ -3,6 +3,8 @@ package com.polymorph.soaringcoach.analysis;
 import java.util.ArrayList;
 
 import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
+import com.polymorph.soaringcoach.Circle;
+import com.polymorph.soaringcoach.Thermal;
 
 public class FlightAnalyser {
 	public enum FlightMode {
@@ -151,12 +153,12 @@ public class FlightAnalyser {
 		for (Circle circle : circles) {
 			if (circle.centeringCorrection()) {
 				if (previous_circle_correction) {
-					circle.check_twice_rule_followed = CHECK_TWICE_RULE.NOT_FOLLOWED;
+					circle.setCheckTwiceRuleIndicator(CHECK_TWICE_RULE.NOT_FOLLOWED);
 				} else {
-					circle.check_twice_rule_followed = CHECK_TWICE_RULE.FOLLOWED;
+					circle.setCheckTwiceRuleIndicator(CHECK_TWICE_RULE.FOLLOWED);
 				}
 			} else {
-				circle.check_twice_rule_followed = CHECK_TWICE_RULE.NOT_APPLICABLE;
+				circle.setCheckTwiceRuleIndicator(CHECK_TWICE_RULE.NOT_APPLICABLE);
 			}
 			previous_circle_correction = circle.centeringCorrection();
 		}

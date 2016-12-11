@@ -8,8 +8,6 @@ import org.junit.Test;
 
 import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.Circle;
-import com.polymorph.soaringcoach.analysis.CircleTestFacade;
 import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class TestDetectCircleCompleted {
