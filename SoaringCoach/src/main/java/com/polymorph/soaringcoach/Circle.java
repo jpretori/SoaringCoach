@@ -3,17 +3,15 @@ package com.polymorph.soaringcoach;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.polymorph.soaringcoach.analysis.FlightAnalyser;
+import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.PolarVector;
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class Circle {
 	public Date timestamp;
 	public long duration;
 	private boolean included_in_thermal = false;
 	CHECK_TWICE_RULE check_twice_rule_followed = CHECK_TWICE_RULE.NOT_APPLICABLE;
-	private boolean centring_correction;
 	
 	private double circle_start_latitude;
 	private double circle_start_longitude;
@@ -21,16 +19,19 @@ public class Circle {
 	public double circle_drift_bearing;
 	public double circle_drift_distance;
 
-	public COMPASS_POINTS correction_direction;
-	public double correction_bearing;
-	public double correction_distance;
-	
 	public double circle_start_course = -400;
 	public double deg_course_change_since_start = 0;
 	public boolean circle_completed = false;
 	public FlightMode turn_direction = FlightMode.CRUISING;
 	
 	public PolarVector drift_vector = null;
+	
+	/**
+	 * By how much did the pilot (intentionally or not) move this circle
+	 * relative to the previous one? This vector already has calculated wind
+	 * influence subtracted out.
+	 */
+	public PolarVector correction_vector = null;
 
 	/**
 	 * @param p1 GNSS Point.  Must be resolved.
@@ -93,10 +94,6 @@ public class Circle {
 		this.included_in_thermal = true;
 	}
 
-	public boolean centeringCorrection() {
-		return centring_correction;
-	}
-
 	public int getAltitudeChange() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -105,18 +102,6 @@ public class Circle {
 	public double getClimbRate() {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	public double getCorrectionDistance() {
-		return correction_distance;
-	}
-
-	public COMPASS_POINTS getCorrectionDirection() {
-		return correction_direction;
-	}
-
-	void setCentringCorrection(boolean b) {
-		centring_correction = b;
 	}
 
 	public CHECK_TWICE_RULE getCheckTwiceRuleIndicator() {
@@ -156,32 +141,6 @@ public class Circle {
 		return start_point ;
 	}
 
-	public void setCorrectionBearing(double correction_bearing) {
-		this.correction_bearing = correction_bearing;
-		if (correction_bearing >= 338 || correction_bearing <= 22) {
-			this.correction_direction = COMPASS_POINTS.N;
-		} else if (correction_bearing >= 23 && correction_bearing <= 67) {
-			this.correction_direction = COMPASS_POINTS.NE;
-		} else if (correction_bearing >= 68 && correction_bearing <= 112) {
-			this.correction_direction = COMPASS_POINTS.E;
-		} else if (correction_bearing >= 113 && correction_bearing <= 157) {
-			this.correction_direction = COMPASS_POINTS.SE;
-		} else if (correction_bearing >= 158 && correction_bearing <= 202) {
-			this.correction_direction = COMPASS_POINTS.S;
-		} else if (correction_bearing >= 203 && correction_bearing <= 247) {
-			this.correction_direction = COMPASS_POINTS.SW;
-		} else if (correction_bearing >= 248 && correction_bearing <= 292) {
-			this.correction_direction = COMPASS_POINTS.W;
-		} else if (correction_bearing >= 293 && correction_bearing <= 337) {
-			this.correction_direction = COMPASS_POINTS.NW;
-		}
-	}
-
-	public void setCorrectionDistance(double correction_distance) {
-		this.correction_distance = correction_distance;
-		
-	}
-
 	/**
 	 * 
 	 * @param p the last point in the circle, which by comparison to the start timestamp will determine the duration
@@ -219,5 +178,4 @@ public class Circle {
 		
 		return circle_completed;
 	}
-
 }

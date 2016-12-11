@@ -27,7 +27,4 @@ public class CircleTestFacade extends Circle {
 		return super.detectCircleCompleted(p);
 	}
 	
-	public void setCentringCorrection(boolean b) {
-		super.setCentringCorrection(b);
-	}
 }

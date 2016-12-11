@@ -6,15 +6,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.polymorph.soaringcoach.Circle;
-import com.polymorph.soaringcoach.CircleTestFacade;
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 
 public class FlightAnalyserTestFacade extends FlightAnalyser {
 	
-	public FlightAnalyserTestFacade(ArrayList<GNSSPoint> file) {
-		super(file);
-	}
-
 	public static double calculateTrackCourse(GNSSPoint p1, GNSSPoint p2) {
 		return FlightAnalyser.calculateTrackCourse(p1, p2);
 	}
@@ -27,33 +21,6 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		return FlightAnalyser.calcBearingChange(crs1, crs2);
 	}
 	
-	public FlightAnalyserTestFacade(String filename) throws FileNotFoundException  {
-		super(null);
-		
-		ArrayList<GNSSPoint> igc_points = new ArrayList<>();
-		
-		for (Scanner sc = new Scanner(new File(filename)); sc.hasNext();) {
-			String line = sc.nextLine();
-			igc_points.add(GNSSPoint.createGNSSPoint(filename, line));
-		}
-		
-		super.setIgcPoints(igc_points);
-	}
-
-	public ArrayList<Circle> runCheckTwiceLogic(boolean[] testPattern) {
-		ArrayList<Circle> circles = new ArrayList<Circle>();
-		
-		for (boolean b : testPattern) {
-			CircleTestFacade c = new CircleTestFacade(null, 20, 0, 0, 0);
-			c.setCentringCorrection(b);
-			circles.add(c);
-		}
-		
-		super.checkTwiceRule(circles);
-		
-		return circles;
-	}
-
 	public static ArrayList<GNSSPoint> loadFromFile(String filename) throws FileNotFoundException {
 		ArrayList<GNSSPoint> igc_points = new ArrayList<>();
 		
@@ -63,10 +30,6 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		}
 		
 		return igc_points;
-	}
-
-	public ArrayList<Circle> calculateCorrectionVectors(ArrayList<Circle> circles) {
-		return super.calculateCorrectionVectors(circles);
 	}
 
 	public ArrayList<Circle> determineCircleStartValues() {

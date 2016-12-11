@@ -25,4 +25,6 @@ public class Flight {
 	
 	public boolean is_thermal_analysis_complete;
 	public ArrayList<Thermal> thermals = null;
+	
+	public boolean is_centring_analysis_complete;
 }

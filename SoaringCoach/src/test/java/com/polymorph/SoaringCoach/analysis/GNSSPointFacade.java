@@ -1,7 +1,5 @@
 package com.polymorph.soaringcoach.analysis;
 
-import java.util.Date;
-
 public class GNSSPointFacade extends GNSSPoint {
 	public GNSSPointFacade() {super();}
 	

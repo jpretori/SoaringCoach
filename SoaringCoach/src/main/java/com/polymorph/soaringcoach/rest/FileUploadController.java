@@ -60,14 +60,14 @@ public class FileUploadController {
 	            	lis.close();
 	            }
 
-                FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
+              /*  FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
                 
                 double totalDistance = flightAnalyser.calcTotalDistance();
 
                 ArrayList<Circle> turns = flightAnalyser.analyseCircling();
                 
                 int turn_count = turns.size();
-                
+*/                
                 //get turn durations display string
                 //String turn_details = "";
                 //for (Turn turn : turns) {

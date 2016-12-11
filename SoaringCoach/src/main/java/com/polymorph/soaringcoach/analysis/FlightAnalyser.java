@@ -13,43 +13,6 @@ public class FlightAnalyser {
 		CRUISING
 	}
 
-	
-	private final double MAX_AVERAGE_DEVIATION_DRIFT_DISTANCE = 10.0;
-	private final double MAX_AVERAGE_DEVIATION_DRIFT_BEARING = 5.0;
-	
-	private ArrayList<GNSSPoint> igc_points = new ArrayList<>();
-	
-	public FlightAnalyser(ArrayList<GNSSPoint> file) {
-		igc_points = file;
-	}
-	
-	/**
-	 * Get the total distance flown over ground by adding together the 
-	 * distance between all points in the file.
-	 * @return total distance flown
-	 */
-	public double calcTotalDistance() {
-		return 0;
-	}
-
-	/**
-	 * Looks at all the turns identified by calculateTurnRates(), and identifies
-	 * which ones fit together into thermals. Also calculates some aggregates
-	 * for each thermal.
-	 * 
-	 * @return ArrayList<Thermal>
-	 * @throws Exception 
-	 */
-	public ArrayList<Thermal> calculateThermals() throws Exception {
-		ArrayList<Thermal> thermals = new ArrayList<>();
-		return thermals;
-	}
-	
-	public ArrayList<Circle> analyseCircling() {
-		// TODO Auto-generated method stub
-		return new ArrayList<>();
-	}
-
 	/**
 	 * Helper to calculate the bearing to get from p1 to p2
 	 * 
@@ -109,11 +72,7 @@ public class FlightAnalyser {
 
 		return r;
 	}
-
-	protected void setIgcPoints(ArrayList<GNSSPoint> points) {
-		this.igc_points = points;
-	}
-
+/*
 	protected void checkTwiceRule(ArrayList<Circle> circles) {
 		boolean previous_circle_correction = true;
 		for (Circle circle : circles) {
@@ -128,101 +87,5 @@ public class FlightAnalyser {
 			}
 			previous_circle_correction = circle.centeringCorrection();
 		}
-	}
-	
-	protected GNSSPoint calcDestinationPoint(GNSSPoint p1, double brng, double d) {
-		final double R = 6371000.0; //Earth mean radius in meters
-		
-		double latitude = Math.asin(Math.sin(p1.lat_radians) * Math.cos(d / R) +
-                Math.cos(p1.lat_radians) * Math.sin(d/R) * Math.cos(brng) );
-		
-		double longitude = p1.lon_radians + Math.atan2(Math.sin(brng) * Math.sin(d/R) * Math.cos(p1.lat_radians),
-                     Math.cos(d/R) - Math.sin(p1.lat_radians) * Math.sin(latitude));
-		
-		GNSSPoint p2 = GNSSPoint.createGNSSPoint(null, null, Math.toDegrees(latitude), Math.toDegrees(longitude), null, 0, 0, null);
-		
-		return p2;
-	}
-
-	/**
-	 * 		Iterate through circles and work out average circle drift distance
-		and average circle drift bearing, trimming away outliers until
-		average deviation is single digits for distance and <5 degrees for
-		direction.  This gets us a trend of circle drift direction & distance, 
-		which approximates wind direction.
-<br><br>
-		Iterate through again - for each circle, calculate first where the
-		average distance and bearing indicates we would have started this
-		circle. While there, calculate the bearing and distance from this
-		expected circle start point to the actual start point. This is the
-		correction vector, i.e. pilot or turbulence induced changes to circle drift.
-
-	 * @param circles
-	 * @return
-	 */
-	ArrayList<Circle> calculateCorrectionVectors(ArrayList<Circle> circles) {
-
-		Circle previous_circle = null;
-		double average_drift_distance = 0;
-		double average_drift_bearing = 0;
-		int i = 0;
-		for (Circle circle : circles) {
-			if (circle != null && previous_circle != null) {
-				
-				GNSSPoint p1 = previous_circle.getStartPoint();
-				GNSSPoint p2 = circle.getStartPoint();
-				
-				circle.circle_drift_bearing = calculateTrackCourse(p1, p2);
-				average_drift_bearing += circle.circle_drift_bearing;
-				
-				circle.circle_drift_distance = p1.distance(p2);
-				average_drift_distance += circle.circle_drift_distance;
-			}
-			
-			previous_circle = circle;
-			i += 1;
-		}
-		average_drift_distance = average_drift_distance / i;
-		average_drift_bearing = average_drift_bearing / i;
-
-		// Trim away distance and bearing values that fall outside the required
-		// average deviation parameters
-		previous_circle = null;
-		for (Circle circle : circles) {
-			if (circle != null && previous_circle != null) {
-				if (Math.abs(circle.getCircleDriftBearing() - average_drift_bearing) > MAX_AVERAGE_DEVIATION_DRIFT_BEARING ||
-						Math.abs(circle.getCircleDriftDistance() - average_drift_distance) > MAX_AVERAGE_DEVIATION_DRIFT_DISTANCE) {
-					
-					average_drift_bearing = average_drift_bearing * i;
-					average_drift_bearing -= circle.getCircleDriftBearing();
-					average_drift_distance = average_drift_distance * i;
-					average_drift_distance -= circle.getCircleDriftDistance();
-					i -= 1;
-					average_drift_bearing = average_drift_bearing / i;
-					average_drift_distance = average_drift_distance / i;
-				}
-			}
-			previous_circle = circle;
-		}
-		
-		// Now work out where the average drift makes us expect each circle, and
-		// work out the correction vector that takes us from that point to the
-		// one where the circle actually started
-		
-		for (Circle circle : circles) {
-			if (circle != null && previous_circle != null) {
-				GNSSPoint expected_circle_start_point = 
-						calcDestinationPoint(previous_circle.getStartPoint(), average_drift_bearing, average_drift_distance);
-				
-				double correction_bearing = calculateTrackCourse(expected_circle_start_point, circle.getStartPoint());
-				circle.setCorrectionBearing(correction_bearing);
-				
-				double correction_distance = expected_circle_start_point.distance(circle.getStartPoint());
-				circle.setCorrectionDistance(correction_distance);
-			}		
-			previous_circle = circle;
-		}
-		
-		return circles;
-	}
+	}*/
 }

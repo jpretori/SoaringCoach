@@ -40,7 +40,7 @@ public class WindAnalysis implements IAnalysis {
 		for (Thermal t : flight.thermals) {
 			t = calculateDriftVectors(t);
 						
-			refineAverageDrift(t);
+			t = refineAverageDrift(t);
 		}
 		
 		flight.is_wind_analysis_complete = true;
@@ -60,7 +60,7 @@ public class WindAnalysis implements IAnalysis {
 	 * 
 	 * @param t
 	 */
-	private void refineAverageDrift(Thermal t) {
+	private Thermal refineAverageDrift(Thermal t) {
 		//initially, just populate the drift vector arrays (polar and cartesian versions) and store how many vectors we have
 		ArrayList<Vector2d> drift_vectors_cartesian = new ArrayList<>();
 		ArrayList<PolarVector> drift_vectors_polar = new ArrayList<>();
@@ -118,7 +118,12 @@ public class WindAnalysis implements IAnalysis {
 			//now we have a wind vector, except that it's size is in "meters per circle"
 			average_drift_polar.size = 1.0 * average_drift_polar.size / t.getAverageCircleDuration();
 			t.wind = average_drift_polar;
+		} else {
+			// No wind to speak of.  At least avoid NPEs down the line
+			t.wind = new PolarVector(0, 0);
 		}
+		
+		return t;
 	}
 
 	/**
@@ -126,8 +131,7 @@ public class WindAnalysis implements IAnalysis {
 	 * circle to the next. Circle objects are updated in-place with drift vector
 	 * information, but the Thermal is returned anyway, for good form.
 	 * 
-	 * @param t
-	 *            Thermal containing some circles
+	 * @param t Thermal containing some circles
 	 */
 	private Thermal calculateDriftVectors(Thermal t) {
 		Circle c1 = null;
