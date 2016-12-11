@@ -24,7 +24,7 @@ public class CircleTestFacade extends Circle {
 	}
 	
 	public boolean detectCircleCompleted(GNSSPoint p) {
-		return false;
+		return super.detectCircleCompleted(p);
 	}
 	
 	public void setCentringCorrection(boolean b) {

@@ -17,10 +17,12 @@ public class Flight {
 	public boolean is_distance_analysis_complete = false;
 	public boolean is_wind_analysis_complete = false;
 	
-	public ArrayList<Thermal> thermals = null;
 	public double total_track_distance = 0;
 	public ArrayList<GNSSPoint> igc_points;
 	
 	public boolean is_circling_analysis_complete = false;
 	public ArrayList<Circle> circles;
+	
+	public boolean is_thermal_analysis_complete;
+	public ArrayList<Thermal> thermals = null;
 }

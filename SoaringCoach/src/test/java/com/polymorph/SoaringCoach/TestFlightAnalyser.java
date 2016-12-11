@@ -2,8 +2,6 @@ package com.polymorph.soaringcoach;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -85,63 +83,6 @@ public class TestFlightAnalyser {
 				new Circle(p8, p8, FlightMode.CRUISING), p9.getLatitude(), p9.getLongitude()), 0.1);
 	}
 	
-	/**
-	 * Takes a section of a real IGC file with a number of thermals in evidence,
-	 * and ensures the thermals are picked up correctly.
-	 * @throws Exception 
-	 */
-	@Test
-	public void testThermalDetectionPositive() throws Exception {
-		
-		ArrayList<GNSSPoint> points = 
-				FlightAnalyserTestFacade.loadFromFile("src/test/resources/thermal_detection_positive_test.igc");
-		
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(points);
-		
-		ArrayList<Thermal> thermals = fa.calculateThermals();
-		
-		assertEquals("number of thermals", 13, thermals.size());
-		
-		int[] num_circles_per_thermal = 
-			{ 20,  2,  3,   10,  1,  1,  1,  1,  4,   2,  2,  1,  2 };
-
-		int[] thermal_duration_seconds = 
-			{ 536, 74, 100, 308, 41, 36, 27, 33, 134, 65, 51, 26, 51 };
-
-		int[] thermal_average_circle_duration = 
-			{ 27,  37, 33,  31,  41, 36, 27, 33, 34,  33, 26, 26, 26 };
-
-		String[] thermal_duration_strings = 
-			{ 
-			"8:56", "1:14", "1:40", "5:08", "0:41", 
-			"0:36", "0:27", "0:33", "2:14", "1:05", 
-			"0:51", "0:26", "0:51" };
-
-		//Assert stuff about each thermal
-		for (int i = 0; i < thermals.size(); i++) {
-			Thermal t = thermals.get(i);
-			
-			assertEquals(
-					"circle count in thermal #" + i, 
-					num_circles_per_thermal[i], 
-					t.getCircles().size());
-			
-			assertEquals(
-					"thermal #"+i+" total duration seconds",
-					thermal_duration_seconds[i],
-					t.getTotalDurationSeconds());
-			
-			assertEquals(
-					"thermal #"+i+" average circle duration",
-					thermal_average_circle_duration[i],
-					t.getAverageCircleDuration());
-			
-			assertEquals(
-					"thermal #"+i+" total duration string",
-					thermal_duration_strings[i],
-					t.getTotalDuration());
-		}
-	}
 
 	/**
 	 * Test in 30deg increments all the way around the compass, towards the left.

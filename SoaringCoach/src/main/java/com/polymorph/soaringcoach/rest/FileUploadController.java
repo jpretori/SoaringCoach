@@ -76,7 +76,7 @@ public class FileUploadController {
 				//	turn_details += "\n";
 				//}
                 
-                ArrayList<Thermal> thermals = flightAnalyser.calculateThermals();
+               /* ArrayList<Thermal> thermals = flightAnalyser.calculateThermals();
                 int thermal_count = thermals.size();
                 
 				String thermal_details = "";
@@ -99,7 +99,8 @@ public class FileUploadController {
 				return "Ground Track Distance = ["+String.valueOf(Math.round(totalDistance)/1000.0)+"] kilometers.\n\n"
 					+ "Total thermals detected = ["+thermal_count+"]\n\n"
                 	+ "Total circles detected = ["+turn_count+"]\n\n"
-        			+ "Thermal details = \n"+thermal_details +"\n\n";
+        			+ "Thermal details = \n"+thermal_details +"\n\n";*/
+                return "";
 				
             } catch (Exception e) {
                 return "You failed to upload " + " => " + e.getMessage();
