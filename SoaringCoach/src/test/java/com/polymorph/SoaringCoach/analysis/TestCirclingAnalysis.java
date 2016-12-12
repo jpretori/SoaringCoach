@@ -90,5 +90,111 @@ public class TestCirclingAnalysis {
 		f.igc_points = new ArrayList<>();
 		TestUtilities.testHasBeenRun(ca, f);
 	}
+	
 
+	@Test
+	/**
+	 * Accurately determine circle start lat/lon/heading/time tuple for a set of circles with no wind
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	public void testDetermineCircleStartNoWind() throws Exception {
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/DetermineCircleStartNoWind.igc");
+		
+		double[] circle_start_lat_expected = {50.76616667, 50.7662, 50.7662, 50.7662};
+		
+		double[] circle_start_lon_expected = {3.877, 3.876816667, 3.876816667, 3.876816667};
+		
+		double[] circle_start_heading_expected = {90, 90, 90, 90};
+		
+		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:46", "10:44:05"};
+		
+		CirclingAnalysis ca = new CirclingAnalysis();
+		ca.performAnalysis(f);
+		ArrayList<Circle> circles = f.circles;
+		
+		assertEquals("Number of circles", 3, circles.size());
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
+					circle_start_lat_expected[i], 
+					circle.getCircleStartLatitude(), 
+					0.00000001);
+			
+			assertEquals(
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
+					circle_start_lon_expected[i],
+					circle.getCircleStartLongitude(),
+					0.00000001);
+			
+			assertEquals(
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
+					circle_start_heading_expected[i],
+					circle.circle_start_course,
+					0.1);
+			
+			assertEquals(
+					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
+					circle_start_timestamp_expected[i],
+					circle.getTimestamp());
+			
+			i += 1;
+		}
+	}
+
+	@Test
+	/**
+	 * Accurately determine circle start lat/lon/heading/time tuple for a set of 
+	 * circles with howling gale
+	 * 
+	 */
+	public void testDetermineCircleStartHowlingGale() throws Exception {
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/DetermineCircleStartHowlingGale.igc");
+		
+		double[] circle_start_lat_expected = { 50.76625, 50.7665, 50.7667166666667, 50.7669 };
+
+		double[] circle_start_lon_expected = { 3.8801, 3.8836, 3.886, 3.8882 };
+
+		double[] circle_start_heading_expected = { 88.1, 88.1, 88.1, 88.1 };
+
+		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:15", "10:40:27", "10:40:37" };
+
+		CirclingAnalysis ca = new CirclingAnalysis();
+		ca.performAnalysis(f);
+		ArrayList<Circle> circles = f.circles;
+		
+		assertEquals("Number of circles", 4, circles.size());
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals("Circle at index " + i, 
+					circle_start_lat_expected[i], 
+					circle.getCircleStartLatitude(), 
+					0.0001);
+			
+			assertEquals("Circle at index " + i, 
+					circle_start_lon_expected[i],
+					circle.getCircleStartLongitude(),
+					0.0001);
+			
+			assertEquals("Circle at index " + i, 
+					circle_start_heading_expected[i],
+					circle.circle_start_course,
+					0.1);
+			
+			assertEquals("Circle at index " + i, 
+					circle_start_timestamp_expected[i],
+					circle.getTimestamp());
+			
+			i += 1;
+		}
+	}
 }

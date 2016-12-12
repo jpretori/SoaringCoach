@@ -9,6 +9,7 @@ import com.polymorph.soaringcoach.analysis.PolarVector;
 public class Thermal {
 	public ArrayList<Circle> circles;
 	public PolarVector wind = null;
+	public boolean is_flying_erratically;
 	
 	/**
 	 * Make a new thermal, ready to accept turns

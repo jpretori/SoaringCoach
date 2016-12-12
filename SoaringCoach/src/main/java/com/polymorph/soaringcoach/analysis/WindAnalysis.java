@@ -76,18 +76,20 @@ public class WindAnalysis implements IAnalysis {
 			}
 		}
 		
+		int drift_vectors_starting_count = drift_vectors_cartesian.size();
+		
 		Vector2d average_drift_cartesian = null;
 		PolarVector average_drift_polar = null;
-		int drift_vectors_count;
+		int drift_vectors_remaining_count;
 		do {
 			average_drift_cartesian = new Vector2d(0, 0);
-			drift_vectors_count = drift_vectors_cartesian.size();
+			drift_vectors_remaining_count = drift_vectors_cartesian.size();
 			
 			//Get average cartesian drift vector, and convert back to polar
 			for (Vector2d drift_cartesian : drift_vectors_cartesian) {
 				average_drift_cartesian.add(drift_cartesian); 
 			}
-			average_drift_cartesian.scale(1.0 / drift_vectors_count); 
+			average_drift_cartesian.scale(1.0 / drift_vectors_remaining_count); 
 			
 			double average_drift_bearing = Math.atan2(average_drift_cartesian.y, average_drift_cartesian.x);
 			average_drift_bearing = Math.toDegrees(average_drift_bearing);
@@ -99,7 +101,7 @@ public class WindAnalysis implements IAnalysis {
 			average_drift_polar = new PolarVector(average_drift_bearing, average_drift_size);
 			
 			//discard outliers, one at a time
-			for (int i = 0; i < drift_vectors_count; i++) {
+			for (int i = 0; i < drift_vectors_remaining_count; i++) {
 				PolarVector drift_vector_polar = drift_vectors_polar.get(i);
 				
 				boolean size_cutoff = Math.abs(drift_vector_polar.size - average_drift_polar.size) > DRIFT_OUTLIER_CUTOFF_SIZE;
@@ -112,7 +114,7 @@ public class WindAnalysis implements IAnalysis {
 					break; //Go back to recalculate the average - doing these one at a time should get more accurate results
 				}
 			}
-		} while (drift_vectors_count > drift_vectors_cartesian.size() && drift_vectors_cartesian.size() > 0);
+		} while (drift_vectors_remaining_count > drift_vectors_cartesian.size() && drift_vectors_cartesian.size() > 0);
 		
 		if (drift_vectors_cartesian.size() > 0) {
 			//now we have a wind vector, except that it's size is in "meters per circle"
@@ -121,6 +123,12 @@ public class WindAnalysis implements IAnalysis {
 		} else {
 			// No wind to speak of.  At least avoid NPEs down the line
 			t.wind = new PolarVector(0, 0);
+		}
+		
+		if ((1.0 * drift_vectors_remaining_count) / drift_vectors_starting_count < 0.3) {
+			// This means we "removed outliers" until only 30% of the original drift vectors remain.  
+			// I.e. the guy is flying erratically, since 70% of circles contain a substantial "correction"
+			t.is_flying_erratically = true;
 		}
 		
 		return t;

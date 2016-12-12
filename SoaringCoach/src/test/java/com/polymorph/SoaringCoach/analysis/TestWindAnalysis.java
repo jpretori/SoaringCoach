@@ -134,6 +134,8 @@ public class TestWindAnalysis {
 		assertEquals(45.0, t.wind.bearing, 0.1);
 		assertEquals(15.73, t.wind.size, 0.1);
 		
+		assertFalse(t.is_flying_erratically);
+		
 		assertEquals(3, t.circles.size());
 		Circle c1, c2, c3;
 		c1 = t.circles.get(0);
@@ -188,7 +190,10 @@ public class TestWindAnalysis {
 		
 		t = f.thermals.get(0);
 		
-		assertNull(t.wind);
+		assertNotNull(t.wind);
+		assertEquals(63.4, t.wind.bearing, 0.1);
+		assertEquals(124.3/t.getAverageCircleDuration(), t.wind.size, 0.1);
+		assertFalse(t.is_flying_erratically);
 		
 		assertEquals(3, t.circles.size());
 		Circle c1, c2, c3;

@@ -14,106 +14,6 @@ public class TestCentringMoveDetection {
 
 	@Test
 	/**
-	 * Accurately determine circle start lat/lon/heading/time tuple for a set of circles with no wind
-	 * 
-	 * @throws FileNotFoundException
-	 */
-	public void testDetermineCircleStartNoWind() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/DetermineCircleStartNoWind.igc");
-		
-		double[] circle_start_lat_expected = {50.76616667, 50.7662, 50.7662, 50.7662};
-		
-		double[] circle_start_lon_expected = {3.877, 3.876816667, 3.876816667, 3.876816667};
-		
-		double[] circle_start_heading_expected = {-1, 286.0, 0.0, 0.0};
-		
-		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:46", "10:44:05"};
-		
-		ArrayList<Circle> circles = null;//fa.determineCircleStartValues();
-		assertEquals("Number of circles", 3, circles.size());
-		
-		int i = 0;
-		for (Circle circle : circles) {
-			assertEquals(
-					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
-					circle_start_lat_expected[i], 
-					circle.getCircleStartLatitude(), 
-					0.00000001);
-			
-			assertEquals(
-					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
-					circle_start_lon_expected[i],
-					circle.getCircleStartLongitude(),
-					0.00000001);
-			
-			assertEquals(
-					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
-					circle_start_heading_expected[i],
-					circle.getCircleDriftBearing(),
-					0.1);
-			
-			assertEquals(
-					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
-					circle_start_timestamp_expected[i],
-					circle.getTimestamp());
-			
-			i += 1;
-		}
-	}
-
-	@Test
-	/**
-	 * Accurately determine circle start lat/lon/heading/time tuple for a set of 
-	 * circles with howling gale
-	 * 
-	 */
-	public void testDetermineCircleStartHowlingGale() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/DetermineCircleStartHowlingGale.igc");
-		
-		double[] circle_start_lat_expected = { 50.76625, 50.7667, 50.7667166666667, 50.7671166666667 };
-
-		double[] circle_start_lon_expected = { 3.88011666666667, 3.88413333333333, 3.886, 3.88873333333333 };
-
-		double[] circle_start_heading_expected = { -1, 80.0, 89.2, 77.0 };
-
-		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:16", "10:40:27", "10:40:38" };
-
-		ArrayList<Circle> circles = null;//fa.determineCircleStartValues();
-		assertEquals("Number of circles", 3, circles.size());
-		
-		int i = 0;
-		for (Circle circle : circles) {
-			assertEquals("Circle at index " + i, 
-					circle_start_lat_expected[i], 
-					circle.getCircleStartLatitude(), 
-					0.00000001);
-			
-			assertEquals("Circle at index " + i, 
-					circle_start_lon_expected[i],
-					circle.getCircleStartLongitude(),
-					0.00000001);
-			
-			assertEquals("Circle at index " + i, 
-					circle_start_heading_expected[i],
-					circle.getCircleDriftBearing(),
-					0.1);
-			
-			assertEquals("Circle at index " + i, 
-					circle_start_timestamp_expected[i],
-					circle.getTimestamp());
-			
-			i += 1;
-		}
-	}
-
-	@Test
-	/**
 	 * Positive: Correctly determine whether or not the fluctuations in distance
 	 * between a set of circles, indicate that a correction move has occurred
 	 * (only needs circle start fixes). This is about testing the calculations
@@ -335,11 +235,4 @@ public class TestCentringMoveDetection {
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	@Test
-	public void testCalcDestinationPoint() {
-		assertEquals("No test implemented yet", 1, 2);
-	}
 }
