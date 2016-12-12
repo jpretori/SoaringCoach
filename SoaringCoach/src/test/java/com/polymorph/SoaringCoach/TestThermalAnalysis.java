@@ -64,7 +64,7 @@ public class TestThermalAnalysis {
 			assertEquals(
 					"circle count in thermal #" + i, 
 					num_circles_per_thermal[i], 
-					t.getCircles().size());
+					t.circles.size());
 			
 			assertEquals(
 					"thermal #"+i+" total duration seconds",

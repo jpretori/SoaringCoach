@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
 import com.polymorph.soaringcoach.Thermal;
@@ -121,4 +122,50 @@ public class TestCentringAnalysis {
 		assertEquals(0.0005, p2.getLatitude(), 0.00001);
 	}
 
+	@Test
+	public void testCorrectionDetectionNoChanges() throws Exception {
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/testCorrectionDetectionNoChanges.igc");
+		
+		PolarVector[] centring_move_conclusion = {
+				new PolarVector(0, 0),
+				new PolarVector(0, 0),
+				new PolarVector(0, 0),
+				new PolarVector(0, 0),
+				new PolarVector(0, 0)};
+		
+		CirclingAnalysis ca = new CirclingAnalysis();
+		f = ca.performAnalysis(f);
+		ArrayList<Circle> circles = f.circles;
+		
+		ThermalAnalysis ta = new ThermalAnalysis();
+		f = ta.performAnalysis(f);
+		
+		WindAnalysis wa = new WindAnalysis();
+		f = wa.performAnalysis(f);
+		
+		CentringAnalysis centring = new CentringAnalysis();
+		f = centring.performAnalysis(f);
+		
+		assertEquals("Number of circles", 4, circles.size());
+		
+		int i = 0;
+		for (Circle circle : circles) {
+			assertEquals(
+					"Circle at index " + i, 
+					centring_move_conclusion[i].bearing, 
+					circle.correction_vector.bearing,
+					0.1);
+			
+			assertEquals(
+					"Circle at index " + i, 
+					centring_move_conclusion[i].size, 
+					circle.correction_vector.size,
+					0.1);
+			
+			i += 1;
+		}		
+	}
 }

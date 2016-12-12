@@ -12,7 +12,7 @@ public class CircleTestFacade extends Circle {
 			double circle_start_latitude,
 			double circle_start_longitude,
 			double circle_drift_bearing) {
-		super(timestamp, duration, circle_start_latitude, circle_start_longitude, circle_drift_bearing);
+		super(timestamp, duration, circle_start_latitude, circle_start_longitude);
 	}
 
 	public CircleTestFacade(GNSSPoint p1, GNSSPoint p2, FlightMode mode) {

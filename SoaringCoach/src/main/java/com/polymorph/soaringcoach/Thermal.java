@@ -30,10 +30,6 @@ public class Thermal {
 		circles.add(t);
 	}
 	
-	public ArrayList<Circle> getCircles() {
-		return circles;
-	}
-	
 	/**
 	 * Calculates and returns the average turn rate over the entire set
 	 * @return a long value - expecting people to get more value out of whole number seconds

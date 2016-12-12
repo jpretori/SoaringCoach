@@ -64,7 +64,7 @@ public class WindAnalysis implements IAnalysis {
 		//initially, just populate the drift vector arrays (polar and cartesian versions) and store how many vectors we have
 		ArrayList<Vector2d> drift_vectors_cartesian = new ArrayList<>();
 		ArrayList<PolarVector> drift_vectors_polar = new ArrayList<>();
-		for (Circle c : t.getCircles()) {
+		for (Circle c : t.circles) {
 			if (c.drift_vector != null) {
 				drift_vectors_polar.add(c.drift_vector);
 				
@@ -143,7 +143,7 @@ public class WindAnalysis implements IAnalysis {
 	 */
 	private Thermal calculateDriftVectors(Thermal t) {
 		Circle c1 = null;
-		for (Circle c2 : t.getCircles()) {
+		for (Circle c2 : t.circles) {
 			if (c1 != null) {
 				GNSSPoint c1_start = c1.getStartPoint();
 				GNSSPoint c2_start = c2.getStartPoint();

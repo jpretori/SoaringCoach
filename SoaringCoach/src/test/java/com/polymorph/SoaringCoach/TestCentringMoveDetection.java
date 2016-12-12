@@ -73,49 +73,6 @@ public class TestCentringMoveDetection {
 		}
 	}
 
-	@Test
-	public void testCorrectionDetectionNoChanges() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/testCorrectionDetectionNoChanges.igc");
-		
-		boolean[] centring_move_conclusion = { false, false, false, false, false };
-		
-		CHECK_TWICE_RULE[] check_twice_rule_followed = {
-				CHECK_TWICE_RULE.NOT_APPLICABLE, 
-				CHECK_TWICE_RULE.NOT_APPLICABLE,
-				CHECK_TWICE_RULE.NOT_APPLICABLE,
-				CHECK_TWICE_RULE.NOT_APPLICABLE,
-				CHECK_TWICE_RULE.NOT_APPLICABLE};
-		
-		int[] altitude_change = { 4, -4, 0, 0, 0 };
-		
-		double[] climb_rate = { 0.2, -0.2, 0.0, 0.0, 0.0 };
-				
-		ArrayList<Circle> circles = null;//fa.analyseCircling();
-		assertEquals("Number of circles", 5, circles.size());
-		
-		int i = 0;
-		for (Circle circle : circles) {
-			assertEquals(
-					"Circle at index " + i, 
-					check_twice_rule_followed[i], 
-					circle.getCheckTwiceRuleIndicator());
-			
-			assertEquals(
-					"Circle at index " + i, 
-					altitude_change[i], 
-					circle.getAltitudeChange());
-			
-			assertEquals(
-					"Circle at index " + i, 
-					climb_rate[i], 
-					circle.getClimbRate(), 0.1);
-			i += 1;
-		}		
-	}
-
 
 	@Test
 	/**

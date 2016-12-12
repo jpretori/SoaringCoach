@@ -15,9 +15,6 @@ public class Circle {
 	
 	private double circle_start_latitude;
 	private double circle_start_longitude;
-	
-	public double circle_drift_bearing;
-	public double circle_drift_distance;
 
 	public double circle_start_course = -400;
 	public double deg_course_change_since_start = 0;
@@ -59,13 +56,11 @@ public class Circle {
 			Date timestamp, 
 			long duration,
 			double circle_start_latitude,
-			double circle_start_longitude,
-			double circle_drift_bearing) {
+			double circle_start_longitude) {
 		this.timestamp = timestamp;
 		this.duration = duration;
 		this.circle_start_latitude = circle_start_latitude;
 		this.circle_start_longitude = circle_start_longitude;
-		this.circle_drift_bearing = circle_drift_bearing;
 	}
 	
 	/**
@@ -119,15 +114,7 @@ public class Circle {
 	public double getCircleStartLongitude() {
 		return circle_start_longitude;
 	}
-
-	public double getCircleDriftBearing() {
-		return circle_drift_bearing;
-	}
 	
-	public double getCircleDriftDistance() {
-		return circle_drift_distance;
-	}
-
 	public String getTimestamp() {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 				
