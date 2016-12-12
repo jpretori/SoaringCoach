@@ -1,14 +1,15 @@
 package com.polymorph.soaringcoach.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.COMPASS_POINTS;
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.Thermal;
 
 public class TestCentringAnalysis {
 
@@ -24,10 +25,12 @@ public class TestCentringAnalysis {
 	 */
 	@Test
 	public void testCorrectionDetectionBearingChanged() throws Exception {
-		int[] expect_circle_correction_distance = { 0, 18, 38, 13 };
 		
-		double[] expect_circle_correction_direction = {
-				0, 0, 0, 0};
+		PolarVector[] expect_corrections = {
+				new PolarVector(0, 0),
+				new PolarVector(81.6, 278), 
+				new PolarVector(79.6, 295),
+				new PolarVector(68.0, 194)};
 		
 		Flight f = new Flight();
 		f.igc_points = FlightAnalyserTestFacade.loadFromFile("src/test/resources/testCorrectionDetectionBearingChanged.igc");
@@ -35,11 +38,15 @@ public class TestCentringAnalysis {
 		CirclingAnalysis circ_a = new CirclingAnalysis();
 		f = circ_a.performAnalysis(f);
 		
-		ThermalAnalysis ta = new ThermalAnalysis();
-		f = ta.performAnalysis(f);
-		
-		WindAnalysis wa = new WindAnalysis();
-		f = wa.performAnalysis(f);
+		Thermal t = new Thermal();
+		f.thermals = new ArrayList<>(); 
+		f.thermals.add(t);
+		t.wind = new PolarVector(0, 0);
+		for (Circle c : f.circles) {
+			t.addCircle(c);
+		}
+		f.is_thermal_analysis_complete = true;
+		f.is_wind_analysis_complete = true;
 		
 		CentringAnalysis cen_a = new CentringAnalysis();
 		f = cen_a.performAnalysis(f);
@@ -50,13 +57,13 @@ public class TestCentringAnalysis {
 		for (Circle circle : f.circles) {
 			assertEquals(
 					"Circle at index " + i, 
-					expect_circle_correction_distance[i], 
+					expect_corrections[i].size, 
 					circle.correction_vector.size,
-					0.1);
+					1);
 			
 			assertEquals(
 					"Circle at index " + i, 
-					expect_circle_correction_direction[i], 
+					expect_corrections[i].bearing, 
 					circle.correction_vector.bearing,
 					0.1);
 			i += 1;
@@ -101,6 +108,17 @@ public class TestCentringAnalysis {
 		f = wa.performAnalysis(f);
 
 		TestUtilities.testHasBeenRun(ca, f);
+	}
+	
+	@Test
+	public void testCalcDestinationPoint() {
+		CentringAnalysis ca = new CentringAnalysis();
+		GNSSPoint p1 = GNSSPoint.createGNSSPoint("testfile", null, 0, 0, null, 0, 0, null);
+		PolarVector wind = new PolarVector(0, 2.224);
+		GNSSPoint p2 = ca.calcDestinationPoint(p1, wind, 25);
+		
+		assertEquals(0, p2.getLongitude(), 0.00001);
+		assertEquals(0.0005, p2.getLatitude(), 0.00001);
 	}
 
 }

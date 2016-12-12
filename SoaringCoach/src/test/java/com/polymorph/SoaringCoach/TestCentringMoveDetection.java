@@ -19,7 +19,9 @@ public class TestCentringMoveDetection {
 	 * @throws FileNotFoundException
 	 */
 	public void testDetermineCircleStartNoWind() throws Exception {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/DetermineCircleStartNoWind.igc");
 		
 		double[] circle_start_lat_expected = {50.76616667, 50.7662, 50.7662, 50.7662};
@@ -30,7 +32,7 @@ public class TestCentringMoveDetection {
 		
 		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:46", "10:44:05"};
 		
-		ArrayList<Circle> circles = fa.determineCircleStartValues();
+		ArrayList<Circle> circles = null;//fa.determineCircleStartValues();
 		assertEquals("Number of circles", 3, circles.size());
 		
 		int i = 0;
@@ -69,7 +71,9 @@ public class TestCentringMoveDetection {
 	 * 
 	 */
 	public void testDetermineCircleStartHowlingGale() throws Exception {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/DetermineCircleStartHowlingGale.igc");
 		
 		double[] circle_start_lat_expected = { 50.76625, 50.7667, 50.7667166666667, 50.7671166666667 };
@@ -80,7 +84,7 @@ public class TestCentringMoveDetection {
 
 		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:16", "10:40:27", "10:40:38" };
 
-		ArrayList<Circle> circles = fa.determineCircleStartValues();
+		ArrayList<Circle> circles = null;//fa.determineCircleStartValues();
 		assertEquals("Number of circles", 3, circles.size());
 		
 		int i = 0;
@@ -118,7 +122,9 @@ public class TestCentringMoveDetection {
 	 * drift direction and distance indication is correct.
 	 */
 	public void testCorrectionDetectionDistanceChanged() throws Exception {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/testCorrectionDetectionDistanceChanged.igc");
 		
 		boolean[] centring_move_conclusion = { false, false, false, true, false, false };
@@ -141,18 +147,13 @@ public class TestCentringMoveDetection {
 				COMPASS_POINTS.N,
 				COMPASS_POINTS.N};
 		
-		ArrayList<Circle> circles = fa.analyseCircling();
+		ArrayList<Circle> circles = null;//fa.analyseCircling();
 		assertEquals("Number of circles", 5, circles.size());
 		
-		circles = fa.calculateCorrectionVectors(circles);
+		circles = null;//fa.calculateCorrectionVectors(circles);
 		
 		int i = 0;
 		for (Circle circle : circles) {
-			assertEquals(
-					"Circle at index " + i, 
-					centring_move_conclusion[i], 
-					circle.centeringCorrection());
-
 			assertEquals(
 					"Circle at index " + i, 
 					check_twice_rule_followed[i], 
@@ -161,20 +162,22 @@ public class TestCentringMoveDetection {
 			assertEquals(
 					"Circle at index " + i, 
 					correction_vector_distance[i], 
-					circle.getCorrectionDistance(),
+					circle.correction_vector.size,
 					0.1);
 			
 			assertEquals(
 					"Circle at index " + i, 
 					correction_vector_direction[i], 
-					circle.getCorrectionDirection());
+					circle.correction_vector.bearing);
 			i += 1;
 		}
 	}
 
 	@Test
 	public void testCorrectionDetectionNoChanges() throws Exception {
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(
+		Flight f = new Flight();
+		
+		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/testCorrectionDetectionNoChanges.igc");
 		
 		boolean[] centring_move_conclusion = { false, false, false, false, false };
@@ -190,16 +193,11 @@ public class TestCentringMoveDetection {
 		
 		double[] climb_rate = { 0.2, -0.2, 0.0, 0.0, 0.0 };
 				
-		ArrayList<Circle> circles = fa.analyseCircling();
+		ArrayList<Circle> circles = null;//fa.analyseCircling();
 		assertEquals("Number of circles", 5, circles.size());
 		
 		int i = 0;
 		for (Circle circle : circles) {
-			assertEquals(
-					"Circle at index " + i, 
-					centring_move_conclusion[i], 
-					circle.centeringCorrection());
-
 			assertEquals(
 					"Circle at index " + i, 
 					check_twice_rule_followed[i], 
@@ -237,9 +235,9 @@ public class TestCentringMoveDetection {
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 		};
 		
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade();
 		
-		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		ArrayList<Circle> circles = null;//fa.runCheckTwiceLogic(testPattern);
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -265,9 +263,9 @@ public class TestCentringMoveDetection {
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 		};
 		
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade();
 		
-		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		ArrayList<Circle> circles = null;//fa.runCheckTwiceLogic(testPattern);
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -294,9 +292,9 @@ public class TestCentringMoveDetection {
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 		};
 		
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade();
 		
-		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		ArrayList<Circle> circles = null;//fa.runCheckTwiceLogic(testPattern);
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -324,9 +322,9 @@ public class TestCentringMoveDetection {
 				CHECK_TWICE_RULE.NOT_APPLICABLE,
 		};
 		
-		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade(new ArrayList<GNSSPoint>());
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade();
 		
-		ArrayList<Circle> circles = fa.runCheckTwiceLogic(testPattern);
+		ArrayList<Circle> circles = null;//fa.runCheckTwiceLogic(testPattern);
 		
 		int i = 0;
 		for (Circle circle : circles) {

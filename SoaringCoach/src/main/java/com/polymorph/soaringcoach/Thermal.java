@@ -25,7 +25,7 @@ public class Thermal {
 		circles.add(t);
 	}
 	
-	public void addTurn(Circle t) {
+	public void addCircle(Circle t) {
 		circles.add(t);
 	}
 	

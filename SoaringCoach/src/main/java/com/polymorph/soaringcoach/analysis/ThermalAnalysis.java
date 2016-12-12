@@ -39,7 +39,7 @@ public class ThermalAnalysis implements IAnalysis {
 						c1.setIncludedInThermal();
 					} 
 					
-					thermal.addTurn(c2);
+					thermal.addCircle(c2);
 					c2.setIncludedInThermal();
 				} else {
 					// Set thermal=null to make sure we initialize a new thermal

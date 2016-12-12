@@ -37,7 +37,7 @@ public class CentringAnalysis implements IAnalysis {
 			for (Circle circle : t.circles) {
 				if (circle != null && previous_circle != null) {
 					GNSSPoint expected_circle_start_point = 
-							calcDestinationPoint(previous_circle.getStartPoint(), t.wind);
+							calcDestinationPoint(previous_circle.getStartPoint(), t.wind, previous_circle.duration);
 					
 					double correction_bearing = FlightAnalyser.calculateTrackCourse(
 							expected_circle_start_point, circle.getStartPoint());
@@ -65,10 +65,10 @@ public class CentringAnalysis implements IAnalysis {
 	}
 
 	
-	private GNSSPoint calcDestinationPoint(GNSSPoint p1, PolarVector wind) {
+	GNSSPoint calcDestinationPoint(GNSSPoint p1, PolarVector wind, long circle_duration) {
 		final double R = 6371000.0; //Earth mean radius in meters
 		
-		double d = wind.size;
+		double d = wind.size * circle_duration; //distance we expect the wind to push us during the whole circle
 		double brng = wind.bearing;
 		
 		double latitude = Math.asin(Math.sin(p1.lat_radians) * Math.cos(d  / R) +

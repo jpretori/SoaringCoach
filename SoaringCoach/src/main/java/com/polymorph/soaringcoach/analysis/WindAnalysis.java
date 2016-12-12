@@ -25,7 +25,7 @@ import com.polymorph.soaringcoach.Thermal;
  */
 public class WindAnalysis implements IAnalysis {
 	private static final double DRIFT_OUTLIER_CUTOFF_SIZE = 20;
-	private static final double DRIFT_OUTLIER_CUTOFF_BEARING = 10;
+	private static final double DRIFT_OUTLIER_CUTOFF_BEARING = 5;
 
 	@Override
 	public Flight performAnalysis(Flight flight) throws AnalysisException {
@@ -76,10 +76,11 @@ public class WindAnalysis implements IAnalysis {
 			}
 		}
 		
-		Vector2d average_drift_cartesian = new Vector2d(0, 0);
+		Vector2d average_drift_cartesian = null;
 		PolarVector average_drift_polar = null;
 		int drift_vectors_count;
-		do {	
+		do {
+			average_drift_cartesian = new Vector2d(0, 0);
 			drift_vectors_count = drift_vectors_cartesian.size();
 			
 			//Get average cartesian drift vector, and convert back to polar
@@ -97,19 +98,18 @@ public class WindAnalysis implements IAnalysis {
 			
 			average_drift_polar = new PolarVector(average_drift_bearing, average_drift_size);
 			
-			//discard outliers
+			//discard outliers, one at a time
 			for (int i = 0; i < drift_vectors_count; i++) {
 				PolarVector drift_vector_polar = drift_vectors_polar.get(i);
 				
 				boolean size_cutoff = Math.abs(drift_vector_polar.size - average_drift_polar.size) > DRIFT_OUTLIER_CUTOFF_SIZE;
 				boolean bearing_cutoff = Math.abs(
-						FlightAnalyser.calcBearingChange(drift_vector_polar.bearing, drift_vector_polar.bearing)) > 
+						FlightAnalyser.calcBearingChange(drift_vector_polar.bearing, average_drift_polar.bearing)) > 
 						DRIFT_OUTLIER_CUTOFF_BEARING;
 				if (size_cutoff || bearing_cutoff) {
 					drift_vectors_cartesian.remove(i);
 					drift_vectors_polar.remove(i);
-					i -= 1; //We just made both arrays shorter by one, don't skip an item!
-					drift_vectors_count -= 1; // And don't go out of bounds at the end
+					break; //Go back to recalculate the average - doing these one at a time should get more accurate results
 				}
 			}
 		} while (drift_vectors_count > drift_vectors_cartesian.size() && drift_vectors_cartesian.size() > 0);
