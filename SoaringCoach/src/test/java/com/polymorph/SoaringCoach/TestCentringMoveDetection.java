@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 
 public class TestCentringMoveDetection {
@@ -22,11 +21,11 @@ public class TestCentringMoveDetection {
 	 * drift direction and distance indication is correct.
 	 */
 	public void testCorrectionDetectionDistanceChanged() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/testCorrectionDetectionDistanceChanged.igc");
 		
+		Flight f = new FlightTestFacade(igc_points);
+
 		boolean[] centring_move_conclusion = { false, false, false, true, false, false };
 		
 		CHECK_TWICE_RULE[] check_twice_rule_followed = {

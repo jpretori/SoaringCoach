@@ -3,7 +3,7 @@ package com.polymorph.soaringcoach;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
+import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.PolarVector;
 

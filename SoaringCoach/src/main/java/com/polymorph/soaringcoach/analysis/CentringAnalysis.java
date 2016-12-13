@@ -2,6 +2,7 @@ package com.polymorph.soaringcoach.analysis;
 
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightAnalyser;
 import com.polymorph.soaringcoach.Thermal;
 
 /**
@@ -15,10 +16,10 @@ import com.polymorph.soaringcoach.Thermal;
  * @author johanpretorius
  *
  */
-public class CentringAnalysis implements IAnalysis {
+public class CentringAnalysis extends AAnalysis {
 
 	@Override
-	public Flight performAnalysis(Flight flight) throws AnalysisException {
+	protected Flight performAnalysis(Flight flight) throws AnalysisException {
 		
 		if (flight.circles == null) {
 			throw new AnalysisException("Circles analysis needs to be completed before centring analysis can commence");

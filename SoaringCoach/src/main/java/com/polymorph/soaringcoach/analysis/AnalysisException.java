@@ -6,4 +6,8 @@ public class AnalysisException extends Exception {
 		super(message);
 	}
 
+	public AnalysisException(String msg, Exception e) {
+		super(msg, e);
+	}
+
 }

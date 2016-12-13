@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.FlightTestFacade;
 
 public class TestCirclingAnalysis {
 
@@ -25,10 +27,10 @@ public class TestCirclingAnalysis {
 	 */
 	@Test
 	public void testCirclingAnalysisPositive() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/circling_detection.igc");
+		
+		Flight f = new FlightTestFacade(igc_points);
 		
 		CirclingAnalysis ca = new CirclingAnalysis();
 		f = ca.performAnalysis(f);
@@ -56,8 +58,7 @@ public class TestCirclingAnalysis {
 	 */
 	@Test
 	public void testCirclingDetectionDiscard() throws Exception {
-		Flight f = new Flight();
-		f.igc_points = new ArrayList<>();
+		Flight f = new FlightTestFacade(new ArrayList<>());
 		
 		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109303308755S01911128EA016190171900308"));
 		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109343308702S01911090EA016310173200309"));
@@ -86,8 +87,7 @@ public class TestCirclingAnalysis {
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
 		CirclingAnalysis ca = new CirclingAnalysis();
-		Flight f = new Flight();
-		f.igc_points = new ArrayList<>();
+		Flight f = new FlightTestFacade(new ArrayList<>());
 		TestUtilities.testHasBeenRun(ca, f);
 	}
 	
@@ -99,10 +99,10 @@ public class TestCirclingAnalysis {
 	 * @throws FileNotFoundException
 	 */
 	public void testDetermineCircleStartNoWind() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/DetermineCircleStartNoWind.igc");
+		
+		Flight f = new FlightTestFacade(igc_points);
 		
 		double[] circle_start_lat_expected = {50.76616667, 50.7662, 50.7662, 50.7662};
 		
@@ -154,10 +154,10 @@ public class TestCirclingAnalysis {
 	 * 
 	 */
 	public void testDetermineCircleStartHowlingGale() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/DetermineCircleStartHowlingGale.igc");
+		
+		Flight f = new FlightTestFacade(igc_points);
 		
 		double[] circle_start_lat_expected = { 50.76625, 50.7665, 50.7667166666667, 50.7669 };
 

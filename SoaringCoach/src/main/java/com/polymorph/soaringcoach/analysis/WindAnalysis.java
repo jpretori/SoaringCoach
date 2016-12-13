@@ -6,6 +6,7 @@ import javax.vecmath.Vector2d;
 
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightAnalyser;
 import com.polymorph.soaringcoach.Thermal;
 
 /**
@@ -23,12 +24,12 @@ import com.polymorph.soaringcoach.Thermal;
  * @author johanpretorius
  *
  */
-public class WindAnalysis implements IAnalysis {
+public class WindAnalysis extends AAnalysis {
 	private static final double DRIFT_OUTLIER_CUTOFF_SIZE = 20;
 	private static final double DRIFT_OUTLIER_CUTOFF_BEARING = 5;
 
 	@Override
-	public Flight performAnalysis(Flight flight) throws AnalysisException {
+	protected Flight performAnalysis(Flight flight) throws AnalysisException {
 		if (flight.is_wind_analysis_complete) {
 			return flight;
 		}

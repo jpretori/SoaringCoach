@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightAnalyser;
 import com.polymorph.soaringcoach.Thermal;
-import com.polymorph.soaringcoach.analysis.FlightAnalyser;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.util.LineInputStream;
 

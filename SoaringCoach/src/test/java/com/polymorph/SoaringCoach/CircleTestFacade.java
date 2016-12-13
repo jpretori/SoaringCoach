@@ -2,7 +2,7 @@ package com.polymorph.soaringcoach;
 
 import java.util.Date;
 
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
+import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 
 public class CircleTestFacade extends Circle {

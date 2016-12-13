@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
+import com.polymorph.soaringcoach.FlightAnalyser;
+import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
 
 /**
  * makes an array of Circles in the flight, marks each as LH or RH, calculates each’s duration, etc
@@ -12,12 +13,12 @@ import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
  * @author johanpretorius
  *
  */
-public class CirclingAnalysis implements IAnalysis {
+public class CirclingAnalysis extends AAnalysis {
 	// TURN_RATE_THRESHOLD is in degrees per second.  Turning faster than this constitutes making a thermal turn.
 	private final int TURN_RATE_THRESHOLD = 4; 
 
 	@Override
-	public Flight performAnalysis(Flight flight) throws AnalysisException {
+	protected Flight performAnalysis(Flight flight) throws AnalysisException {
 		
 		if (flight.igc_points == null) {
 			//null points array probably means the Flight has not been initialised properly for some reason.

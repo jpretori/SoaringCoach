@@ -1,25 +1,67 @@
 package com.polymorph.soaringcoach;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-import org.junit.Before;
+import java.io.File;
+
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
-import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
+import com.polymorph.soaringcoach.analysis.AnalysisException;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 
 public class TestFlightAnalyser {
 
-	@Before
-	public void setUp() throws Exception {
+	@Test
+	public void testAddAndAnalyseFlightInvalidFile() {
+		FlightAnalyser fa = new FlightAnalyser();
+		
+		boolean got_exception = false;
+		
+		try {
+			fa.addAndAnalyseFlight(new File("invalid.file"));
+		} catch (AnalysisException e) {
+			got_exception = true;
+		}
+		
+		assertTrue(got_exception);
 	}
 
 	@Test
-	public void testFlightAnalyser() {
-		//fail("Not yet implemented");
+	public void testAddAndAnalyseFlightEmptyFile() {
+		FlightAnalyser fa = new FlightAnalyser();
+		
+		File file = new File("src/test/resources/empty.igc");
+		
+		boolean got_exception = false;
+		
+		try {
+			fa.addAndAnalyseFlight(file);
+		} catch (AnalysisException e) {
+			got_exception = true;
+		}
+		
+		assertTrue(got_exception);
 	}
 
+	@Test
+	public void testAddAndAnalyseFlightValidFile() throws AnalysisException {
+		FlightAnalyser fa = new FlightAnalyser();
+		
+		File file = new File("src/test/resources/small_valid.igc");
+		
+		Flight flight = fa.addAndAnalyseFlight(file);
+		
+		assertNotNull(flight);
+		
+		assertNotNull(flight.igc_points);
+		
+		assertTrue(flight.is_centring_analysis_complete);
+		assertTrue(flight.is_circling_analysis_complete);
+		assertTrue(flight.is_distance_analysis_complete);
+		assertTrue(flight.is_thermal_analysis_complete);
+		assertTrue(flight.is_wind_analysis_complete);
+	}
 	
 	/**
 	 * A set of points placed roughly in an octagon, with the first two points

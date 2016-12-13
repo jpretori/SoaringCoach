@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.FlightTestFacade;
 
 public class TestDistanceAnalysis {
 
@@ -18,8 +20,7 @@ public class TestDistanceAnalysis {
 		points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/slow_movement_north.igc");
 		
-		Flight f = new Flight();
-		f.igc_points = points;
+		Flight f = new FlightTestFacade(points);
 		
 		DistanceAnalysis da = new DistanceAnalysis();
 		
@@ -36,8 +37,7 @@ public class TestDistanceAnalysis {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1005003359832S01917153EA0450004550Villiersdorp"));
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B1045003402828S02028435EA0450004550FASX"));
 		
-		Flight f = new Flight();
-		f.igc_points = points;
+		Flight f = new FlightTestFacade(points);
 		
 		DistanceAnalysis da = new DistanceAnalysis();
 		
@@ -56,8 +56,7 @@ public class TestDistanceAnalysis {
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B0920003343993S01921747EA0450003450Vic Peak"));
 		points.add(GNSSPoint.createGNSSPoint("testfile", "B0925003339778S01924835EA0450003450FAWC"));
 		
-		Flight f = new Flight();
-		f.igc_points = points;
+		Flight f = new FlightTestFacade(points);
 		
 		DistanceAnalysis da = new DistanceAnalysis();
 		
@@ -68,8 +67,7 @@ public class TestDistanceAnalysis {
 
 	@Test
 	public void testPerformAnalysisNullPoints() throws AnalysisException {
-		Flight f = new Flight();
-		f.igc_points = null;
+		Flight f = new FlightTestFacade(null);
 		DistanceAnalysis da = new DistanceAnalysis();
 		
 		da.performAnalysis(f);

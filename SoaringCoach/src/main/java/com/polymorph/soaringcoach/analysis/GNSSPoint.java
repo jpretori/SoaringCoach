@@ -7,6 +7,7 @@ import javax.vecmath.Point3d;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
+import com.polymorph.soaringcoach.FlightAnalyser;
 
 /**
  * Uses the Point3d class as basis for calculations.  By convention:

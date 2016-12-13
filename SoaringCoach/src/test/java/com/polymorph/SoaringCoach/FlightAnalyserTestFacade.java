@@ -1,4 +1,4 @@
-package com.polymorph.soaringcoach.analysis;
+package com.polymorph.soaringcoach;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.polymorph.soaringcoach.Circle;
+import com.polymorph.soaringcoach.FlightAnalyser;
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
 
 public class FlightAnalyserTestFacade extends FlightAnalyser {
 	

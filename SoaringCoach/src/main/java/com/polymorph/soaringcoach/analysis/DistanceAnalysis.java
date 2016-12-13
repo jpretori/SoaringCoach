@@ -8,10 +8,10 @@ import com.polymorph.soaringcoach.Flight;
  * @author johanpretorius
  *
  */
-public class DistanceAnalysis implements IAnalysis {
+public class DistanceAnalysis extends AAnalysis {
 
 	@Override
-	public Flight performAnalysis(Flight flight) throws AnalysisException {
+	protected Flight performAnalysis(Flight flight) throws AnalysisException {
 		double total_dist = 0;
 		GNSSPoint prev_pt = null;
 		if (flight.igc_points != null) {				

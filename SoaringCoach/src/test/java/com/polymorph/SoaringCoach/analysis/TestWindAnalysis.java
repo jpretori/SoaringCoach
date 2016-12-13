@@ -9,9 +9,10 @@ import org.junit.Test;
 
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightTestFacade;
 import com.polymorph.soaringcoach.Thermal;
+import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.AnalysisException;
-import com.polymorph.soaringcoach.analysis.FlightAnalyser.FlightMode;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.WindAnalysis;
 
@@ -20,7 +21,7 @@ public class TestWindAnalysis {
 
 	@Test
 	public void testPerformAnalysisNullThermals() {
-		Flight f = new Flight();
+		Flight f = new FlightTestFacade(null);
 		f.thermals = null;
 		
 		boolean got_exception = false;
@@ -60,7 +61,7 @@ public class TestWindAnalysis {
 		c.duration = 10;
 		t.circles.add(c);
 		
-		Flight f = new Flight();
+		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		f.thermals.add(t);
 		
@@ -119,7 +120,7 @@ public class TestWindAnalysis {
 		c.duration = 10;
 		t.circles.add(c);
 		
-		Flight f = new Flight();
+		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		f.thermals.add(t);
 		
@@ -180,7 +181,7 @@ public class TestWindAnalysis {
 		c.duration = 10;
 		t.circles.add(c);
 		
-		Flight f = new Flight();
+		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		f.thermals.add(t);
 		
@@ -214,7 +215,7 @@ public class TestWindAnalysis {
 
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
-		Flight f = new Flight();
+		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		TestUtilities.testHasBeenRun(wa, f);
 	}

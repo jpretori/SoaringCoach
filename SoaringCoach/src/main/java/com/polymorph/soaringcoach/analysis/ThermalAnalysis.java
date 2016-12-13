@@ -14,10 +14,10 @@ import com.polymorph.soaringcoach.Thermal;
  * @author johanpretorius
  *
  */
-public class ThermalAnalysis implements IAnalysis {
+public class ThermalAnalysis extends AAnalysis {
 
 	@Override
-	public Flight performAnalysis(Flight flight) throws AnalysisException {
+	protected Flight performAnalysis(Flight flight) throws AnalysisException {
 		if (flight.circles == null) {
 			throw new AnalysisException("Null circles array - Circling analysis has not been completed yet.");
 		}

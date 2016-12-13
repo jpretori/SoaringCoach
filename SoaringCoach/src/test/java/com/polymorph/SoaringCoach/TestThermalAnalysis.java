@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.polymorph.soaringcoach.analysis.AnalysisException;
 import com.polymorph.soaringcoach.analysis.CirclingAnalysis;
-import com.polymorph.soaringcoach.analysis.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.TestUtilities;
 import com.polymorph.soaringcoach.analysis.ThermalAnalysis;
 
@@ -22,23 +22,23 @@ public class TestThermalAnalysis {
 	 */
 	@Test
 	public void testThermalDetectionPositive() throws Exception {
-		Flight f = new Flight();
-		f.igc_points = 
-				FlightAnalyserTestFacade.loadFromFile("src/test/resources/thermal_detection_positive_test.igc");
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile("src/test/resources/thermal_detection_positive_test.igc");
+		
+		Flight f = new FlightTestFacade(igc_points);
 		
 		ThermalAnalysis ta = new ThermalAnalysis();
 		
 		boolean got_exception = false;
 		try {
-			ta.performAnalysis(f);
+			ta.analyse(f);
 		} catch (AnalysisException e) {
 			got_exception = true;
 		}
 		assertTrue(got_exception);
 		
 		CirclingAnalysis ca = new CirclingAnalysis();
-		ca.performAnalysis(f);
-		ta.performAnalysis(f);
+		ca.analyse(f);
+		ta.analyse(f);
 		
 		assertEquals("number of thermals", 13, f.thermals.size());
 		
@@ -86,7 +86,7 @@ public class TestThermalAnalysis {
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
 		ThermalAnalysis ta = new ThermalAnalysis();
-		Flight f = new Flight();
+		Flight f = new FlightTestFacade(null);
 		f.circles = new ArrayList<>();
 		
 		TestUtilities.testHasBeenRun(ta, f);

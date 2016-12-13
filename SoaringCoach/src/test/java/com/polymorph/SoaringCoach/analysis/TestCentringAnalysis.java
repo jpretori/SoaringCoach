@@ -7,9 +7,10 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.polymorph.soaringcoach.CHECK_TWICE_RULE;
 import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
+import com.polymorph.soaringcoach.FlightAnalyserTestFacade;
+import com.polymorph.soaringcoach.FlightTestFacade;
 import com.polymorph.soaringcoach.Thermal;
 
 public class TestCentringAnalysis {
@@ -33,8 +34,9 @@ public class TestCentringAnalysis {
 				new PolarVector(79.6, 295),
 				new PolarVector(68.0, 194)};
 		
-		Flight f = new Flight();
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile("src/test/resources/testCorrectionDetectionBearingChanged.igc");
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/testCorrectionDetectionBearingChanged.igc");
+		Flight f = new FlightTestFacade(igc_points);
 		
 		CirclingAnalysis circ_a = new CirclingAnalysis();
 		f = circ_a.performAnalysis(f);
@@ -73,9 +75,8 @@ public class TestCentringAnalysis {
 
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
-		Flight f = new Flight();
-		f.igc_points = new ArrayList<>();
-		IAnalysis ca = new CentringAnalysis();
+		Flight f = new FlightTestFacade(new ArrayList<>());
+		AAnalysis ca = new CentringAnalysis();
 		
 		boolean got_exception = false;
 		try {
@@ -124,10 +125,10 @@ public class TestCentringAnalysis {
 
 	@Test
 	public void testCorrectionDetectionNoChanges() throws Exception {
-		Flight f = new Flight();
-		
-		f.igc_points = FlightAnalyserTestFacade.loadFromFile(
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
 				"src/test/resources/testCorrectionDetectionNoChanges.igc");
+		
+		Flight f = new FlightTestFacade(igc_points);
 		
 		PolarVector[] centring_move_conclusion = {
 				new PolarVector(0, 0),
