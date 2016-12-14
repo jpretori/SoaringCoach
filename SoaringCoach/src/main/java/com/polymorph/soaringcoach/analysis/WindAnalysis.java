@@ -121,6 +121,11 @@ public class WindAnalysis extends AAnalysis {
 			//now we have a wind vector, except that it's size is in "meters per circle"
 			average_drift_polar.size = 1.0 * average_drift_polar.size / t.getAverageCircleDuration();
 			t.wind = average_drift_polar;
+			
+			//atan2 can return negative angles.  Clamp to positive.
+			if (t.wind.bearing < 0) {
+				t.wind.bearing += 360;
+			}
 		} else {
 			// No wind to speak of.  At least avoid NPEs down the line
 			t.wind = new PolarVector(0, 0);
@@ -153,6 +158,8 @@ public class WindAnalysis extends AAnalysis {
 				double drift_distance = c1_start.distance(c2_start);
 				
 				c2.drift_vector = new PolarVector(drift_bearing, drift_distance); 			
+			} else {
+				c2.drift_vector = new PolarVector(0, 0);
 			}
 			
 			c1 = c2;
