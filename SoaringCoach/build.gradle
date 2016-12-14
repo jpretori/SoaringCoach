@@ -28,6 +28,7 @@ repositories {
 }
 
 dependencies {
+    compile("net.sf.jopt-simple:jopt-simple:5.0.3")
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("javax.vecmath:vecmath:1.5.2")
@@ -39,7 +40,7 @@ dependencies {
 }
 
 task wrapper(type:Wrapper) {
-	gradleVersion = '2.3'
+	gradleVersion = '2.9'
 }
 
 task copyToLib(type: Copy) {

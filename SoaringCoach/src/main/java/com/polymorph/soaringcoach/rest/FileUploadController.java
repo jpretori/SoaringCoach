@@ -1,6 +1,5 @@
 package com.polymorph.soaringcoach.rest;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,12 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.polymorph.soaringcoach.Circle;
-import com.polymorph.soaringcoach.Flight;
-import com.polymorph.soaringcoach.FlightAnalyser;
-import com.polymorph.soaringcoach.Thermal;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.LineInputStream;
 
 /**
  * Created by russel on 15/12/10.
@@ -43,7 +37,7 @@ public class FileUploadController {
             	// 3. Get notified once calculation is complete.  Somehow tell the user about this event
             	// 4. User either clicks on the flight or some refresh button to get updated aggregate stats
             	
-            	
+            	/*
                 GNSSPoint gnssPoint;
                 
                 String line;
@@ -58,7 +52,7 @@ public class FileUploadController {
 	                }
 	            } finally {
 	            	lis.close();
-	            }
+	            }*/
 
               /*  FlightAnalyser flightAnalyser = new FlightAnalyser(gnssPointList);
                 
