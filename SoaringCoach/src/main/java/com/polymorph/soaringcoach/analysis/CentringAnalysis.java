@@ -17,6 +17,10 @@ import com.polymorph.soaringcoach.Thermal;
  *
  */
 public class CentringAnalysis extends AAnalysis {
+	/**
+	 * Only correction vectors longer than this value are recognized as such.
+	 */
+	public static final long CORRECTION_VECTOR_RECOGNITION_THRESHOLD = 5;
 
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
@@ -47,7 +51,11 @@ public class CentringAnalysis extends AAnalysis {
 					
 					PolarVector correction = new PolarVector(correction_bearing, correction_distance);
 					
-					circle.correction_vector = correction;
+					if (correction.size > CORRECTION_VECTOR_RECOGNITION_THRESHOLD) {
+						circle.correction_vector = correction;
+					} else {
+						circle.correction_vector = new PolarVector(0, 0);
+					}
 				} else {
 					//Avoid NPEs down the line
 					circle.correction_vector = new PolarVector(0, 0);
@@ -70,15 +78,17 @@ public class CentringAnalysis extends AAnalysis {
 		final double R = 6371000.0; //Earth mean radius in meters
 		
 		double d = wind.size * circle_duration; //distance we expect the wind to push us during the whole circle
-		double brng = wind.bearing;
+		double brng = Math.toRadians(wind.bearing);
 		
-		double latitude = Math.asin(Math.sin(p1.lat_radians) * Math.cos(d  / R) +
+		double latitude = Math.asin(Math.sin(p1.lat_radians) * Math.cos(d/R) +
                 Math.cos(p1.lat_radians) * Math.sin(d/R) * Math.cos(brng));
 		
 		double longitude = p1.lon_radians + Math.atan2(Math.sin(brng) * Math.sin(d/R) * Math.cos(p1.lat_radians),
                      Math.cos(d/R) - Math.sin(p1.lat_radians) * Math.sin(latitude));
 		
-		GNSSPoint p2 = GNSSPoint.createGNSSPoint(null, null, Math.toDegrees(latitude), Math.toDegrees(longitude), null, 0, 0, null);
+		double lat_deg = Math.toDegrees(latitude);
+		double lon_deg = Math.toDegrees(longitude);
+		GNSSPoint p2 = GNSSPoint.createGNSSPoint(null, null, lat_deg, lon_deg, null, 0, 0, null);
 		
 		return p2;
 	}
