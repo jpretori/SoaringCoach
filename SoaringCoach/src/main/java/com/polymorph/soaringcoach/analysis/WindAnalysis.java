@@ -27,6 +27,7 @@ import com.polymorph.soaringcoach.Thermal;
 public class WindAnalysis extends AAnalysis {
 	private static final double DRIFT_OUTLIER_CUTOFF_SIZE = 20;
 	private static final double DRIFT_OUTLIER_CUTOFF_BEARING = 5;
+	private static final int MIN_DRIFT_VECTORS_REQUIRED = 3;
 
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
@@ -115,7 +116,8 @@ public class WindAnalysis extends AAnalysis {
 					break; //Go back to recalculate the average - doing these one at a time should get more accurate results
 				}
 			}
-		} while (drift_vectors_remaining_count > drift_vectors_cartesian.size() && drift_vectors_cartesian.size() > 0);
+		} while (drift_vectors_remaining_count > drift_vectors_cartesian.size() && 
+				drift_vectors_cartesian.size() >= MIN_DRIFT_VECTORS_REQUIRED);
 		
 		if (drift_vectors_cartesian.size() > 0) {
 			//now we have a wind vector, except that it's size is in "meters per circle"
@@ -135,6 +137,13 @@ public class WindAnalysis extends AAnalysis {
 			// This means we "removed outliers" until only 30% of the original drift vectors remain.  
 			// I.e. the guy is flying erratically, since 70% of circles contain a substantial "correction"
 			t.is_flying_erratically = true;
+			t.could_not_calculate_wind = true;
+		}
+		
+		if (drift_vectors_cartesian.size() < MIN_DRIFT_VECTORS_REQUIRED) {
+			//This means we don't actually have enough data to make a reliable wind calculation
+			t.wind = new PolarVector(0, 0);
+			t.could_not_calculate_wind = true;
 		}
 		
 		return t;

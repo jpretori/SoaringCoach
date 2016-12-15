@@ -40,22 +40,19 @@ public class TestThermalAnalysis {
 		ca.analyse(f);
 		ta.analyse(f);
 		
-		assertEquals("number of thermals", 13, f.thermals.size());
+		assertEquals("number of thermals", 5, f.thermals.size());
 		
 		int[] num_circles_per_thermal = 
-			{ 20,  2,  3,   10,  1,  1,  1,  1,  4,   2,  2,  1,  2 };
+			{ 27, 13,  2,  8,  6 };
 
 		int[] thermal_duration_seconds = 
-			{ 536, 74, 100, 308, 41, 36, 27, 33, 134, 65, 51, 26, 51 };
+			{ 780, 442, 81, 264, 157 };
 
 		int[] thermal_average_circle_duration = 
-			{ 27,  37, 33,  31,  41, 36, 27, 33, 34,  33, 26, 26, 26 };
+			{ 29,  34,  41, 33, 26 };
 
 		String[] thermal_duration_strings = 
-			{ 
-			"8:56", "1:14", "1:40", "5:08", "0:41", 
-			"0:36", "0:27", "0:33", "2:14", "1:05", 
-			"0:51", "0:26", "0:51" };
+			{ "13:00", "7:22", "1:21", "4:24", "2:37" };
 
 		//Assert stuff about each thermal
 		for (int i = 0; i < f.thermals.size(); i++) {

@@ -14,8 +14,9 @@ import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
  *
  */
 public class CirclingAnalysis extends AAnalysis {
+	private static final long MAX_CENTERING_STRAIGHTEN_TIME = 10;
 	// TURN_RATE_THRESHOLD is in degrees per second.  Turning faster than this constitutes making a thermal turn.
-	private final int TURN_RATE_THRESHOLD = 4; 
+	private final int TURN_RATE_THRESHOLD = 6; 
 
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
@@ -32,6 +33,9 @@ public class CirclingAnalysis extends AAnalysis {
 		FlightMode mode = FlightMode.CRUISING;
 		Circle circle = null;
 		
+		Circle last_halfdone_circle = null;
+		GNSSPoint halfdone_circle_last_point = null;
+		
 		for (GNSSPoint p2 : flight.igc_points) {
 			
 			if (p1 != null && p2 != null) {
@@ -39,66 +43,37 @@ public class CirclingAnalysis extends AAnalysis {
 				
 				p2.resolve(p1);
 				
-				switch (mode) {
-					case CRUISING:
-						//Detect mode change
-						if (p2.turn_rate > TURN_RATE_THRESHOLD) {
-							mode = FlightMode.TURNING_RIGHT;
-							circle = new Circle(p1, p2, mode);
-						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
-							mode = FlightMode.TURNING_LEFT;
-							circle = new Circle(p1, p2, mode);
-						}
-						break;
-					case TURNING_LEFT: 
-						//Detect mode change
-						if (Math.abs(p2.turn_rate) < TURN_RATE_THRESHOLD) {
-							//Turning too slowly to still call this a thermal turn
-							mode = FlightMode.CRUISING;
-							circle = null;
-						} else if (p2.turn_rate > TURN_RATE_THRESHOLD) {
-							//Switched turn direction
-							mode = FlightMode.TURNING_RIGHT;
-							circle = new Circle(p1, p2, mode);
+				if (mode == FlightMode.CRUISING) {
+					if (Math.abs(p2.turn_rate) > TURN_RATE_THRESHOLD) {
+						mode = getTurnDirection(p2.turn_rate);
+						if (last_halfdone_circle != null && 
+								mode == last_halfdone_circle.turn_direction && 
+								getElapsedTime(halfdone_circle_last_point, p2) <= MAX_CENTERING_STRAIGHTEN_TIME) {
+							circle = last_halfdone_circle;
 						} else {
-							//Detect going past turn start course.  Only relevant if we're still turning.
-							circle.detectCircleCompleted(p2);
-							
-							if (circle.circle_completed) {
-								// This means we've just passed the course on which the turn started.
-								// So a full circle is accomplished!
-								
-								circle.setDuration(p2);
-								circles.add(circle);
-								circle = new Circle(p1, p2, circle); 
-							}
-						}
-						break;
-					case TURNING_RIGHT:
-						//Detect mode change
-						if (Math.abs(p2.turn_rate) < TURN_RATE_THRESHOLD) {
-							//Turning too slowly to still call this a thermal turn
-							mode = FlightMode.CRUISING;
-							circle = null;
-						} else if (p2.turn_rate < -TURN_RATE_THRESHOLD) {
-							//Switched turn direction
-							mode = FlightMode.TURNING_LEFT;
 							circle = new Circle(p1, p2, mode);
-						} else {
-							//Detect going past turn start course.  Only relevant if we're still turning.
-							circle.detectCircleCompleted(p2);
-							
-							if (circle.circle_completed) {
-								// This means we've just passed the course on which the turn started.
-								// So a full circle is accomplished!
-	
-								circle.setDuration(p2);
-								circles.add(circle);
-								circle = new Circle(p1, p2, circle); 
-							}
 						}
-						break;
-					default: throw new AnalysisException("Unexpected flight mode indicator [" + mode + "]");
+					}
+				} else {
+					if (Math.abs(p2.turn_rate) < TURN_RATE_THRESHOLD) {
+						//Turning too slowly to still call this a thermal turn
+						last_halfdone_circle = circle;
+						halfdone_circle_last_point = p2;
+						mode = FlightMode.CRUISING;
+						circle = null;
+					} else if (getTurnDirection(p2.turn_rate) != mode) {
+						//Switched turn direction
+						mode = switchTurnDirection(mode);
+						circle = new Circle(p1, p2, mode);
+					} else {
+						circle.detectCircleCompleted(p2);
+						
+						if (circle.circle_completed) {
+							circle.setDuration(p2);
+							circles.add(circle);
+							circle = new Circle(p1, p2, circle); 
+						}
+					}
 				}
 			}
 			
@@ -110,6 +85,22 @@ public class CirclingAnalysis extends AAnalysis {
 		
 		flight.is_circling_analysis_complete = true;
 		return flight;
+	}
+
+	private long getElapsedTime(GNSSPoint halfdone_circle_last_point, GNSSPoint p2) {
+		if (p2 != null && halfdone_circle_last_point != null) {
+			return (p2.data.timestamp.getTime() - halfdone_circle_last_point.data.timestamp.getTime()) / 1000;
+		} else {
+			return 1000; //safest for the rest of the code
+		}
+	}
+
+	private FlightMode switchTurnDirection(FlightMode mode) {
+		return mode == FlightMode.TURNING_LEFT ? FlightMode.TURNING_RIGHT : FlightMode.TURNING_LEFT;
+	}
+
+	private FlightMode getTurnDirection(double turn_rate) {
+		return turn_rate < 0 ? FlightMode.TURNING_LEFT : FlightMode.TURNING_RIGHT;
 	}
 
 	@Override

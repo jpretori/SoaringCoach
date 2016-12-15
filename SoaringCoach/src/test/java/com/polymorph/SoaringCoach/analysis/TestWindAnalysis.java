@@ -61,6 +61,13 @@ public class TestWindAnalysis {
 		c.duration = 10;
 		t.circles.add(c);
 		
+		p1 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.003, 0.003, "A", 500, 500, "");
+		p2 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.003, 0.0031, "A", 500, 500, "");;
+		p2.resolve(p1);
+		c = new Circle(p1, p2, c);
+		c.duration = 10;
+		t.circles.add(c);
+		
 		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		f.thermals.add(t);
@@ -69,28 +76,35 @@ public class TestWindAnalysis {
 		
 		assertEquals(1, f.thermals.size());
 		
-		t = f.thermals.get(0);
+		Thermal t_test = f.thermals.get(0);
 		
 		assertNotNull(t.wind);
 		
-		assertEquals(45.0, t.wind.bearing, 0.1);
-		assertEquals(15.73, t.wind.size, 0.1);
+		assertEquals(45.0, t_test.wind.bearing, 0.1);
+		assertEquals(15.73, t_test.wind.size, 0.1);
 		
-		assertEquals(3, t.circles.size());
-		Circle c1, c2, c3;
-		c1 = t.circles.get(0);
-		c2 = t.circles.get(1);
-		c3 = t.circles.get(2);
+		Circle c1, c2, c3, c4;
+		c1 = t_test.circles.get(0);
+		c2 = t_test.circles.get(1);
+		c3 = t_test.circles.get(2);
+		c4 = t_test.circles.get(3);
 		
-		assertNull(c1.drift_vector);
+		assertNotNull(c1.drift_vector);
 		assertNotNull(c2.drift_vector);
 		assertNotNull(c3.drift_vector);
+		assertNotNull(c4.drift_vector);
+		
+		assertEquals(0, c1.drift_vector.bearing, 1);
+		assertEquals(0, c1.drift_vector.size, 1);
 		
 		assertEquals(45.0, c2.drift_vector.bearing, 1);
 		assertEquals(157.3, c2.drift_vector.size, 1);
 		
 		assertEquals(45.0, c3.drift_vector.bearing, 1);
 		assertEquals(157.3, c3.drift_vector.size, 1);
+		
+		assertEquals(45.0, c4.drift_vector.bearing, 1);
+		assertEquals(157.3, c4.drift_vector.size, 1);
 	}
 
 	@Test
@@ -120,6 +134,13 @@ public class TestWindAnalysis {
 		c.duration = 10;
 		t.circles.add(c);
 		
+		p1 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.003, 0.003, "A", 500, 500, "");
+		p2 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.003, 0.0031, "A", 500, 500, "");;
+		p2.resolve(p1);
+		c = new Circle(p1, p2, c);
+		c.duration = 10;
+		t.circles.add(c);
+		
 		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		f.thermals.add(t);
@@ -136,14 +157,14 @@ public class TestWindAnalysis {
 		assertEquals(15.73, t.wind.size, 0.1);
 		
 		assertFalse(t.is_flying_erratically);
+		assertFalse(t.could_not_calculate_wind);
 		
-		assertEquals(3, t.circles.size());
 		Circle c1, c2, c3;
 		c1 = t.circles.get(0);
 		c2 = t.circles.get(1);
 		c3 = t.circles.get(2);
 		
-		assertNull(c1.drift_vector);
+		assertNotNull(c1.drift_vector);
 		assertNotNull(c2.drift_vector);
 		assertNotNull(c3.drift_vector);
 		
@@ -181,6 +202,27 @@ public class TestWindAnalysis {
 		c.duration = 10;
 		t.circles.add(c);
 		
+		p1 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.003, 0.003, "A", 500, 500, "");
+		p2 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.003, 0.0031, "A", 500, 500, "");;
+		p2.resolve(p1);
+		c = new Circle(p1, p2, c);
+		c.duration = 10;
+		t.circles.add(c);
+		
+		p1 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.004, 0.004, "A", 500, 500, "");
+		p2 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.004, 0.0041, "A", 500, 500, "");;
+		p2.resolve(p1);
+		c = new Circle(p1, p2, c);
+		c.duration = 10;
+		t.circles.add(c);
+		
+		p1 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.005, 0.005, "A", 500, 500, "");
+		p2 = GNSSPoint.createGNSSPoint("testfile", new Date(), 0.005, 0.0051, "A", 500, 500, "");;
+		p2.resolve(p1);
+		c = new Circle(p1, p2, c);
+		c.duration = 10;
+		t.circles.add(c);
+
 		Flight f = new FlightTestFacade(null);
 		f.thermals = new ArrayList<>();
 		f.thermals.add(t);
@@ -191,18 +233,18 @@ public class TestWindAnalysis {
 		
 		t = f.thermals.get(0);
 		
-		assertNotNull(t.wind);
-		assertEquals(63.4, t.wind.bearing, 0.1);
-		assertEquals(124.3/t.getAverageCircleDuration(), t.wind.size, 0.1);
 		assertFalse(t.is_flying_erratically);
+		assertFalse(t.could_not_calculate_wind);
+		assertNotNull(t.wind);
+		assertEquals(45.0, t.wind.bearing, 0.1);
+		assertEquals(157.2/t.getAverageCircleDuration(), t.wind.size, 0.1);
 		
-		assertEquals(3, t.circles.size());
 		Circle c1, c2, c3;
 		c1 = t.circles.get(0);
 		c2 = t.circles.get(1);
 		c3 = t.circles.get(2);
 		
-		assertNull(c1.drift_vector);
+		assertNotNull(c1.drift_vector);
 		assertNotNull(c2.drift_vector);
 		assertNotNull(c3.drift_vector);
 		

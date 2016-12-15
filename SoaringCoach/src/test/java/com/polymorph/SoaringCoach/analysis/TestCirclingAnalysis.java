@@ -2,6 +2,8 @@ package com.polymorph.soaringcoach.analysis;
 
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -10,6 +12,8 @@ import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
 import com.polymorph.soaringcoach.FlightAnalyserTestFacade;
 import com.polymorph.soaringcoach.FlightTestFacade;
+import com.polymorph.soaringcoach.Thermal;
+import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
 
 public class TestCirclingAnalysis {
 
@@ -40,10 +44,10 @@ public class TestCirclingAnalysis {
 		
 		//Check individual turn durations
 		Circle t1 = f.circles.get(0);
-		assertEquals("first circle duration", 36, t1.duration);
+		assertEquals("first circle duration", 32, t1.duration);
 		
 		Circle t2 = f.circles.get(1);
-		assertEquals("second circle duration", 20, t2.duration);
+		assertEquals("second circle duration", 24, t2.duration);
 		
 		Circle t3 = f.circles.get(2);
 		assertEquals("third circle duration", 32, t3.duration);
@@ -104,19 +108,19 @@ public class TestCirclingAnalysis {
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
-		double[] circle_start_lat_expected = {50.76616667, 50.7662, 50.7662, 50.7662};
+		double[] circle_start_lat_expected = {50.76617, 50.76655};
 		
-		double[] circle_start_lon_expected = {3.877, 3.876816667, 3.876816667, 3.876816667};
+		double[] circle_start_lon_expected = {3.877017, 3.877617};
 		
-		double[] circle_start_heading_expected = {90, 90, 90, 90};
+		double[] circle_start_heading_expected = {90, 90};
 		
-		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:27", "10:43:46", "10:44:05"};
+		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:29"};
 		
 		CirclingAnalysis ca = new CirclingAnalysis();
 		ca.performAnalysis(f);
 		ArrayList<Circle> circles = f.circles;
 		
-		assertEquals("Number of circles", 3, circles.size());
+		assertEquals("Number of circles", 2, circles.size());
 		
 		int i = 0;
 		for (Circle circle : circles) {
@@ -124,13 +128,13 @@ public class TestCirclingAnalysis {
 					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
 					circle_start_lat_expected[i], 
 					circle.getCircleStartLatitude(), 
-					0.00000001);
+					0.0001);
 			
 			assertEquals(
 					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
 					circle_start_lon_expected[i],
 					circle.getCircleStartLongitude(),
-					0.00000001);
+					0.0001);
 			
 			assertEquals(
 					"Circle at index [" + i + "], timestamp [" + circle.getTimestamp() + "]", 
@@ -159,13 +163,13 @@ public class TestCirclingAnalysis {
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
-		double[] circle_start_lat_expected = { 50.76625, 50.7665, 50.7667166666667, 50.7669 };
+		double[] circle_start_lat_expected = { 50.76625, 50.76707, 50.7667166666667, 50.7669 };
 
-		double[] circle_start_lon_expected = { 3.8801, 3.8836, 3.886, 3.8882 };
+		double[] circle_start_lon_expected = { 3.88011, 3.88427, 3.886, 3.88817 };
 
 		double[] circle_start_heading_expected = { 88.1, 88.1, 88.1, 88.1 };
 
-		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:15", "10:40:27", "10:40:37" };
+		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:17", "10:40:27", "10:40:37" };
 
 		CirclingAnalysis ca = new CirclingAnalysis();
 		ca.performAnalysis(f);
@@ -196,5 +200,89 @@ public class TestCirclingAnalysis {
 			
 			i += 1;
 		}
+	}
+	
+	/**
+	 * Flight contains 8 circles, first 4 are LH circles all strung together
+	 * with a substantial correction between circles 2&3. The second thermal is
+	 * the same except that the circles are made towards the right.
+	 * 
+	 * The purpose of this test is to make sure that CirclingAnalysis can deal
+	 * with a mid-thermal centering move, still accepting that the elongated
+	 * circle is a proper circle even though the turn rate certainly decayed
+	 * below the threshold.
+	 * 
+	 * @throws AnalysisException
+	 * @throws IOException
+	 */
+	@Test
+	public void testCentringMoveIgnored() throws AnalysisException, IOException {
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/CenteringMoveTest.igc");
+		
+		Flight f = new FlightTestFacade(igc_points);
+		
+		f = new CirclingAnalysis().performAnalysis(f);
+		f = new ThermalAnalysis().performAnalysis(f);
+		
+		assertEquals(2, f.thermals.size());
+		Thermal t1 = f.thermals.get(0);
+		Thermal t2 = f.thermals.get(1);
+		
+		Circle c = f.circles.get(0);
+		assertEquals(21, c.duration);
+		assertEquals(FlightMode.TURNING_LEFT, c.turn_direction);
+		assertTrue(t1.circles.contains(c));
+		
+		c = f.circles.get(1);
+		assertEquals(17, c.duration);
+		assertEquals(FlightMode.TURNING_LEFT, c.turn_direction);
+		assertTrue(t1.circles.contains(c));
+		
+		c = f.circles.get(2);
+		assertEquals(23, c.duration);
+		assertEquals(FlightMode.TURNING_LEFT, c.turn_direction);
+		assertTrue(t1.circles.contains(c));
+		
+		c = f.circles.get(3);
+		assertEquals(16, c.duration);
+		assertEquals(FlightMode.TURNING_LEFT, c.turn_direction);
+		assertTrue(t1.circles.contains(c));
+		
+		
+		
+		c = f.circles.get(4);
+		assertEquals(21, c.duration);
+		assertEquals(FlightMode.TURNING_RIGHT, c.turn_direction);
+		assertTrue(t2.circles.contains(c));
+		
+		c = f.circles.get(5);
+		assertEquals(19, c.duration);
+		assertEquals(FlightMode.TURNING_RIGHT, c.turn_direction);
+		assertTrue(t2.circles.contains(c));
+		
+		c = f.circles.get(6);
+		assertEquals(23, c.duration);
+		assertEquals(FlightMode.TURNING_RIGHT, c.turn_direction);
+		assertTrue(t2.circles.contains(c));
+		
+		c = f.circles.get(7);
+		assertEquals(17, c.duration);
+		assertEquals(FlightMode.TURNING_RIGHT, c.turn_direction);
+		assertTrue(t2.circles.contains(c));
+
+		
+		
+		//Left-hand turning drift vectors
+		/*
+		assertEquals(9.5, f.circles.get(1).drift_vector.bearing, 3.0);
+		assertEquals(8.0, f.circles.get(1).drift_vector.size, 2.0);
+		
+		assertEquals(221.6, f.circles.get(2).drift_vector.bearing, 3.0);
+		assertEquals(79.0, f.circles.get(2).drift_vector.size, 2.0);
+		
+		assertEquals(342.8, f.circles.get(3).drift_vector.bearing, 3.0);
+		assertEquals(11.0, f.circles.get(3).drift_vector.size, 2.0);
+		*/
 	}
 }

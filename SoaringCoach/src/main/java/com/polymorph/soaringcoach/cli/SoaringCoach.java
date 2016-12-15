@@ -31,6 +31,7 @@ public class SoaringCoach {
 		 System.out.println("=============");
 		 System.out.println("Flight ID: " + flight.id);
 		 System.out.println("Total Track Distance (km): " + Math.round(flight.total_track_distance)/1000.0);
+		 System.out.println("Total Flight Duration (seconds): " + flight.getDuration());
 		 System.out.println("Number of GNSS Fixes: " + flight.igc_points.size());
 		 System.out.println("Number of circles: " + flight.circles.size());
 		 System.out.println("Number of thermals: " + flight.thermals.size());
@@ -40,15 +41,19 @@ public class SoaringCoach {
 		 int i = 1;
 		 for (Thermal t : flight.thermals) {
 			 System.out.println("\tThermal #: " + i++);
-			 System.out.println("\tThermal start time: " + t.circles.get(0).getTimestamp());
-			 System.out.println("\tThermal duration: " + t.getTotalDuration());
+			 System.out.println("\tStart time: " + t.circles.get(0).getTimestamp());
+			 System.out.println("\tDuration: " + t.getTotalDuration());
 			 System.out.println("\tNumber of circles: " + t.circles.size());
 			 System.out.println("\tAverage circle duration: " + t.getAverageCircleDuration());
+			 System.out.println("\tTurn direction: " + t.circles.get(0).turn_direction);
 			 if (t.is_flying_erratically) {
 				 System.out.println("\tPilot seems to be flying erratically! (30% or fewer of circle drift vectors were consistent enough to use for wind calculation)");
 			 }
-			 if (t.wind.size > 0) {
-				 System.out.println("\tCalculated wind (bearing, km/h): " + Math.round(t.wind.bearing) + ", " + Math.round(t.wind.size * 3.6));
+			 System.out.print("\tCalculated wind (bearing, km/h): ");
+			 if (t.could_not_calculate_wind) {
+				 System.out.println("Too few circles to calculate");
+			 } else {
+				 System.out.println(Math.round(t.wind.bearing) + ", " + Math.round(t.wind.size * 3.6));
 			 }
 			 System.out.println();
 			 System.out.println("\tCircles within this thermal (durations are in seconds)");

@@ -1,5 +1,8 @@
 package com.polymorph.soaringcoach;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
@@ -48,5 +51,14 @@ public class Flight {
 		FlightSummary fs = new FlightSummary(this.id, this.total_track_distance);
 		
 		return fs;
+	}
+
+	public long getDuration() {
+		long first_fix = igc_points.get(0).data.timestamp.getTime();
+		long last_fix = igc_points.get(igc_points.size()-1).data.timestamp.getTime();
+		
+		long seconds = (last_fix - first_fix) / 1000;
+		
+		return seconds;
 	}
 }
