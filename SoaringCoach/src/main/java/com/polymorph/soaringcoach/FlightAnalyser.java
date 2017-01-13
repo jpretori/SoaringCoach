@@ -15,9 +15,9 @@ import com.polymorph.soaringcoach.analysis.CentringAnalysis;
 import com.polymorph.soaringcoach.analysis.CirclingAnalysis;
 import com.polymorph.soaringcoach.analysis.DistanceAnalysis;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
-import com.polymorph.soaringcoach.analysis.GNSSPointData;
 import com.polymorph.soaringcoach.analysis.ThermalAnalysis;
 import com.polymorph.soaringcoach.analysis.WindAnalysis;
+import com.polymorph.soaringcoach.analysis.parsing.GNSSPointData;
 
 public class FlightAnalyser {
 	public enum FlightMode {

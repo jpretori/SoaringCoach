@@ -13,6 +13,8 @@ import org.beanio.BeanReader;
 import org.beanio.StreamFactory;
 import org.junit.Test;
 
+import com.polymorph.soaringcoach.analysis.parsing.GNSSPointData;
+
 public class TestFileParsing {
 
 	/**

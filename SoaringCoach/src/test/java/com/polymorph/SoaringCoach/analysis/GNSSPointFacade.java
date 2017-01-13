@@ -1,5 +1,7 @@
 package com.polymorph.soaringcoach.analysis;
 
+import com.polymorph.soaringcoach.analysis.parsing.GNSSPointData;
+
 public class GNSSPointFacade extends GNSSPoint {
 	public GNSSPointFacade() {super();}
 	

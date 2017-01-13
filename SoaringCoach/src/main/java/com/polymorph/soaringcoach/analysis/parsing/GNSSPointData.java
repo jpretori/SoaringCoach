@@ -1,4 +1,4 @@
-package com.polymorph.soaringcoach.analysis;
+package com.polymorph.soaringcoach.analysis.parsing;
 
 import java.util.Date;
 
