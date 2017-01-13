@@ -14,11 +14,11 @@ public class GNSSPointData {
 	public String record_type;
 	public String latitude_degrees;
 	public String latitude_minutes;
-	public String latitude_equator_ref;
+	public String latitudeEquatorRef;
 	public String longitude_degrees;
 	public String longitude_minutes;
 	public String longitude_greenwich_ref;
-	public String altitude_ok;
+	public String altitudeOk;
 	public int pressure_altitude;
 	public int gnss_altitude;
 	public String other;
@@ -69,10 +69,10 @@ public class GNSSPointData {
 
 	@Field(offset=15, length=1)
 	public String getLatitudeEquatorRef() {
-		return latitude_equator_ref;
+		return latitudeEquatorRef;
 	}
 	public void setLatitudeEquatorRef(String latitude_equator_ref) {
-		this.latitude_equator_ref = latitude_equator_ref;
+		this.latitudeEquatorRef = latitude_equator_ref;
 	}
 
 	@Field(offset=16, length=3, align=Align.RIGHT)
@@ -101,10 +101,10 @@ public class GNSSPointData {
 
 	@Field(offset=25, length=1)
 	public String getAltitudeOK() {
-		return altitude_ok;
+		return altitudeOk;
 	}
 	public void setAltitudeOK(String altitude_ok) {
-		this.altitude_ok = altitude_ok;
+		this.altitudeOk = altitude_ok;
 	}
 	
 	@Field(offset=26, length=5, align=Align.RIGHT, paddingChar='0')

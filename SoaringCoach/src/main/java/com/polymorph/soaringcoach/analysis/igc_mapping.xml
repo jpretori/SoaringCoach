@@ -1,0 +1,25 @@
+<beanio xmlns="http://www.beanio.org/2012/03"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
+
+  <stream name="igc_file" format="fixedlength">
+    <record name="GpsFix"  minOccurs="0" maxOccurs="unbounded" class="com.polymorph.soaringcoach.analysis.GNSSPointData">
+      <field name="recordType" rid="true" literal="B" length="1"/>
+      <field name="timestamp" format="HHmmss" length="6"/>
+      <field name="latitudeDegrees" length="2" />
+      <field name="latitudeMinutes" length="5" />
+      <field name="latitudeEquatorRef" length="1" />
+      <field name="longitudeDegrees" length="3" />
+      <field name="longitudeMinutes" length="5" />
+      <field name="longitudeGreenwichRef" length="1" />
+      <field name="altitudeOk" length="1"/>
+      <field name="pressureAltitude" length="5"/>
+      <field name="gnssAltitude" length="5"/>
+      <field name="other" length="unbounded"/>
+    </record>
+
+    <record name="default">
+      <field name="defaultRecordType" rid="true" regex="[A,C-Z]" length="1"/>
+    </record>
+  </stream>
+</beanio>

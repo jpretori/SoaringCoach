@@ -1,16 +1,21 @@
 package com.polymorph.soaringcoach;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import org.beanio.BeanReader;
+import org.beanio.BeanReaderException;
+import org.beanio.StreamFactory;
 
 import com.polymorph.soaringcoach.analysis.AnalysisException;
 import com.polymorph.soaringcoach.analysis.CentringAnalysis;
 import com.polymorph.soaringcoach.analysis.CirclingAnalysis;
 import com.polymorph.soaringcoach.analysis.DistanceAnalysis;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
+import com.polymorph.soaringcoach.analysis.GNSSPointData;
 import com.polymorph.soaringcoach.analysis.ThermalAnalysis;
 import com.polymorph.soaringcoach.analysis.WindAnalysis;
 
@@ -41,7 +46,7 @@ public class FlightAnalyser {
 	public Flight addAndAnalyseFlight(File file) throws AnalysisException {
         ArrayList<GNSSPoint> gnss_point_list;
 		try {
-			gnss_point_list = readIgcFile(file);
+			gnss_point_list = readIgcFileBeanIO(file);
 		} catch (IOException e) {
 			throw new AnalysisException("Could not read file", e);
 		}
@@ -65,43 +70,43 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 * @throws IOException 
 	 */
-	private ArrayList<GNSSPoint> readIgcFile(File file) throws AnalysisException, IOException {
-		GNSSPoint gnss_point = null;
-		FileReader fr = null;
-		BufferedReader br = null;
-		ArrayList<GNSSPoint> gnss_point_list = new ArrayList<>();
+	private ArrayList<GNSSPoint> readIgcFileBeanIO(File file) throws AnalysisException, IOException {
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		System.out.println(
+				df.format(LocalDateTime.now()) +
+				" Parsing file [" + 
+				file.getName() + "]");
 		
+		StreamFactory factory = StreamFactory.newInstance();
+		
+		factory.load("src/main/java/com/polymorph/soaringcoach/analysis/igc_mapping.xml");
+
+		BeanReader br = null;
+		ArrayList<GNSSPoint> points = new ArrayList<>();
+
 		try {
-	        try {
-	            fr = new FileReader(file);
-	            br = new BufferedReader(fr);
-	            
-	            String line = null;
-				while ((line  = br.readLine()) != null) {
-	                gnss_point = GNSSPoint.createGNSSPoint(file.getName(), line);
-	                if(gnss_point != null) {
-						gnss_point_list.add(gnss_point);
-	                }
-	            }
-			} catch (IOException e) {
-				throw new IOException("Problem reading file " + file.getName(), e);
+			try {
+				br = factory.createReader("igc_file", file);
+				GNSSPointData pt_data = null;
+				while ((pt_data = (GNSSPointData) br.read()) != null) {
+					GNSSPoint pt = GNSSPoint.createGNSSPoint(pt_data);
+					points.add(pt);
+				}
+			} catch (BeanReaderException e) {
+				throw new IOException("Problem reading file " + file.getName(), e);				
 			}
-        } finally {
-        	try {
-        		//if there was some problem opening the file, these could be null
-        		if (fr != null) { 
-        			fr.close();
-        		}
-        		if (fr != null) { 
-        			br.close();
-        		}
-			} catch (IOException e) {
-				throw new IOException("Problem closing file after reading it " + file.getName(), e);
+		} finally {
+			if (br != null) {
+				br.close();
 			}
-        }
-		return gnss_point_list;
+		}			
+		
+		System.out.println(
+				df.format(LocalDateTime.now()) +
+				" File parsing completed");
+		
+		return points;
 	}
-	
 	
 	/**
 	 * The meat & potatoes of this class - it calls all the different AAnalysis

@@ -82,6 +82,46 @@ public class GNSSPoint extends Point3d {
 	 */
 	protected GNSSPoint() {}
 	
+	
+	public static GNSSPoint createGNSSPoint(GNSSPointData pt_data) {
+		GNSSPoint pt = null;
+		
+		double decimalized_lat = -1000; //init to impossible values
+		double decimalized_lon = -1000;
+	
+		if (isValidGpsFix(pt_data)) {
+			
+			// It's a GPS fix record, so we can convert it.
+			decimalized_lat = decimalizeDegrees(
+					pt_data.latitude_degrees, 
+					pt_data.latitude_minutes, 
+					pt_data.latitudeEquatorRef);
+			
+			decimalized_lon = decimalizeDegrees(
+					pt_data.longitude_degrees, 
+					pt_data.longitude_minutes, 
+					pt_data.longitude_greenwich_ref);
+			
+			pt = GNSSPoint.createGNSSPoint(
+					null,
+					pt_data.timestamp, 
+					decimalized_lat, 
+					decimalized_lon, 
+					pt_data.altitudeOk, 
+					pt_data.pressure_altitude, 
+					pt_data.gnss_altitude, 
+					pt_data.other);
+			
+			pt.data = pt_data;
+			
+		} else {
+			SimpleDateFormat df = new SimpleDateFormat("HHmmss");
+			System.out.println("Invalid GPS fix at: [" + df.format(pt_data.timestamp) + "], discarded the record");
+		} 
+		
+		return pt;
+	}
+	
 	/**
 	 * Create from what's loaded from the DB
 	 * 
@@ -145,7 +185,7 @@ public class GNSSPoint extends Point3d {
 				decimalized_lat = decimalizeDegrees(
 						pt_data.latitude_degrees, 
 						pt_data.latitude_minutes, 
-						pt_data.latitude_equator_ref);
+						pt_data.latitudeEquatorRef);
 				
 				decimalized_lon = decimalizeDegrees(
 						pt_data.longitude_degrees, 
@@ -157,7 +197,7 @@ public class GNSSPoint extends Point3d {
 						pt_data.timestamp, 
 						decimalized_lat, 
 						decimalized_lon, 
-						pt_data.altitude_ok, 
+						pt_data.altitudeOk, 
 						pt_data.pressure_altitude, 
 						pt_data.gnss_altitude, 
 						pt_data.other);

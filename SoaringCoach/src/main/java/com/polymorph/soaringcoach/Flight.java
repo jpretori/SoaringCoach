@@ -1,8 +1,5 @@
 package com.polymorph.soaringcoach;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
