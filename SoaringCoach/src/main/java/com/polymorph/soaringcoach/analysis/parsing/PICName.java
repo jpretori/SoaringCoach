@@ -14,7 +14,15 @@ public class PICName {
 		return picName;
 	}
 	public void setPicName(String text) {
-		this.picName = text;
+		if (text != null) {
+			try {
+				this.picName = text.substring(text.indexOf(":") + 1);
+			} catch (IndexOutOfBoundsException e) {
+				this.picName = "";
+			}
+		} else {
+			this.picName = text;
+		}
 	}
 	
 }

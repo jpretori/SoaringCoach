@@ -30,6 +30,7 @@ public class SoaringCoach {
 		 System.out.println("Headline info");
 		 System.out.println("=============");
 		 System.out.println("Flight ID: " + flight.id);
+		 System.out.println("Pilot Name: " + flight.pilot_name);
 		 System.out.println("Total Track Distance (km): " + Math.round(flight.total_track_distance)/1000.0);
 		 System.out.println("Total Flight Duration (seconds): " + flight.getDuration());
 		 System.out.println("Number of GNSS Fixes: " + flight.igc_points.size());
