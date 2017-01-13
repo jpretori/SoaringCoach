@@ -17,6 +17,7 @@ import com.polymorph.soaringcoach.analysis.DistanceAnalysis;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.ThermalAnalysis;
 import com.polymorph.soaringcoach.analysis.WindAnalysis;
+import com.polymorph.soaringcoach.analysis.parsing.PICName;
 import com.polymorph.soaringcoach.analysis.parsing.GNSSPointData;
 
 public class FlightAnalyser {
@@ -44,19 +45,19 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 */
 	public Flight addAndAnalyseFlight(File file) throws AnalysisException {
-        ArrayList<GNSSPoint> gnss_point_list;
+        Flight f = new Flight();
+        
 		try {
-			gnss_point_list = readIgcFileBeanIO(file);
+			f = readIgcFileBeanIO(file, f);
 		} catch (IOException e) {
 			throw new AnalysisException("Could not read file", e);
 		}
 		
-		Flight f = null;
-		if (gnss_point_list.size() < 1) {
+		if (f.igc_points.size() < 1) {
 			throw new AnalysisException(
 					"This does not seem to be an IGC file - no valid fixes available to analyse " + file.getName());
 		} else {
-			f  = analyse(gnss_point_list);
+			f  = analyse(f);
 		}
 		
 		return f;
@@ -70,7 +71,7 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 * @throws IOException 
 	 */
-	private ArrayList<GNSSPoint> readIgcFileBeanIO(File file) throws AnalysisException, IOException {
+	private Flight readIgcFileBeanIO(File file, Flight f) throws AnalysisException, IOException {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		System.out.println(
 				df.format(LocalDateTime.now()) +
@@ -82,15 +83,23 @@ public class FlightAnalyser {
 		factory.load("src/main/java/com/polymorph/soaringcoach/analysis/igc_mapping.xml");
 
 		BeanReader br = null;
-		ArrayList<GNSSPoint> points = new ArrayList<>();
+		f.igc_points = new ArrayList<>();
 
 		try {
 			try {
 				br = factory.createReader("igc_file", file);
 				GNSSPointData pt_data = null;
-				while ((pt_data = (GNSSPointData) br.read()) != null) {
-					GNSSPoint pt = GNSSPoint.createGNSSPoint(pt_data);
-					points.add(pt);
+				Object bean = null;
+				
+				while ((bean = br.read()) != null) {
+					if (bean instanceof GNSSPointData) {
+						pt_data = (GNSSPointData) bean;
+						
+						GNSSPoint pt = GNSSPoint.createGNSSPoint(pt_data);
+						f.igc_points.add(pt);
+					} else if (bean instanceof PICName) {
+						f.pilot_name = ((PICName) bean).picName;
+					}
 				}
 			} catch (BeanReaderException e) {
 				throw new IOException("Problem reading file " + file.getName(), e);				
@@ -105,7 +114,7 @@ public class FlightAnalyser {
 				df.format(LocalDateTime.now()) +
 				" File parsing completed");
 		
-		return points;
+		return f;
 	}
 	
 	/**
@@ -115,9 +124,7 @@ public class FlightAnalyser {
 	 * @param gnssPointList
 	 * @return
 	 */
-	private Flight analyse(ArrayList<GNSSPoint> gnssPointList) throws AnalysisException {
-		Flight f = new Flight(gnssPointList);
-		
+	private Flight analyse(Flight f) throws AnalysisException {
 		f = new DistanceAnalysis().analyse(f);
 		f = new CirclingAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);

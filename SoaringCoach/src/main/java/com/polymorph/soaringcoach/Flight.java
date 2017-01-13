@@ -30,6 +30,8 @@ public class Flight {
 	public ArrayList<Thermal> thermals = null;
 	
 	public boolean is_centring_analysis_complete;
+
+	public String pilot_name;
 	
 	/**
 	 * Creates a new Flight object, initialised with the fixes provided - ready for analysis
@@ -37,6 +39,14 @@ public class Flight {
 	 */
 	protected Flight(ArrayList<GNSSPoint> fixes) {
 		this.igc_points = fixes;
+	}
+	
+	/**
+	 * Creates a new Flight object
+	 * @param fixes
+	 */
+	protected Flight() {
+		this.igc_points = new ArrayList<>();
 	}
 	
 	/**
