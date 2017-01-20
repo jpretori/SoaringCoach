@@ -47,10 +47,7 @@ public class SoaringCoach {
 			 System.out.println("\tNumber of circles: " + t.circles.size());
 			 System.out.println("\tAverage circle duration: " + t.getAverageCircleDuration());
 			 System.out.println("\tTurn direction: " + t.circles.get(0).turn_direction);
-			 if (t.is_flying_erratically) {
-				 System.out.println("\tPilot seems to be flying erratically! (30% or fewer of circle drift vectors were consistent enough to use for wind calculation)");
-			 }
-			 System.out.print("\tCalculated wind (bearing, km/h): ");
+			 System.out.print("\tCalculated wind (bearing, speed in km/h): ");
 			 if (t.could_not_calculate_wind) {
 				 System.out.println("Too few circles to calculate");
 			 } else {
@@ -65,10 +62,10 @@ public class SoaringCoach {
 			 for (Circle c : t.circles) {
 				 System.out.println("\t\t" + circle_num++ + ". Duration: " + c.duration);
 				 if (c.drift_vector.size > 0) {
-					 System.out.println("\t\t\tDrift vector (bearing, meters): " + Math.round(c.drift_vector.bearing) + ", " + Math.round(c.drift_vector.size));
+					 System.out.println("\t\t\tDrift vector (bearing, distance in m): " + Math.round(c.drift_vector.bearing) + ", " + Math.round(c.drift_vector.size));
 				 }
 				 if (c.correction_vector.size > 0) {
-					 System.out.println("\t\t\tCentring vector (bearing, meters): " + Math.round(c.correction_vector.bearing) + ", " + Math.round(c.correction_vector.size));
+					 System.out.println("\t\t\tCentring vector (bearing, distance in m): " + Math.round(c.correction_vector.bearing) + ", " + Math.round(c.correction_vector.size));
 				 }
 				 if (c.turn_direction != thermal_turn_direction) {
 					 System.out.println("\t\t\tSwitched turn direction!");

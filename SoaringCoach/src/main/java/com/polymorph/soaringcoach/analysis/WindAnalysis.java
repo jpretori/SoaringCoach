@@ -25,8 +25,8 @@ import com.polymorph.soaringcoach.Thermal;
  *
  */
 public class WindAnalysis extends AAnalysis {
-	private static final double DRIFT_OUTLIER_CUTOFF_SIZE = 20;
-	private static final double DRIFT_OUTLIER_CUTOFF_BEARING = 5;
+	private static final double DRIFT_OUTLIER_CUTOFF_SIZE = 20*4;
+	private static final double DRIFT_OUTLIER_CUTOFF_BEARING = 5*9;
 	private static final int MIN_DRIFT_VECTORS_REQUIRED = 3;
 
 	@Override
@@ -63,90 +63,150 @@ public class WindAnalysis extends AAnalysis {
 	 * @param t
 	 */
 	private Thermal refineAverageDrift(Thermal t) {
-		//initially, just populate the drift vector arrays (polar and cartesian versions) and store how many vectors we have
-		ArrayList<Vector2d> drift_vectors_cartesian = new ArrayList<>();
-		ArrayList<PolarVector> drift_vectors_polar = new ArrayList<>();
-		for (Circle c : t.circles) {
-			if (c.drift_vector != null) {
-				drift_vectors_polar.add(c.drift_vector);
-				
-				double x = c.drift_vector.size * Math.cos(Math.toRadians(c.drift_vector.bearing));
-				double y = c.drift_vector.size * Math.sin(Math.toRadians(c.drift_vector.bearing));
-				
-				Vector2d drift_cartesian = new Vector2d(x, y);
-				drift_vectors_cartesian.add(drift_cartesian);
-			}
-		}
+		ArrayList<PolarVector> driftVectorsPolar = getPolarVectorsList(t);
 		
-		int drift_vectors_starting_count = drift_vectors_cartesian.size();
+		ArrayList<Vector2d> driftVectorsCartesian = getCartesianVectorsList(t);
 		
-		Vector2d average_drift_cartesian = null;
-		PolarVector average_drift_polar = null;
-		int drift_vectors_remaining_count;
+		Vector2d averageDriftCartesian = null;
+		PolarVector averageDriftPolar = null;
+		boolean justRemovedOne = false;
+		int driftVectorsCount = driftVectorsCartesian.size();
 		do {
-			average_drift_cartesian = new Vector2d(0, 0);
-			drift_vectors_remaining_count = drift_vectors_cartesian.size();
 			
-			//Get average cartesian drift vector, and convert back to polar
-			for (Vector2d drift_cartesian : drift_vectors_cartesian) {
-				average_drift_cartesian.add(drift_cartesian); 
-			}
-			average_drift_cartesian.scale(1.0 / drift_vectors_remaining_count); 
+			averageDriftCartesian = vectorCartesianCalcAverage(driftVectorsCartesian, driftVectorsCount); 
 			
-			double average_drift_bearing = Math.atan2(average_drift_cartesian.y, average_drift_cartesian.x);
-			average_drift_bearing = Math.toDegrees(average_drift_bearing);
+			averageDriftPolar = vectorCartesianToPolar(averageDriftCartesian);
 			
-			double average_drift_size = Math.sqrt(
-					average_drift_cartesian.x * average_drift_cartesian.x + 
-					average_drift_cartesian.y * average_drift_cartesian.y);
-			
-			average_drift_polar = new PolarVector(average_drift_bearing, average_drift_size);
-			
-			//discard outliers, one at a time
-			for (int i = 0; i < drift_vectors_remaining_count; i++) {
-				PolarVector drift_vector_polar = drift_vectors_polar.get(i);
+			//look for an outlier, discard it if found and re-calculate the average
+			boolean sizeCutoff = false;
+			boolean bearingCutoff = false;
+			justRemovedOne = false;
+			for (int i = 0; (i < driftVectorsCount) && !(justRemovedOne); i++) {
+				PolarVector driftVectorPolar = driftVectorsPolar.get(i);
 				
-				boolean size_cutoff = Math.abs(drift_vector_polar.size - average_drift_polar.size) > DRIFT_OUTLIER_CUTOFF_SIZE;
-				boolean bearing_cutoff = Math.abs(
-						FlightAnalyser.calcBearingChange(drift_vector_polar.bearing, average_drift_polar.bearing)) > 
+				sizeCutoff = Math.abs(driftVectorPolar.size - averageDriftPolar.size) > DRIFT_OUTLIER_CUTOFF_SIZE;
+				bearingCutoff = Math.abs(
+						FlightAnalyser.calcBearingChange(driftVectorPolar.bearing, averageDriftPolar.bearing)) > 
 						DRIFT_OUTLIER_CUTOFF_BEARING;
-				if (size_cutoff || bearing_cutoff) {
-					drift_vectors_cartesian.remove(i);
-					drift_vectors_polar.remove(i);
-					break; //Go back to recalculate the average - doing these one at a time should get more accurate results
+						
+				if (sizeCutoff || bearingCutoff) {
+					driftVectorsCartesian.remove(i);
+					driftVectorsPolar.remove(i);
+					driftVectorsCount  = driftVectorsCartesian.size();
+					System.out.println("Discarded drift vector as a wind effect because: " + (sizeCutoff ? "SIZE" : "") + ", " + (bearingCutoff ? "BEARING" : ""));
+					justRemovedOne = true;
 				}
 			}
-		} while (drift_vectors_remaining_count > drift_vectors_cartesian.size() && 
-				drift_vectors_cartesian.size() >= MIN_DRIFT_VECTORS_REQUIRED);
+		} while (justRemovedOne && 
+				driftVectorsCount >= MIN_DRIFT_VECTORS_REQUIRED);
 		
-		if (drift_vectors_cartesian.size() > 0) {
-			//now we have a wind vector, except that it's size is in "meters per circle"
-			average_drift_polar.size = 1.0 * average_drift_polar.size / t.getAverageCircleDuration();
-			t.wind = average_drift_polar;
-			
-			//atan2 can return negative angles.  Clamp to positive.
-			if (t.wind.bearing < 0) {
-				t.wind.bearing += 360;
-			}
-		} else {
-			// No wind to speak of.  At least avoid NPEs down the line
-			t.wind = new PolarVector(0, 0);
-		}
+		long averageCircleDuration = t.getAverageCircleDuration();
+		t.wind = calculateAverageWind(driftVectorsCount, averageDriftPolar, averageCircleDuration);
 		
-		if ((1.0 * drift_vectors_remaining_count) / drift_vectors_starting_count < 0.3) {
-			// This means we "removed outliers" until only 30% of the original drift vectors remain.  
-			// I.e. the guy is flying erratically, since 70% of circles contain a substantial "correction"
-			t.is_flying_erratically = true;
-			t.could_not_calculate_wind = true;
-		}
-		
-		if (drift_vectors_cartesian.size() < MIN_DRIFT_VECTORS_REQUIRED) {
-			//This means we don't actually have enough data to make a reliable wind calculation
-			t.wind = new PolarVector(0, 0);
-			t.could_not_calculate_wind = true;
-		}
+		t.could_not_calculate_wind = driftVectorsCount < MIN_DRIFT_VECTORS_REQUIRED;
 		
 		return t;
+	}
+
+	/**
+	 * @param t
+	 * @return
+	 */
+	private ArrayList<Vector2d> getCartesianVectorsList(Thermal t) {
+		ArrayList<Vector2d> driftVectorsCartesian = new ArrayList<>();
+		for (Circle c : t.circles) {
+			if (c.drift_vector != null) {
+				Vector2d driftCartesian = vectorPolarToCartesian(c);
+				
+				driftVectorsCartesian.add(driftCartesian);
+			}
+		}
+		return driftVectorsCartesian;
+	}
+
+	/**
+	 * @param t
+	 * @return
+	 */
+	private ArrayList<PolarVector> getPolarVectorsList(Thermal t) {
+		ArrayList<PolarVector> driftVectorsPolar = new ArrayList<>();
+		for (Circle c : t.circles) {
+			if (c.drift_vector != null) {
+				driftVectorsPolar.add(c.drift_vector);
+			}
+		}
+		return driftVectorsPolar;
+	}
+
+	/**
+	 * @param driftVectorsCount
+	 * @param averageDriftPolar
+	 * @param averageCircleDuration
+	 * @return
+	 */
+	private PolarVector calculateAverageWind(int driftVectorsCount, PolarVector averageDriftPolar,
+			long averageCircleDuration) {
+		
+		PolarVector wind = new PolarVector(0, 0);
+		
+		if (driftVectorsCount > 0) {
+			//now we have a wind vector, except that it's size is in "meters per circle"
+			averageDriftPolar.size = 1.0 * averageDriftPolar.size / averageCircleDuration;
+			wind = averageDriftPolar;
+			
+			//atan2 can return negative angles.  Clamp to positive.
+			if (wind.bearing < 0) {
+				wind.bearing += 360;
+			}
+		} 
+
+		return wind;
+	}
+
+	/**
+	 * @param averageDriftCartesian
+	 * @return
+	 */
+	private PolarVector vectorCartesianToPolar(Vector2d averageDriftCartesian) {
+		PolarVector averageDriftPolar;
+		double average_drift_bearing = Math.atan2(averageDriftCartesian.y, averageDriftCartesian.x);
+		average_drift_bearing = Math.toDegrees(average_drift_bearing);
+		
+		double average_drift_size = Math.sqrt(
+				averageDriftCartesian.x * averageDriftCartesian.x + 
+				averageDriftCartesian.y * averageDriftCartesian.y);
+		
+		averageDriftPolar = new PolarVector(average_drift_bearing, average_drift_size);
+		return averageDriftPolar;
+	}
+
+	/**
+	 * @param driftVectorsCartesian
+	 * @param driftVectorsRemainingCount
+	 * @return
+	 */
+	private Vector2d vectorCartesianCalcAverage(ArrayList<Vector2d> driftVectorsCartesian,
+			int driftVectorsRemainingCount) {
+		Vector2d averageDriftCartesian;
+		//Get average cartesian drift vector, and convert back to polar
+		averageDriftCartesian = new Vector2d(0, 0);
+		for (Vector2d drift_cartesian : driftVectorsCartesian) {
+			averageDriftCartesian.add(drift_cartesian); 
+		}
+		averageDriftCartesian.scale(1.0 / driftVectorsRemainingCount);
+		return averageDriftCartesian;
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	private Vector2d vectorPolarToCartesian(Circle c) {
+		double x = c.drift_vector.size * Math.cos(Math.toRadians(c.drift_vector.bearing));
+		double y = c.drift_vector.size * Math.sin(Math.toRadians(c.drift_vector.bearing));
+		
+		Vector2d driftCartesian = new Vector2d(x, y);
+		return driftCartesian;
 	}
 
 	/**
@@ -163,7 +223,7 @@ public class WindAnalysis extends AAnalysis {
 				GNSSPoint c1_start = c1.getStartPoint();
 				GNSSPoint c2_start = c2.getStartPoint();
 				
-				double drift_bearing = FlightAnalyser.calculateTrackCourse(c1_start , c2_start);
+				double drift_bearing = FlightAnalyser.calculateTrackCourse(c1_start, c2_start);
 				double drift_distance = c1_start.distance(c2_start);
 				
 				c2.drift_vector = new PolarVector(drift_bearing, drift_distance); 			
