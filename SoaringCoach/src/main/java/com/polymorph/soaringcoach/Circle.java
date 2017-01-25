@@ -29,6 +29,8 @@ public class Circle {
 	 * influence subtracted out.
 	 */
 	public PolarVector correction_vector = null;
+	public GNSSPoint last_point_before_circle;
+	public GNSSPoint last_point_in_circle = null;
 
 	/**
 	 * @param p1 GNSS Point.  Must be resolved.
@@ -37,6 +39,7 @@ public class Circle {
 	 * 
 	 */
 	public Circle(GNSSPoint p1, GNSSPoint p2, FlightMode mode) {
+		this.last_point_before_circle = p1;
 		this.timestamp = p2.data.timestamp;
 		this.circle_start_latitude = p2.getLatitude();
 		this.circle_start_longitude = p2.getLongitude();	
@@ -162,6 +165,8 @@ public class Circle {
 		}
 		
 		circle_completed = Math.abs(deg_course_change_since_start) >= 360;
+		
+		this.last_point_in_circle  = p;
 		
 		return circle_completed;
 	}

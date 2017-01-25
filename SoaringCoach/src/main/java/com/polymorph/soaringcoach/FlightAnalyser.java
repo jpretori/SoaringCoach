@@ -15,6 +15,7 @@ import com.polymorph.soaringcoach.analysis.CentringAnalysis;
 import com.polymorph.soaringcoach.analysis.CirclingAnalysis;
 import com.polymorph.soaringcoach.analysis.DistanceAnalysis;
 import com.polymorph.soaringcoach.analysis.GNSSPoint;
+import com.polymorph.soaringcoach.analysis.ShortStraightPhasesAnalysis;
 import com.polymorph.soaringcoach.analysis.ThermalAnalysis;
 import com.polymorph.soaringcoach.analysis.WindAnalysis;
 import com.polymorph.soaringcoach.analysis.parsing.PICName;
@@ -130,6 +131,7 @@ public class FlightAnalyser {
 		f = new ThermalAnalysis().analyse(f);
 		f = new WindAnalysis().analyse(f);
 		f = new CentringAnalysis().analyse(f);
+		f = new ShortStraightPhasesAnalysis().analyse(f);
 		
 		return f;
 	}

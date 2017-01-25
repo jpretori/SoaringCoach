@@ -46,9 +46,11 @@ public class CirclingAnalysis extends AAnalysis {
 				if (mode == FlightMode.CRUISING) {
 					if (Math.abs(p2.turn_rate) > TURN_RATE_THRESHOLD) {
 						mode = getTurnDirection(p2.turn_rate);
-						if (last_halfdone_circle != null && 
-								mode == last_halfdone_circle.turn_direction && 
-								getElapsedTime(halfdone_circle_last_point, p2) <= MAX_CENTERING_STRAIGHTEN_TIME) {
+						if (detectResumingCircleAfterCentringMove(
+								mode, 
+								last_halfdone_circle, 
+								halfdone_circle_last_point,
+								p2)) {
 							circle = last_halfdone_circle;
 						} else {
 							circle = new Circle(p1, p2, mode);
@@ -85,6 +87,23 @@ public class CirclingAnalysis extends AAnalysis {
 		
 		flight.is_circling_analysis_complete = true;
 		return flight;
+	}
+
+	/**
+	 * @param mode
+	 * @param last_halfdone_circle
+	 * @param halfdone_circle_last_point
+	 * @param p2
+	 * @return
+	 */
+	private boolean detectResumingCircleAfterCentringMove(
+			FlightMode mode, 
+			Circle last_halfdone_circle,
+			GNSSPoint halfdone_circle_last_point, 
+			GNSSPoint p2) {
+		return last_halfdone_circle != null && 
+				mode == last_halfdone_circle.turn_direction && 
+				getElapsedTime(halfdone_circle_last_point, p2) <= MAX_CENTERING_STRAIGHTEN_TIME;
 	}
 
 	private long getElapsedTime(GNSSPoint halfdone_circle_last_point, GNSSPoint p2) {

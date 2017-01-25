@@ -6,6 +6,7 @@ import com.polymorph.soaringcoach.Circle;
 import com.polymorph.soaringcoach.Flight;
 import com.polymorph.soaringcoach.FlightAnalyser;
 import com.polymorph.soaringcoach.FlightAnalyser.FlightMode;
+import com.polymorph.soaringcoach.StraightPhase;
 import com.polymorph.soaringcoach.Thermal;
 import com.polymorph.soaringcoach.analysis.AnalysisException;
 
@@ -26,20 +27,35 @@ public class SoaringCoach {
 		 FlightAnalyser fa = new FlightAnalyser();
 		 Flight flight = fa.addAndAnalyseFlight(f);
 		 
+		 System.out.println();
 		 System.out.println("Analysis complete.  Dumping flight parameters.");
 		 System.out.println("Headline info");
 		 System.out.println("=============");
 		 System.out.println("Flight ID: " + flight.id);
 		 System.out.println("Pilot Name: " + flight.pilot_name);
 		 System.out.println("Total Track Distance (km): " + Math.round(flight.total_track_distance)/1000.0);
-		 System.out.println("Total Flight Duration (seconds): " + flight.getDuration());
+		 System.out.println("Total Flight Duration (hours): " + (Math.round((flight.getDuration()/3600)*10))/10.0);
 		 System.out.println("Number of GNSS Fixes: " + flight.igc_points.size());
 		 System.out.println("Number of circles: " + flight.circles.size());
 		 System.out.println("Number of thermals: " + flight.thermals.size());
+		 System.out.println("Number of straight phases: " + flight.straight_phases.size());
+		 System.out.println();
+		 
+		 System.out.println();
+		 
+		 System.out.println("Straight Phases");
+		 System.out.println("===============");
+		 System.out.println("Distances are in km");
+		 int i = 1;
+		 flight.straight_phases.sort(null);
+		 for (StraightPhase s : flight.straight_phases) {
+			System.out.println("\t" + i++ + ". Start: " + s.start_point.getTimestamp() + ", Distance: " + Math.round(s.distance)/1000.0);
+		 }
+		 
 		 System.out.println();
 		 System.out.println("Thermals");
 		 System.out.println("========");
-		 int i = 1;
+		 i = 1;
 		 for (Thermal t : flight.thermals) {
 			 System.out.println("\tThermal #: " + i++);
 			 System.out.println("\tStart time: " + t.circles.get(0).getTimestamp());

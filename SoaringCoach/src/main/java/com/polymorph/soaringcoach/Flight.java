@@ -32,6 +32,9 @@ public class Flight {
 	public boolean is_centring_analysis_complete;
 
 	public String pilot_name;
+
+	public boolean is_short_straight_phases_analysis_complete = false;
+	public ArrayList<StraightPhase> straight_phases;
 	
 	/**
 	 * Creates a new Flight object, initialised with the fixes provided - ready for analysis
