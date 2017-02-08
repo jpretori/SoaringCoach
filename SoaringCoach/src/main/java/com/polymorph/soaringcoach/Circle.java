@@ -29,8 +29,8 @@ public class Circle {
 	 * influence subtracted out.
 	 */
 	public PolarVector correction_vector = null;
-	public GNSSPoint last_point_before_circle;
-	public GNSSPoint last_point_in_circle = null;
+	public GNSSPoint startPoint;
+	public GNSSPoint endPoint = null;
 
 	/**
 	 * @param p1 GNSS Point.  Must be resolved.
@@ -39,12 +39,12 @@ public class Circle {
 	 * 
 	 */
 	public Circle(GNSSPoint p1, GNSSPoint p2, FlightMode mode) {
-		this.last_point_before_circle = p1;
+		this.startPoint = p1;
 		this.timestamp = p2.data.timestamp;
 		this.circle_start_latitude = p2.getLatitude();
 		this.circle_start_longitude = p2.getLongitude();	
 		this.turn_direction = mode;
-		this.circle_start_course = p1.track_course_deg;
+		this.circle_start_course = p1.bearingIntoPoint;
 	}
 	
 	
@@ -152,7 +152,7 @@ public class Circle {
 	public boolean detectCircleCompleted(GNSSPoint p) {
 		if (deg_course_change_since_start == 0) {
 			//Work out the smallest angle between the circle start course & the track course leading to p
-			 double angle = Math.abs(circle_start_course - p.track_course_deg);
+			 double angle = Math.abs(circle_start_course - p.bearingIntoPoint);
 			 double angle_inverse = Math.abs(angle - 360);
 			 
 			 if (angle < angle_inverse) {
@@ -166,7 +166,7 @@ public class Circle {
 		
 		circle_completed = Math.abs(deg_course_change_since_start) >= 360;
 		
-		this.last_point_in_circle  = p;
+		this.endPoint  = p;
 		
 		return circle_completed;
 	}

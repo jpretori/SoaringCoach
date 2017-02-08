@@ -27,7 +27,7 @@ public class GNSSPoint extends Point3d {
 	/**
 	 * The track course from the previous point to this one
 	 */
-	public double track_course_deg = -400;
+	public double bearingIntoPoint = -400;
 	
 	/**
 	 * Number of seconds since the last point
@@ -309,9 +309,23 @@ public class GNSSPoint extends Point3d {
 	public void resolve(GNSSPoint p1) {
 		this.seconds_since_last_fix = (this.data.timestamp.getTime() - p1.data.timestamp.getTime())/1000;
 		
-		if (p1.track_course_deg > -400) { // if it's still -400, it wasn't initialised - so p1 is the first point in the file
-			double track_course_delta = FlightAnalyser.calcBearingChange(p1.track_course_deg, this.track_course_deg);
+		if (p1.bearingIntoPoint > -400) { // if it's still -400, it wasn't initialised - so p1 is the first point in the file
+			double track_course_delta = FlightAnalyser.calcBearingChange(p1.bearingIntoPoint, this.bearingIntoPoint);
 			this.turn_rate = track_course_delta / this.seconds_since_last_fix;
 		}
+	}
+	
+	/**
+	 * For the purposes of SoaringCoach, two <code>GNSSPoints</code> are equal iff their timestamps are equal.
+	 */
+	@Override
+	public boolean equals(Object t1) {
+		try {
+			GNSSPoint p2 = (GNSSPoint) t1;
+			return this.data.timestamp.equals(p2.data.timestamp);
+		} 
+		catch (ClassCastException e) {return false;}
+		catch (NullPointerException e) {return false;}
+		
 	}
 }

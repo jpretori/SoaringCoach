@@ -39,7 +39,7 @@ public class CirclingAnalysis extends AAnalysis {
 		for (GNSSPoint p2 : flight.igc_points) {
 			
 			if (p1 != null && p2 != null) {
-				p2.track_course_deg = FlightAnalyser.calculateTrackCourse(p1, p2);
+				p2.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, p2);
 				
 				p2.resolve(p1);
 				

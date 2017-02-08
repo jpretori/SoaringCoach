@@ -30,24 +30,12 @@ public class ThermalAnalysis extends AAnalysis {
 			
 			if (c1 != null && c2 != null) {
 				
-				if ((c1.timestamp.getTime() + c1.duration*1000) == c2.timestamp.getTime()) {
-					//Turns are adjacent so add both to the thermal if we're starting a new record - otherwise just add c2
-					
-					if (thermal == null) {
-						thermal = new Thermal(c1);
-						flight.thermals.add(thermal);
-						c1.setIncludedInThermal();
-					} 
-					
-					thermal.addCircle(c2);
-					c2.setIncludedInThermal();
-				} else {
-					// Set thermal=null to make sure we initialize a new thermal
-					// next time two turns are adjacent 
-					thermal = null;
+				thermal = addCirclesToThermal(thermal, c1, c2);
+				if (thermal != null) {
+					flight.thermals.add(thermal);
 				}
-				
-				//c1 and c2 were not adjacent, check if we have a 1-circle thermal
+
+				//if c1 isn't in a thermal yet, it means it's a 1-circle thermal.  Add it into it's own Thermal object.
 				if (!c1.isIncludedInThermal()) {
 					flight.thermals.add(new Thermal(c1));
 					c1.setIncludedInThermal();
@@ -58,6 +46,36 @@ public class ThermalAnalysis extends AAnalysis {
 		
 		flight.is_thermal_analysis_complete = true;
 		return flight;
+	}
+
+	/**
+	 * Figures out whether two circles are adjacent, adding one or both as
+	 * appropriate (<code>c1</code> may already be in there). Returns null if
+	 * the circles are not adjacent - this this does not work for single-circle
+	 * "thermals".
+	 * 
+	 * @param thermal
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	private Thermal addCirclesToThermal(Thermal thermal, Circle c1, Circle c2) {
+		if ((c1.timestamp.getTime() + c1.duration*1000) == c2.timestamp.getTime()) {
+			//Turns are adjacent so add both to the thermal if we're starting a new record - otherwise just add c2
+			
+			if (thermal == null) {
+				thermal = new Thermal(c1);
+				c1.setIncludedInThermal();
+			} 
+			
+			thermal.addCircle(c2);
+			c2.setIncludedInThermal();
+		} else {
+			// Set thermal=null to make sure we initialize a new thermal
+			// next time two turns are adjacent 
+			thermal = null;
+		}
+		return thermal;
 	}
 
 	@Override

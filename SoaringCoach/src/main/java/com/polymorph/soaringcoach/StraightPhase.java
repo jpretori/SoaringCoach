@@ -7,8 +7,10 @@ public class StraightPhase implements Comparable<StraightPhase>{
 	public GNSSPoint end_point;
 	public double distance;
 	
-	public void calculateDistance() {
-		distance = end_point.distance(start_point);
+	public StraightPhase(GNSSPoint start, GNSSPoint end) {
+		distance = end.distance(start);
+		this.end_point = end;
+		this.start_point = start;
 	}
 
 	@Override

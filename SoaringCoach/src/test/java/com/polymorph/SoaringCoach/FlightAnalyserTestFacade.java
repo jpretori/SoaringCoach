@@ -28,7 +28,11 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		
 		for (Scanner sc = new Scanner(new File(filename)); sc.hasNext();) {
 			String line = sc.nextLine();
-			igc_points.add(GNSSPoint.createGNSSPoint(filename, line));
+			
+			GNSSPoint pt = GNSSPoint.createGNSSPoint(filename, line);
+			if (pt != null) {
+				igc_points.add(pt);
+			}
 		}
 		
 		return igc_points;

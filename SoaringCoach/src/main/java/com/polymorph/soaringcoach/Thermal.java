@@ -4,12 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.polymorph.soaringcoach.analysis.GNSSPoint;
 import com.polymorph.soaringcoach.analysis.PolarVector;
 
 public class Thermal {
 	public ArrayList<Circle> circles;
 	public PolarVector wind = null;
 	public boolean could_not_calculate_wind = false;
+	public GNSSPoint startPoint;
+	public GNSSPoint endPoint;
 	
 	/**
 	 * Make a new thermal, ready to accept turns
@@ -21,13 +24,16 @@ public class Thermal {
 	/**
 	 * Make a single-circle thermal.  Allows adding more circles if needed.
 	 */
-	public Thermal(Circle t) {
-		this.circles = new ArrayList<Circle>();
-		circles.add(t);
+	public Thermal(Circle c) {
+		this.circles = new ArrayList<>();
+		circles.add(c);
+		this.startPoint = c.startPoint;
+		this.endPoint = c.endPoint;
 	}
 	
-	public void addCircle(Circle t) {
-		circles.add(t);
+	public void addCircle(Circle c) {
+		circles.add(c);
+		this.endPoint = c.endPoint;
 	}
 	
 	/**
