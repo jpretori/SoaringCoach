@@ -111,7 +111,7 @@ public class FlightAnalyser {
 		
 		StreamFactory factory = StreamFactory.newInstance();
 		
-		factory.load("src/main/java/com/polymorph/soaringcoach/analysis/igc_mapping.xml");
+		factory.load("src/main/java/soaringcoach/analysis/igc_mapping.xml");
 
 		BeanReader br = null;
 		f.igc_points = new ArrayList<>();

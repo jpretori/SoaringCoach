@@ -3,12 +3,12 @@
   xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
 
   <stream name="igc_file" format="fixedlength" ignoreUnidentifiedRecords="true">
-    <record name="PICName" minOccurs="1" maxOccurs="1" class="com.polymorph.soaringcoach.analysis.parsing.PICName">
+    <record name="PICName" minOccurs="1" maxOccurs="1" class="soaringcoach.analysis.parsing.PICName">
       <field name="recordType" rid="true" literal="HFPLT" length="5" />
       <field name="picName" length="unbounded" />
     </record>
 
-    <record name="GpsFix" minOccurs="0" maxOccurs="unbounded" class="com.polymorph.soaringcoach.analysis.parsing.GNSSPointData">
+    <record name="GpsFix" minOccurs="0" maxOccurs="unbounded" class="soaringcoach.analysis.parsing.GNSSPointData">
       <field name="recordType" rid="true" literal="B" length="1"/>
       <field name="timestamp" format="HHmmss" length="6"/>
       <field name="latitudeDegrees" length="2" />
