@@ -1,6 +1,7 @@
 package soaringcoach.analysis;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import soaringcoach.Flight;
 import soaringcoach.FlightAnalyser;
@@ -80,13 +81,16 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 				if (bearingDelta > THRESHOLD_ANGLE) {
 					if (!continuedTurn) {
 						continuedTurn = true;
-						straightPhase1 = new StraightPhase(straightPhase.start_point, pTail);
-						newStraightPhasesArray.add(straightPhase1);
-						
-						// if the turn continues for several more points, this may introduce a small error. However, because
-						// CirclingAnalysis is complete at this point, we can be sure that the turn does NOT go full circle, 
-						// so the error will at most be a semicircle, the worst case of which is a few hundred meters.
-						straightPhase = new StraightPhase(pHead, straightPhase.end_point);
+						//Avoid degenerately short straight phases
+						if (Math.abs(straightPhase.start_point.data.timestamp.getTime() - pTail.data.timestamp.getTime()) > THRESHOLD_TIME) {
+							straightPhase1 = new StraightPhase(straightPhase.start_point, pTail);
+							newStraightPhasesArray.add(straightPhase1);
+							
+							// if the turn continues for several more points, this may introduce a small error. However, because
+							// CirclingAnalysis is complete at this point, we can be sure that the turn does NOT go full circle, 
+							// so the error will at most be a semicircle, the worst case of which is a few hundred meters.
+							straightPhase = new StraightPhase(pHead, straightPhase.end_point);
+						}
 					}
 				} else {
 					continuedTurn = false;

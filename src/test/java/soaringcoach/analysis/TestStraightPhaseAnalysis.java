@@ -2,11 +2,13 @@ package soaringcoach.analysis;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.junit.Test;
 
+import soaringcoach.Flight;
 import soaringcoach.FlightAnalyser;
 import soaringcoach.FlightAnalyserTestFacade;
 import soaringcoach.FlightTestFacade;
@@ -51,15 +53,7 @@ public class TestStraightPhaseAnalysis {
 		
 		StraightPhaseAnalysisTestFacade spa = new StraightPhaseAnalysisTestFacade();
 		
-		//Dependency on all points having been resolved and their "bearingIntoPoint" values calculated
-		GNSSPoint p1 = null;
-		for (GNSSPoint p2 : f.igc_points) {
-			if (p1 != null && p2 != null) {
-				p2.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, p2);
-				p2.resolve(p1);
-			}
-			p1 = p2;
-		}
+		resolveAllPoints(f);
 		
 		//Now the test
 		ArrayList<StraightPhase> phases = spa.splitIntoSections(
@@ -73,17 +67,48 @@ public class TestStraightPhaseAnalysis {
 
 	@Test
 	public void testSplitIntoSectionsLongSlowTurn() throws FileNotFoundException, AnalysisException {
-		fail("Not yet implemented");
+		FlightTestFacade f = new FlightTestFacade(
+				FlightAnalyserTestFacade.loadFromFile("src/test/resources/SlowCurve.igc"));
+		
+		StraightPhaseAnalysisTestFacade spa = new StraightPhaseAnalysisTestFacade();
+		
+		resolveAllPoints(f);
+		
+		//Now the test
+		ArrayList<StraightPhase> phases = spa.splitIntoSections(
+				new StraightPhase(
+						f.igc_points.get(0), 
+						f.igc_points.get(f.igc_points.size() - 1)), 
+				f);
+		
+		assertEquals(1, phases.size());
 	}
 
-	@Test
-	public void testPerformAnalysisIntegrationTest() throws FileNotFoundException, AnalysisException {
-		fail("Not yet implemented");
+	/**
+	 * Utility method to resolve a dependency that all these tests have: all
+	 * points must have been resolved and their "bearingIntoPoint" values
+	 * calculated
+	 * 
+	 * @param f
+	 */
+	private void resolveAllPoints(FlightTestFacade f) {
+		GNSSPoint p1 = null;
+		for (GNSSPoint p2 : f.igc_points) {
+			if (p1 != null && p2 != null) {
+				p2.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, p2);
+				p2.resolve(p1);
+			}
+			p1 = p2;
+		}
 	}
 
 	@Test
 	public void testPerformAnalysisNoStraightSections() throws FileNotFoundException, AnalysisException {
-		fail("Not yet implemented");
+		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade();
+		Flight f = fa.addAndAnalyseFlight(new File("src/test/resources/DetermineCircleStartNoWind.igc"));
+				
+		//"Takeoff roll" and "final glide" should be all there is.
+		assertEquals(2, f.straight_phases.size());
 	}
 
 }
