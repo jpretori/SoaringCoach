@@ -41,3 +41,4 @@ Again - these are not all implemented yet, the intent is to give some idea of wh
 ## Contributing
 The project backlog is kept in Github issues, please look there for something you can usefully tackle.
 If you want, feel free to chat to me about what you intend to do before you start - I may be able to save you some time.
+If you haven't contributed to a GitHub project before, this article may help you: https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/
