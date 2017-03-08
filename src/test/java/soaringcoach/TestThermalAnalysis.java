@@ -31,6 +31,7 @@
 package soaringcoach;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ import org.junit.Test;
 import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.CirclingAnalysis;
 import soaringcoach.analysis.GNSSPoint;
-import soaringcoach.analysis.TestUtilities;
 import soaringcoach.analysis.ThermalAnalysis;
 
 public class TestThermalAnalysis {
@@ -114,9 +114,12 @@ public class TestThermalAnalysis {
 	public void testHasBeenRun() throws AnalysisException {
 		ThermalAnalysis ta = new ThermalAnalysis();
 		Flight f = new FlightTestFacade(null);
-		f.circles = new ArrayList<>();
 		
-		TestUtilities.testHasBeenRun(ta, f);
+		f.is_thermal_analysis_complete = false;
+		assertFalse(ta.hasBeenRun(f));
+		
+		f.is_thermal_analysis_complete = true;
+		assertTrue(ta.hasBeenRun(f));
 	}
 
 }

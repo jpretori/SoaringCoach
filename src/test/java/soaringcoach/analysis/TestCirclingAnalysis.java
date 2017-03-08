@@ -31,6 +31,7 @@
 package soaringcoach.analysis;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -122,7 +123,10 @@ public class TestCirclingAnalysis {
 	public void testHasBeenRun() throws AnalysisException {
 		CirclingAnalysis ca = new CirclingAnalysis();
 		Flight f = new FlightTestFacade(new ArrayList<>());
-		TestUtilities.testHasBeenRun(ca, f);
+		f.is_circling_analysis_complete = false;
+		assertFalse(ca.hasBeenRun(f));
+		f.is_circling_analysis_complete = true;
+		assertTrue(ca.hasBeenRun(f));
 	}
 	
 
@@ -240,7 +244,7 @@ public class TestCirclingAnalysis {
 	 * The purpose of this test is to make sure that CirclingAnalysis can deal
 	 * with a mid-thermal centering move, still accepting that the elongated
 	 * circle is a proper circle even though the turn rate certainly decayed
-	 * below the threshold.
+	 * below the threshold for a moment.
 	 * 
 	 * @throws AnalysisException
 	 * @throws IOException

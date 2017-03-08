@@ -286,8 +286,10 @@ public class TestWindAnalysis {
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
 		Flight f = new FlightTestFacade(null);
-		f.thermals = new ArrayList<>();
-		TestUtilities.testHasBeenRun(wa, f);
+		f.is_wind_analysis_complete = false;
+		assertFalse(wa.hasBeenRun(f));
+		f.is_wind_analysis_complete = true;
+		assertTrue(wa.hasBeenRun(f));
 	}
 
 }

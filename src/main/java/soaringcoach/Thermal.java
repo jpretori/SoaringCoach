@@ -61,9 +61,33 @@ public class Thermal {
 		this.endPoint = c.endPoint;
 	}
 	
-	public void addCircle(Circle c) {
-		circles.add(c);
-		this.endPoint = c.endPoint;
+	/**
+	 * Figures out whether <code>Circle c</code> can be attached to the thermal,
+	 * by checking circle durations and start times. If it matches, this will
+	 * add the circle to the thermal and return <code>true</code>. If not, the
+	 * circle will *not* be added, and return <code>false</code>
+	 * 
+	 * @param c
+	 * @return <code>true</code> if the circle was added to the thermal
+	 * <br><code>false</code> otherwise
+	 */
+	public boolean addCircle(Circle c) {
+		
+		if (this.circles.isEmpty()) {
+			this.circles.add(c);
+			this.startPoint = c.startPoint;
+			this.endPoint = c.endPoint;
+			return  true;
+		}
+		
+		Circle lastCircle = this.circles.get(this.circles.size() - 1);
+		if ((lastCircle.timestamp.getTime() + lastCircle.duration*1000) == c.timestamp.getTime()) {
+			circles.add(c);
+			this.endPoint = c.endPoint;
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**

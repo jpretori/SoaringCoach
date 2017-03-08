@@ -30,7 +30,9 @@
 
 package soaringcoach.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -109,7 +111,11 @@ public class TestDistanceAnalysis {
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
 		DistanceAnalysis da = new DistanceAnalysis();
-		TestUtilities.testHasBeenRun(da, null);
+		Flight flight = new FlightTestFacade(new ArrayList<>());
+		flight.is_distance_analysis_complete = false;
+		assertFalse(da.hasBeenRun(flight ));
+		flight.is_distance_analysis_complete = true;
+		assertTrue(da.hasBeenRun(flight));
 	}
 
 }

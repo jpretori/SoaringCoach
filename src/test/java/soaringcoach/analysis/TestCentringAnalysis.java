@@ -31,6 +31,7 @@
 package soaringcoach.analysis;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
@@ -109,39 +110,10 @@ public class TestCentringAnalysis {
 	public void testHasBeenRun() throws AnalysisException {
 		Flight f = new FlightTestFacade(new ArrayList<>());
 		AAnalysis ca = new CentringAnalysis();
-		
-		boolean got_exception = false;
-		try {
-			TestUtilities.testHasBeenRun(ca, f);
-		} catch (AnalysisException e) {
-			got_exception = true;
-		}
-		assertTrue(got_exception);
-		
-		got_exception = false;
-		CirclingAnalysis circ_a = new CirclingAnalysis();
-		f = circ_a.performAnalysis(f);
-		try {
-			TestUtilities.testHasBeenRun(ca, f);
-		} catch (AnalysisException e) {
-			got_exception = true;
-		}
-		assertTrue(got_exception);
-		
-		got_exception = false;
-		ThermalAnalysis ta = new ThermalAnalysis();
-		f = ta.performAnalysis(f);
-		try {
-			TestUtilities.testHasBeenRun(ca, f);
-		} catch (AnalysisException e) {
-			got_exception = true;
-		}
-		assertTrue(got_exception);
-		
-		WindAnalysis wa = new WindAnalysis();
-		f = wa.performAnalysis(f);
-
-		TestUtilities.testHasBeenRun(ca, f);
+		f.is_circling_analysis_complete = false;
+		assertFalse(ca.hasBeenRun(f));
+		f.is_circling_analysis_complete = true;
+		assertTrue(ca.hasBeenRun(f));
 	}
 	
 	@Test
