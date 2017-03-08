@@ -93,7 +93,7 @@ public class WindAnalysis extends AAnalysis {
 					driftVectorsCartesian.remove(i);
 					driftVectorsPolar.remove(i);
 					driftVectorsCount  = driftVectorsCartesian.size();
-					System.out.println("Discarded drift vector as a wind effect because: " + (sizeCutoff ? "SIZE" : "") + ", " + (bearingCutoff ? "BEARING" : ""));
+					//System.out.println("Discarded drift vector as a wind effect because: " + (sizeCutoff ? "SIZE" : "") + ", " + (bearingCutoff ? "BEARING" : ""));
 					justRemovedOne = true;
 				}
 			}

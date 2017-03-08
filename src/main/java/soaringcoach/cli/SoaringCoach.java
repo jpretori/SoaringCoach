@@ -48,7 +48,7 @@ public class SoaringCoach {
 		 int i = 1;
 		 flight.straight_phases.sort(null);
 		 for (StraightPhase s : flight.straight_phases) {
-			System.out.println("\t" + i++ + ". Start: " + s.start_point.getTimestamp() + ", Distance: " + Math.round(s.distance)/1000.0);
+			System.out.println("\t" + i++ + ". Start: " + s.start_point.getTimestamp() + ", End: " + s.end_point.getTimestamp() + ", Distance: " + Math.round(s.distance)/1000.0);
 		 }
 		 
 		 System.out.println();
