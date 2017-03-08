@@ -110,9 +110,9 @@ public class TestCentringAnalysis {
 	public void testHasBeenRun() throws AnalysisException {
 		Flight f = new FlightTestFacade(new ArrayList<>());
 		AAnalysis ca = new CentringAnalysis();
-		f.is_circling_analysis_complete = false;
+		f.is_centring_analysis_complete = false;
 		assertFalse(ca.hasBeenRun(f));
-		f.is_circling_analysis_complete = true;
+		f.is_centring_analysis_complete = true;
 		assertTrue(ca.hasBeenRun(f));
 	}
 	
