@@ -43,10 +43,18 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 	
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
+		
 		//Add the first straight phase: takeoff roll is always straight, so we can start with the first point in the file up till the first circle
 		flight.straight_phases = new ArrayList<>();
 		GNSSPoint firstStraightPhaseStart = flight.igc_points.get(0);
-		GNSSPoint firstStraightPhaseEnd = flight.thermals.get(0).startPoint;
+		GNSSPoint firstStraightPhaseEnd;
+		if (flight.thermals.size() > 0) {
+			firstStraightPhaseEnd = flight.thermals.get(0).startPoint;
+		} else {
+			int last_igc_index = flight.igc_points.size() - 1;
+			firstStraightPhaseEnd = flight.igc_points.get(last_igc_index);
+		}
+
 		StraightPhase s = new StraightPhase(firstStraightPhaseStart, firstStraightPhaseEnd);
 		flight.straight_phases.addAll(splitIntoSections(s, flight));
 		
@@ -60,14 +68,13 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 			}
 			
 			t1 = t2;
+			
+			//Add the final glide starting after the last thermal through to the last point in the flight.
+			Thermal lastThermal = flight.thermals.get(flight.thermals.size() - 1);
+			GNSSPoint flightLastPoint = flight.igc_points.get(flight.igc_points.size() - 1);
+			s = new StraightPhase(lastThermal.endPoint, flightLastPoint);
+			flight.straight_phases.addAll(splitIntoSections(s, flight));
 		}
-		
-		//Add the final glide starting after the last thermal through to the last point in the flight.
-		Thermal lastThermal = flight.thermals.get(flight.thermals.size() - 1);
-		GNSSPoint flightLastPoint = flight.igc_points.get(flight.igc_points.size() - 1);
-		s = new StraightPhase(lastThermal.endPoint, flightLastPoint);
-		flight.straight_phases.addAll(splitIntoSections(s, flight));
-		
 		
 		flight.is_short_straight_phases_analysis_complete = true;
 		return flight;
@@ -135,4 +142,15 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 		return flight.is_short_straight_phases_analysis_complete;
 	}
 
+	@Override
+	protected void checkPreconditions(Flight flight) throws PreconditionsFailedException {
+		super.checkPreconditions(flight);
+		
+		//Must have at least one IGC point
+		if (flight.igc_points == null) { throw new PreconditionsFailedException("IGC points array is not initialised"); }
+		if (flight.igc_points.size() < 1) { throw new PreconditionsFailedException("No IGC Points found"); }
+		
+		//Must have at least initialised the thermals array
+		if (flight.thermals == null) { throw new PreconditionsFailedException("Thermals array not initialised"); }
+	}
 }

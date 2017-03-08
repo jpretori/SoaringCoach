@@ -58,8 +58,12 @@ public abstract class AAnalysis {
 	
 	public abstract boolean hasBeenRun(Flight flight);
 	
+	//TODO bin sysouts
 	public final Flight analyse(Flight flight) throws AnalysisException {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		
+		checkPreconditions(flight);
+		
 		if (!hasBeenRun(flight)) {
 			System.out.println(
 					df.format(LocalDateTime.now()) +
@@ -80,5 +84,24 @@ public abstract class AAnalysis {
 		}
 		
 		return flight;
+	}
+
+	/**
+	 * Allows analysis subclasses to specify their own logic for checking
+	 * pre-conditions, which could include checking the Flight object for
+	 * existence of raw or even processed information.
+	 * 
+	 * <p>
+	 * If any necessary pre-conditions fail, throw a new
+	 * <code>PreconditionsFailedException</code> with an appropriate message.
+	 * 
+	 * <p>
+	 * Default implementation checks that flight object is non-null.
+	 * 
+	 */
+	protected void checkPreconditions(Flight flight) throws PreconditionsFailedException {
+		if (flight == null) {
+			throw new PreconditionsFailedException("Cannot perform any analysis - flight object is null");
+		}
 	}
 }

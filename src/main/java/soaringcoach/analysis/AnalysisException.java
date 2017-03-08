@@ -30,6 +30,7 @@
 
 package soaringcoach.analysis;
 
+@SuppressWarnings("serial")
 public class AnalysisException extends Exception {
 
 	public AnalysisException(String message) {
