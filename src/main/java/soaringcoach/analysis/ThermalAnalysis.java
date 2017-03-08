@@ -58,9 +58,8 @@ public class ThermalAnalysis extends AAnalysis {
 			}
 		}
 		
-		//Check for crazy edge case
-		if (flight.thermals.isEmpty() && !thermal.circles.isEmpty()) {
-			//Flight had exactly one thermal, the for loop above doesn't cater for this case
+		//For loop never adds the last thermal it finds, so do it "manually"
+		if (!thermal.circles.isEmpty()) {
 			flight.thermals.add(thermal);
 		}
 		
