@@ -47,6 +47,8 @@ import soaringcoach.analysis.parsing.PICName;
 
 public class TestFileParsing {
 
+	private static final String IGC_MAPPING_FILE = "src/main/java/soaringcoach/analysis/igc_mapping.xml";
+
 	/**
 	 * Tests that we can identify record types we're interested in, without breaking
 	 */
@@ -54,7 +56,7 @@ public class TestFileParsing {
 	public void testIdentifyingRecords() {
 		StreamFactory factory = StreamFactory.newInstance();
 		
-		factory.load("src/main/java/com/polymorph/soaringcoach/analysis/igc_mapping.xml");
+		factory.load(IGC_MAPPING_FILE);
 
 		BeanReader br = factory.createReader("igc_file", new File("src/test/resources/5c6c3ke1.igc"));;
 		
@@ -83,7 +85,7 @@ public class TestFileParsing {
 	public void testBRecordParsing() throws ParseException {
 		StreamFactory factory = StreamFactory.newInstance();
 		
-		factory.load("src/main/java/com/polymorph/soaringcoach/analysis/igc_mapping.xml");
+		factory.load(IGC_MAPPING_FILE);
 
 		BeanReader br = factory.createReader("igc_file", new File("src/test/resources/minimal_parsable.igc"));;
 
@@ -128,7 +130,7 @@ public class TestFileParsing {
 	public void testHeaderRecordParsing() {
 		StreamFactory factory = StreamFactory.newInstance();
 		
-		factory.load("src/main/java/com/polymorph/soaringcoach/analysis/igc_mapping.xml");
+		factory.load(IGC_MAPPING_FILE);
 
 		BeanReader br = factory.createReader("igc_file", new File("src/test/resources/minimal_parsable.igc"));;
 
