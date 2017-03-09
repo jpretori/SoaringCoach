@@ -65,6 +65,9 @@ public class Flight {
 
 	public boolean is_short_straight_phases_analysis_complete = false;
 	public ArrayList<StraightPhase> straight_phases;
+
+	public boolean isFlightSummaryAnalysisComplete = false;
+	public FlightSummary flightSummary;
 	
 	/**
 	 * Creates a new Flight object, initialised with the fixes provided - ready for analysis
@@ -82,17 +85,6 @@ public class Flight {
 		this.igc_points = new ArrayList<>();
 	}
 	
-	/**
-	 * Creates a FlightSummary object based on the values contained in this class
-	 * 
-	 * @return FlightSummary object
-	 */
-	public FlightSummary getFlightSummary() {
-		FlightSummary fs = new FlightSummary(this.id, this.total_track_distance);
-		
-		return fs;
-	}
-
 	public long getDuration() {
 		return 0;
 	}

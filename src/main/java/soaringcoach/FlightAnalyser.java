@@ -49,6 +49,7 @@ import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.CentringAnalysis;
 import soaringcoach.analysis.CirclingAnalysis;
 import soaringcoach.analysis.DistanceAnalysis;
+import soaringcoach.analysis.FlightSummaryAnalysis;
 import soaringcoach.analysis.GNSSPoint;
 import soaringcoach.analysis.ShortStraightPhasesAnalysis;
 import soaringcoach.analysis.ThermalAnalysis;
@@ -194,6 +195,7 @@ public class FlightAnalyser {
 		f = new WindAnalysis().analyse(f);
 		f = new CentringAnalysis().analyse(f);
 		f = new ShortStraightPhasesAnalysis().analyse(f);
+		f = new FlightSummaryAnalysis().analyse(f);
 		
 		return f;
 	}

@@ -48,10 +48,16 @@ public class FlightSummary {
 	 * Total track distance over ground
 	 */
 	public double total_track_distance = 0;
+
+	public String pilotName;
 	
 	
 	protected FlightSummary(long id, double total_track_distance) {
 		this.id = id;
 		this.total_track_distance = total_track_distance;
+	}
+
+
+	public FlightSummary() {
 	}
 }
