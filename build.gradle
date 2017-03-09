@@ -19,7 +19,7 @@ version = '1.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Soaring Coach',
-                   'Implementation-Version': version
+                   'Implementation-Version': 1.0
     }
 }
 

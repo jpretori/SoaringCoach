@@ -43,7 +43,7 @@ import soaringcoach.FlightAnalyser.FlightMode;
 import soaringcoach.analysis.AnalysisException;
 
 public class SoaringCoach {
-
+/*
 	public static void main(String[] args) throws AnalysisException {
 		 OptionParser parser = new OptionParser( "n:" );
 		 parser.accepts("n").withRequiredArg().required();
@@ -120,5 +120,5 @@ public class SoaringCoach {
 			System.out.println();
 		}
 	}
-
+*/
 }

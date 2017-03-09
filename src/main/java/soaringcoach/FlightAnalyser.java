@@ -30,8 +30,13 @@
 
 package soaringcoach;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -67,6 +72,33 @@ public class FlightAnalyser {
 	}
 	
 	/**
+	 * 
+	 * @param igc_input
+	 * @return
+	 * @throws AnalysisException 
+	 */
+	public Flight addAndAnalyseFlight(InputStream igc_input) throws AnalysisException {
+    	InputStreamReader isr = new InputStreamReader(igc_input);
+    	BufferedReader igc_reader = new BufferedReader(isr);
+    	
+    	Flight flight = new Flight();
+    	
+    	try {
+    		flight = readIgcFileBeanIO(igc_reader, flight);
+    	} catch (IOException e) {
+    		throw new AnalysisException("Could not read IGC content");
+    	}
+		
+		if (flight.igc_points.size() < 1) {
+			throw new AnalysisException("This does not seem to be an IGC file - no valid fixes available to analyse");
+		} else {
+			flight = analyse(flight);
+		}
+
+    	return flight;
+	}
+	
+	/**
 	 * Given an IGC file in <b>file</b>, parses the records in there and
 	 * performs full analysis on the flight. Returns the resulting detailed
 	 * <b>Flight</b> object.
@@ -76,22 +108,23 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 */
 	public Flight addAndAnalyseFlight(File file) throws AnalysisException {
-        Flight f = new Flight();
+        Flight flight = new Flight();
         
 		try {
-			f = readIgcFileBeanIO(file, f);
+			FileReader fileReader = new FileReader(file);
+			flight = readIgcFileBeanIO(fileReader, flight);
 		} catch (IOException e) {
-			throw new AnalysisException("Could not read file", e);
+			throw new AnalysisException("Could not read file " + file.getName(), e);
 		}
 		
-		if (f.igc_points.size() < 1) {
+		if (flight.igc_points.size() < 1) {
 			throw new AnalysisException(
 					"This does not seem to be an IGC file - no valid fixes available to analyse " + file.getName());
 		} else {
-			f  = analyse(f);
+			flight = analyse(flight);
 		}
 		
-		return f;
+		return flight;
 	}
 
 	/**
@@ -102,12 +135,9 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 * @throws IOException 
 	 */
-	private Flight readIgcFileBeanIO(File file, Flight f) throws AnalysisException, IOException {
+	private Flight readIgcFileBeanIO(Reader file, Flight f) throws AnalysisException, IOException {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		System.out.println(
-				df.format(LocalDateTime.now()) +
-				" Parsing file [" + 
-				file.getName() + "]");
+		System.out.println(df.format(LocalDateTime.now()) + " Parsing IGC");
 		
 		StreamFactory factory = StreamFactory.newInstance();
 		
@@ -133,7 +163,7 @@ public class FlightAnalyser {
 					}
 				}
 			} catch (BeanReaderException e) {
-				throw new IOException("Problem reading file " + file.getName(), e);				
+				throw new IOException("Problem reading IGC Data", e);				
 			}
 		} finally {
 			if (br != null) {
