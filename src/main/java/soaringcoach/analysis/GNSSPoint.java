@@ -249,7 +249,7 @@ public class GNSSPoint extends Point3d {
 	protected static boolean isValidBRecord(String file_input) {
 		//Chuck out nulls to avoid falling over ungracefully
 		if (file_input == null) {
-			System.err.println("GNSSPoint.isValidBRecord() - File input [null]");
+			System.err.println("GNSSPoint.isValidBRecord() - entire row was null");
 			return false;
 		}
 		
@@ -294,8 +294,8 @@ public class GNSSPoint extends Point3d {
 	 */
 	protected static boolean isValidGpsFix(GNSSPointData pt) {
 		//Is it marked as a "valid" altitude
-		if (!"A".equals(pt.getAltitudeOK())) {
-			System.out.println("Altitude validity flag not set to 'A'");
+		if (!("A".equals(pt.getAltitudeOK()) || "V".equals(pt.getAltitudeOK()))) {
+			System.out.println("Altitude validity flag not set to 'A' or 'V'");
 			return false;
 		}
 		

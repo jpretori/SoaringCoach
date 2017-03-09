@@ -111,7 +111,7 @@ public class TestDistanceAnalysis {
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
 		DistanceAnalysis da = new DistanceAnalysis();
-		Flight flight = new FlightTestFacade(new ArrayList<>());
+		Flight flight = new FlightTestFacade(new ArrayList<GNSSPoint>());
 		flight.is_distance_analysis_complete = false;
 		assertFalse(da.hasBeenRun(flight ));
 		flight.is_distance_analysis_complete = true;

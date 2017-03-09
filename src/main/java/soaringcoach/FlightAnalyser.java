@@ -157,7 +157,9 @@ public class FlightAnalyser {
 						pt_data = (GNSSPointData) bean;
 						
 						GNSSPoint pt = GNSSPoint.createGNSSPoint(pt_data);
-						f.igc_points.add(pt);
+						if (pt != null) {
+							f.igc_points.add(pt);
+						}
 					} else if (bean instanceof PICName) {
 						f.pilot_name = ((PICName) bean).picName;
 					}

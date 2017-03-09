@@ -108,7 +108,7 @@ public class TestCentringAnalysis {
 
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
-		Flight f = new FlightTestFacade(new ArrayList<>());
+		Flight f = new FlightTestFacade(new ArrayList<GNSSPoint>());
 		AAnalysis ca = new CentringAnalysis();
 		f.is_centring_analysis_complete = false;
 		assertFalse(ca.hasBeenRun(f));

@@ -31,7 +31,6 @@
 package soaringcoach.rest;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,18 +42,12 @@ import org.springframework.web.multipart.MultipartFile;
 import soaringcoach.Flight;
 import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.AnalysisException;
-import soaringcoach.analysis.GNSSPoint;
 
 @RestController
 public class FileUploadController {
 
-    ArrayList<GNSSPoint> gnssPointList;
-
     @RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody Flight handleFileUpload(@RequestParam("file") MultipartFile file) throws AnalysisException, IOException {
-
-        gnssPointList = new ArrayList<>();
-
     	FlightAnalyser fa = new FlightAnalyser();
     	
 		Flight f = fa.addAndAnalyseFlight(file.getInputStream());

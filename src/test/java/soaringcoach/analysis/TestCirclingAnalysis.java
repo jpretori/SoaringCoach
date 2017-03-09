@@ -93,7 +93,7 @@ public class TestCirclingAnalysis {
 	 */
 	@Test
 	public void testCirclingDetectionDiscard() throws Exception {
-		Flight f = new FlightTestFacade(new ArrayList<>());
+		Flight f = new FlightTestFacade(new ArrayList<GNSSPoint>());
 		
 		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109303308755S01911128EA016190171900308"));
 		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109343308702S01911090EA016310173200309"));
@@ -122,7 +122,7 @@ public class TestCirclingAnalysis {
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
 		CirclingAnalysis ca = new CirclingAnalysis();
-		Flight f = new FlightTestFacade(new ArrayList<>());
+		Flight f = new FlightTestFacade(new ArrayList<GNSSPoint>());
 		f.is_circling_analysis_complete = false;
 		assertFalse(ca.hasBeenRun(f));
 		f.is_circling_analysis_complete = true;
