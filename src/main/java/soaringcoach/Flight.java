@@ -94,11 +94,6 @@ public class Flight {
 	}
 
 	public long getDuration() {
-		long first_fix = igc_points.get(0).data.timestamp.getTime();
-		long last_fix = igc_points.get(igc_points.size()-1).data.timestamp.getTime();
-		
-		long seconds = (last_fix - first_fix) / 1000;
-		
-		return seconds;
+		return 0;
 	}
 }

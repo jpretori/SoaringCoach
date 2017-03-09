@@ -31,6 +31,7 @@
 package soaringcoach.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,6 +53,8 @@ public class FileUploadController {
     	
 		Flight f = fa.addAndAnalyseFlight(file.getInputStream());
     	
+		f.igc_points = new ArrayList<>();
+		
         return f;
     }
 }
