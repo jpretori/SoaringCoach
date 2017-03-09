@@ -42,3 +42,7 @@ Again - these are not all implemented yet, the intent is to give some idea of wh
 The project backlog is kept in Github issues, please look there for something you can usefully tackle.
 If you want, feel free to chat to me about what you intend to do before you start - I may be able to save you some time.
 If you haven't contributed to a GitHub project before, this article may help you: https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/
+
+Soaring Coach consists of two parts:
+* The front-end is Bootstrap based, kept in a separate Github repository and hosted using Github Pages
+* The backend does all the analysis, is kept in this repository and hosted on Heroku.  It can be accessed at https://protected-bayou-34428.herokuapp.com/upload using a POST request that uploads an IGC file.  The analysis results are returned as JSON (quite a LOT of JSON in fact)
