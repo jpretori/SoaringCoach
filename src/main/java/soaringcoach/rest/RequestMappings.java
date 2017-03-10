@@ -33,6 +33,7 @@ package soaringcoach.rest;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,11 +46,12 @@ import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.PolarVector;
 
+@CrossOrigin
 @RestController
 public class RequestMappings {
 
-    @RequestMapping(value="/upload", method=RequestMethod.POST)
-    public @ResponseBody Flight handleFileUpload(@RequestParam("file") MultipartFile file) throws AnalysisException, IOException {
+    @RequestMapping(name="/upload", method=RequestMethod.POST)
+    public @ResponseBody Flight handleFileUpload(@RequestParam(name="file") MultipartFile file) throws AnalysisException, IOException {
     	FlightAnalyser fa = new FlightAnalyser();
     	
 		Flight f = fa.addAndAnalyseFlight(file.getInputStream());
@@ -59,8 +61,8 @@ public class RequestMappings {
         return f;
     }
     
-    @RequestMapping(value="/health", method=RequestMethod.GET)
-    public PolarVector handleHealthCheck(@RequestParam("echo") long echo) {
+    @RequestMapping(name="/health", method=RequestMethod.GET)
+    public PolarVector handleHealthCheck(@RequestParam(name="echo", defaultValue = "42") long echo) {
     	return new PolarVector(echo, echo);
     }
 }
