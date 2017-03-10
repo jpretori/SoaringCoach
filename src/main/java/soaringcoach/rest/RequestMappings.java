@@ -43,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 import soaringcoach.Flight;
 import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.AnalysisException;
+import soaringcoach.analysis.PolarVector;
 
 @RestController
 public class RequestMappings {
@@ -56,5 +57,10 @@ public class RequestMappings {
 		f.igc_points = new ArrayList<>();
 		
         return f;
+    }
+    
+    @RequestMapping(value="/health", method=RequestMethod.GET)
+    public PolarVector handleHealthCheck(@RequestParam("echo") long echo) {
+    	return new PolarVector(echo, echo);
     }
 }
