@@ -45,7 +45,7 @@ import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.AnalysisException;
 
 @RestController
-public class FileUploadController {
+public class RequestMappings {
 
     @RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody Flight handleFileUpload(@RequestParam("file") MultipartFile file) throws AnalysisException, IOException {
