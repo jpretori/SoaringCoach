@@ -46,10 +46,11 @@ import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.PolarVector;
 
-@CrossOrigin(origins="*")
+@CrossOrigin
 @RestController
 public class RequestMappings {
 
+	@CrossOrigin
     @RequestMapping(name="/upload", method=RequestMethod.POST)
     public @ResponseBody Flight handleFileUpload(@RequestParam(name="file") MultipartFile file) throws AnalysisException, IOException {
     	FlightAnalyser fa = new FlightAnalyser();
@@ -61,6 +62,7 @@ public class RequestMappings {
         return f;
     }
     
+	@CrossOrigin
     @RequestMapping(name="/health", method=RequestMethod.GET)
     public PolarVector handleHealthCheck(@RequestParam(name="echo", defaultValue = "42") long echo) {
     	return new PolarVector(echo, echo);
