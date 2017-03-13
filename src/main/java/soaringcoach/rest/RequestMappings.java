@@ -46,7 +46,7 @@ import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.PolarVector;
 
-@CrossOrigin
+@CrossOrigin(origins="*")
 @RestController
 public class RequestMappings {
 
