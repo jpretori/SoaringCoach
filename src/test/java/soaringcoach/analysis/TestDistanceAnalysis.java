@@ -66,7 +66,7 @@ public class TestDistanceAnalysis {
 		f = new ShortStraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);
 		
-		assertEquals(3720, f.total_track_distance, 10);
+		assertEquals(3010, f.total_track_distance, 100);
 	}
 	
 	@Test
