@@ -73,8 +73,7 @@ public class DistanceAnalysis extends AAnalysis {
 			throw new PreconditionsFailedException("Can not determine flight distance unless thermal analysis is complete");
 		}
 		
-		ShortStraightPhasesAnalysis	shortStraightPhasesAnalysis = new ShortStraightPhasesAnalysis();
-		if (!shortStraightPhasesAnalysis.hasBeenRun(f)) {
+		if (!new ShortStraightPhasesAnalysis().hasBeenRun(f)) {
 			throw new PreconditionsFailedException("Can not determine flight distance unless straight phase analysis is complete");
 		}
 	}
