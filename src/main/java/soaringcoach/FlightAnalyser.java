@@ -189,12 +189,12 @@ public class FlightAnalyser {
 	 * @return
 	 */
 	private Flight analyse(Flight f) throws AnalysisException {
-		f = new DistanceAnalysis().analyse(f);
 		f = new CirclingAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);
 		f = new WindAnalysis().analyse(f);
 		f = new CentringAnalysis().analyse(f);
 		f = new ShortStraightPhasesAnalysis().analyse(f);
+		f = new DistanceAnalysis().analyse(f);
 		f = new FlightSummaryAnalysis().analyse(f);
 		
 		return f;

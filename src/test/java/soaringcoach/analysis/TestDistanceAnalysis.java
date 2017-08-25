@@ -45,6 +45,28 @@ import soaringcoach.FlightTestFacade;
 
 public class TestDistanceAnalysis {
 
+	/**
+	 * Test to prove removal of bug #4 (Make flight distance calculation more
+	 * accurate by removing tight circles from the calculation)
+	 * 
+	 * @throws AnalysisException
+	 * @throws FileNotFoundException
+	 */
+	@Test
+	public void testCalcDistanceBypassingThermals() throws AnalysisException, FileNotFoundException {
+		ArrayList<GNSSPoint> points = new ArrayList<>();
+		
+		points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/distance_has_thermal.igc");
+		
+		Flight f = new FlightTestFacade(points);
+		
+		DistanceAnalysis da = new DistanceAnalysis();
+		da.performAnalysis(f);
+		
+		assertEquals(3540, f.total_track_distance, 10);
+	}
+	
 	@Test
 	public void testCalcTotalDistanceManyPointsCloseTogether() throws AnalysisException, FileNotFoundException {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
@@ -54,10 +76,11 @@ public class TestDistanceAnalysis {
 		
 		Flight f = new FlightTestFacade(points);
 		
-		DistanceAnalysis da = new DistanceAnalysis();
-		
-		da.performAnalysis(f);
-		
+		f = new CirclingAnalysis().analyse(f);
+		f = new ThermalAnalysis().analyse(f);
+		f = new ShortStraightPhasesAnalysis().analyse(f);
+		f = new DistanceAnalysis().analyse(f);
+
 		assertEquals(206, f.total_track_distance, 1);
 	}
 

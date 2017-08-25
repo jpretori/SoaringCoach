@@ -31,9 +31,11 @@
 package soaringcoach.analysis;
 
 import soaringcoach.Flight;
+import soaringcoach.StraightPhase;
+import soaringcoach.Thermal;
 
 /**
- * Works out the task distance, flight distance, as well as the track deviation percentage
+ * Works out the flight distance.
  * 
  * @author johanpretorius
  *
@@ -43,18 +45,16 @@ public class DistanceAnalysis extends AAnalysis {
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
 		double total_dist = 0;
-		GNSSPoint prev_pt = null;
-		if (flight.igc_points != null) {				
-			for (GNSSPoint pt : flight.igc_points) {
-	
-				if (pt != null && prev_pt != null) {
-					total_dist += pt.distance(prev_pt);
-				}
-				prev_pt = pt;
-			}
-		}
-		flight.total_track_distance = total_dist;
 		
+		for (StraightPhase s : flight.straight_phases) {
+			total_dist += s.distance;
+		}
+		
+		for (Thermal t : flight.thermals) {
+			total_dist += t.startPoint.distance(t.endPoint);
+		}
+		
+		flight.total_track_distance = total_dist ;
 		flight.is_distance_analysis_complete = true;
 		return flight;
 	}
@@ -64,4 +64,18 @@ public class DistanceAnalysis extends AAnalysis {
 		return flight.is_distance_analysis_complete;
 	}
 
+	@Override
+	protected void checkPreconditions(Flight f)  throws PreconditionsFailedException {
+		super.checkPreconditions(f);
+		
+		ThermalAnalysis thermalAnalysis = new ThermalAnalysis();
+		if (!thermalAnalysis.hasBeenRun(f)) {
+			throw new PreconditionsFailedException("Can not determine flight distance unless thermal analysis is complete");
+		}
+		
+		ShortStraightPhasesAnalysis	shortStraightPhasesAnalysis = new ShortStraightPhasesAnalysis();
+		if (!shortStraightPhasesAnalysis.hasBeenRun(f)) {
+			throw new PreconditionsFailedException("Can not determine flight distance unless straight phase analysis is complete");
+		}
+	}
 }
