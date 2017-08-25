@@ -74,7 +74,7 @@ public class Circle {
 		this.circle_start_latitude = p2.getLatitude();
 		this.circle_start_longitude = p2.getLongitude();	
 		this.turn_direction = mode;
-		this.circle_start_course = p1.bearingIntoPoint;
+		this.circle_start_course = p1.getBearingIntoPoint();
 	}
 	
 	
@@ -182,7 +182,7 @@ public class Circle {
 	public boolean detectCircleCompleted(GNSSPoint p) {
 		if (deg_course_change_since_start == 0) {
 			//Work out the smallest angle between the circle start course & the track course leading to p
-			 double angle = Math.abs(circle_start_course - p.bearingIntoPoint);
+			 double angle = Math.abs(circle_start_course - p.getBearingIntoPoint());
 			 double angle_inverse = Math.abs(angle - 360);
 			 
 			 if (angle < angle_inverse) {

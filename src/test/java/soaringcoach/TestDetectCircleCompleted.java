@@ -72,7 +72,6 @@ public class TestDetectCircleCompleted {
 		
 		GNSSPoint p2 = points.get(1);
 		GNSSPoint p1 = points.get(0);
-		p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 		p2.resolve(p1);
 		
 		CircleTestFacade c = null;
@@ -83,7 +82,6 @@ public class TestDetectCircleCompleted {
 			p2 = points.get(i);
 			
 			if (p1 != null && p2 != null) {
-				p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
 				if (c == null) {
 					c = new CircleTestFacade(p1, p2, FlightMode.TURNING_LEFT);
@@ -131,7 +129,6 @@ public class TestDetectCircleCompleted {
 		
 		GNSSPoint p2 = points.get(1);
 		GNSSPoint p1 = points.get(0);
-		p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 		p2.resolve(p1);
 		
 		CircleTestFacade c = null;
@@ -142,7 +139,6 @@ public class TestDetectCircleCompleted {
 			p2 = points.get(i);
 			
 			if (p1 != null && p2 != null) {
-				p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
 				if (c == null) {
 					c = new CircleTestFacade(p1, p2, FlightMode.TURNING_LEFT);
@@ -190,7 +186,6 @@ public class TestDetectCircleCompleted {
 		
 		GNSSPoint p2 = points.get(1);
 		GNSSPoint p1 = points.get(0);
-		p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 		p2.resolve(p1);
 		
 		CircleTestFacade c = null;
@@ -201,7 +196,6 @@ public class TestDetectCircleCompleted {
 			p2 = points.get(i);
 			
 			if (p1 != null && p2 != null) {
-				p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
 				if (c == null) {
 					c = new CircleTestFacade(p1, p2, FlightMode.TURNING_RIGHT);
@@ -249,7 +243,6 @@ public class TestDetectCircleCompleted {
 		
 		GNSSPoint p2 = points.get(1);
 		GNSSPoint p1 = points.get(0);
-		p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 		p2.resolve(p1);
 		
 		CircleTestFacade c = null;
@@ -260,7 +253,6 @@ public class TestDetectCircleCompleted {
 			p2 = points.get(i);
 			
 			if (p1 != null && p2 != null) {
-				p2.bearingIntoPoint = FlightAnalyserTestFacade.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
 				if (c == null) {
 					c = new CircleTestFacade(p1, p2, FlightMode.TURNING_RIGHT);

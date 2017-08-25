@@ -115,7 +115,7 @@ public class StraightPhasesAnalysis extends AAnalysis {
 				}
 			
 				//Only check the angle if head and tail points are far enough apart (i.e. at or near the threshold time).
-				double bearingDelta = Math.abs(FlightAnalyser.calcBearingChange(pTail.bearingIntoPoint, pHead.bearingIntoPoint));
+				double bearingDelta = Math.abs(FlightAnalyser.calcBearingChange(pTail.getBearingIntoPoint(), pHead.getBearingIntoPoint()));
 				if (bearingDelta > THRESHOLD_ANGLE) {
 					if (!continuedTurn) {
 						continuedTurn = true;

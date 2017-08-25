@@ -30,7 +30,7 @@
 
 package soaringcoach.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import soaringcoach.Flight;
-import soaringcoach.FlightAnalyser;
 import soaringcoach.FlightAnalyserTestFacade;
 import soaringcoach.FlightTestFacade;
 import soaringcoach.StraightPhase;
@@ -125,7 +124,6 @@ public class TestStraightPhaseAnalysis {
 		GNSSPoint p1 = null;
 		for (GNSSPoint p2 : f.igc_points) {
 			if (p1 != null && p2 != null) {
-				p2.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, p2);
 				p2.resolve(p1);
 			}
 			p1 = p2;

@@ -58,7 +58,7 @@ public class GNSSPoint extends Point3d {
 	/**
 	 * The track course from the previous point to this one
 	 */
-	public double bearingIntoPoint = -400;
+	private double bearingIntoPoint = -400;
 	
 	/**
 	 * Number of seconds since the last point
@@ -334,8 +334,12 @@ public class GNSSPoint extends Point3d {
 	}
 	
 	/**
-	 * Calculates and stores the number of seconds since the last fix, as well as the turn rate in degrees/second.
-	 * @param p1 the preceding fix
+	 * Resolves several useful derived elements for this point, including the number of seconds since the last fix, 
+	 * the turn rate in degrees/second and the bearing from the preceding point to this one.
+	 * point.
+	 * 
+	 * @param p1
+	 *            the preceding fix
 	 */
 	public void resolve(GNSSPoint p1) {
 		this.seconds_since_last_fix = (this.data.timestamp.getTime() - p1.data.timestamp.getTime())/1000;
@@ -344,6 +348,8 @@ public class GNSSPoint extends Point3d {
 			double track_course_delta = FlightAnalyser.calcBearingChange(p1.bearingIntoPoint, this.bearingIntoPoint);
 			this.turn_rate = track_course_delta / this.seconds_since_last_fix;
 		}
+		
+		this.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, this);
 	}
 	
 	/**
@@ -358,5 +364,9 @@ public class GNSSPoint extends Point3d {
 		catch (ClassCastException e) {return false;}
 		catch (NullPointerException e) {return false;}
 		
+	}
+	
+	public double getBearingIntoPoint() {
+		return this.bearingIntoPoint;
 	}
 }
