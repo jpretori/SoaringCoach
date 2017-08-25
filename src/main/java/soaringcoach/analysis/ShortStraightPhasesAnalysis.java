@@ -100,6 +100,7 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 		}
 		
 		int tailIndex = flight.igc_points.indexOf(straightPhase.start_point);
+		
 		GNSSPoint pTail = flight.igc_points.get(tailIndex);
 		boolean continuedTurn = false;
 		for (int headIndex = tailIndex + 1; 
@@ -107,25 +108,31 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 				headIndex++) {
 			GNSSPoint pHead = flight.igc_points.get(headIndex);
 			
-			long headToTailTimeDiff = pHead.data.timestamp.getTime() - pTail.data.timestamp.getTime();
-			if (headToTailTimeDiff > THRESHOLD_TIME) {
+			if (timeDelta(pTail, pHead) > THRESHOLD_TIME) {
 				//Bring up the tail so the time difference between p1 and p2 is again near the threshold time.
-				pTail = flight.igc_points.get(++tailIndex);
+				while (timeDelta(pTail, pHead) > THRESHOLD_TIME) {
+					pTail = flight.igc_points.get(++tailIndex);
+				}
 			
 				//Only check the angle if head and tail points are far enough apart (i.e. at or near the threshold time).
 				double bearingDelta = Math.abs(FlightAnalyser.calcBearingChange(pTail.bearingIntoPoint, pHead.bearingIntoPoint));
 				if (bearingDelta > THRESHOLD_ANGLE) {
 					if (!continuedTurn) {
 						continuedTurn = true;
-						//Avoid degenerately short straight phases
-						if (Math.abs(straightPhase.start_point.data.timestamp.getTime() - pTail.data.timestamp.getTime()) > THRESHOLD_TIME) {
-							straightPhase1 = new StraightPhase(straightPhase.start_point, pTail);
+						
+						if (Math.abs(timeDelta(straightPhase.start_point, pTail)) > THRESHOLD_TIME) { //Avoid degenerately short straight phases
+							//Cut the straight section in two at pHead
+							straightPhase1 = new StraightPhase(straightPhase.start_point, pHead);
 							newStraightPhasesArray.add(straightPhase1);
 							
 							// if the turn continues for several more points, this may introduce a small error. However, because
 							// CirclingAnalysis is complete at this point, we can be sure that the turn does NOT go full circle, 
 							// so the error will at most be a semicircle, the worst case of which is a few hundred meters.
 							straightPhase = new StraightPhase(pHead, straightPhase.end_point);
+							
+							//Re-set indices to continue the loop after the cut (or stop the loop because we're done)
+							tailIndex = headIndex + 1;
+							headIndex = tailIndex + 1;
 						}
 					}
 				} else {
@@ -135,6 +142,15 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 		}
 		newStraightPhasesArray.add(straightPhase);
 		return newStraightPhasesArray;
+	}
+
+	/**
+	 * @param pTail
+	 * @param pHead
+	 * @return
+	 */
+	private long timeDelta(GNSSPoint pTail, GNSSPoint pHead) {
+		return pHead.data.timestamp.getTime() - pTail.data.timestamp.getTime();
 	}
 
 	@Override
@@ -152,5 +168,9 @@ public class ShortStraightPhasesAnalysis extends AAnalysis {
 		
 		//Must have at least initialised the thermals array
 		if (flight.thermals == null) { throw new PreconditionsFailedException("Thermals array not initialised"); }
+		
+		if (!new CirclingAnalysis().hasBeenRun(flight)) {
+			throw new PreconditionsFailedException("Circling analysis must be completed before straight phase analysis");
+		}
 	}
 }
