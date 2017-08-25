@@ -37,7 +37,7 @@ import soaringcoach.FlightAnalyser;
 import soaringcoach.StraightPhase;
 import soaringcoach.Thermal;
 
-public class ShortStraightPhasesAnalysis extends AAnalysis {
+public class StraightPhasesAnalysis extends AAnalysis {
 	private static final int THRESHOLD_TIME = 10 * 1000; //10 seconds
 	private static final int THRESHOLD_ANGLE = 45;
 	

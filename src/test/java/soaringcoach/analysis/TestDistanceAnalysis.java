@@ -63,7 +63,7 @@ public class TestDistanceAnalysis {
 		
 		f = new CirclingAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);
-		f = new ShortStraightPhasesAnalysis().analyse(f);
+		f = new StraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);
 		
 		assertEquals(3010, f.total_track_distance, 100);
@@ -80,7 +80,7 @@ public class TestDistanceAnalysis {
 		
 		f = new CirclingAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);
-		f = new ShortStraightPhasesAnalysis().analyse(f);
+		f = new StraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);
 
 		assertEquals(206, f.total_track_distance, 1);

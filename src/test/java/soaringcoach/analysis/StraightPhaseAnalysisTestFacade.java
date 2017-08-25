@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import soaringcoach.Flight;
 import soaringcoach.StraightPhase;
 
-public class StraightPhaseAnalysisTestFacade extends ShortStraightPhasesAnalysis {
+public class StraightPhaseAnalysisTestFacade extends StraightPhasesAnalysis {
 
 	@Override
 	public Flight performAnalysis(Flight flight) throws AnalysisException {
