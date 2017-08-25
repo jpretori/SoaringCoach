@@ -46,3 +46,12 @@ If you haven't contributed to a GitHub project before, this article may help you
 Soaring Coach consists of two parts:
 * The front-end is Bootstrap based, kept in a separate Github repository and hosted using Github Pages
 * The backend does all the analysis, is kept in this repository and hosted on Heroku.  It can be accessed at https://protected-bayou-34428.herokuapp.com/upload using a POST request that uploads an IGC file.  The analysis results are returned as JSON (quite a LOT of JSON in fact)
+
+### Deploying new backend versions
+* Make sure "master" branch is in deployable state (i.e. make sure all the tests pass)
+* Log in to Heroku on the web
+* Go to "Deploy"
+* Hit "Manual Deploy" - and wait a few seconds for build and deploy to finish
+
+### Deploying new front-end versions
+* Just push code to the UI repo and wait for Github pages to update.
