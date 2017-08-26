@@ -343,13 +343,13 @@ public class GNSSPoint extends Point3d {
 	 */
 	public void resolve(GNSSPoint p1) {
 		this.seconds_since_last_fix = (this.data.timestamp.getTime() - p1.data.timestamp.getTime())/1000;
+		this.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, this);
 		
 		if (p1.bearingIntoPoint > -400) { // if it's still -400, it wasn't initialised - so p1 is the first point in the file
 			double track_course_delta = FlightAnalyser.calcBearingChange(p1.bearingIntoPoint, this.bearingIntoPoint);
 			this.turn_rate = track_course_delta / this.seconds_since_last_fix;
 		}
 		
-		this.bearingIntoPoint = FlightAnalyser.calculateTrackCourse(p1, this);
 	}
 	
 	/**
