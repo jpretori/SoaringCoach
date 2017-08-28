@@ -61,7 +61,7 @@ public class TestDistanceAnalysis {
 		
 		Flight f = new FlightTestFacade(points);
 		
-		f = new CirclingAnalysis().analyse(f);
+		f = new CirclesAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);
 		f = new StraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);
@@ -78,7 +78,7 @@ public class TestDistanceAnalysis {
 		
 		Flight f = new FlightTestFacade(points);
 		
-		f = new CirclingAnalysis().analyse(f);
+		f = new CirclesAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);
 		f = new StraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);

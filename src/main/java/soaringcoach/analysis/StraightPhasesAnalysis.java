@@ -171,7 +171,7 @@ public class StraightPhasesAnalysis extends AAnalysis {
 		//Must have at least initialised the thermals array
 		if (flight.thermals == null) { throw new PreconditionsFailedException("Thermals array not initialised"); }
 		
-		if (!new CirclingAnalysis().hasBeenRun(flight)) {
+		if (!new CirclesAnalysis().hasBeenRun(flight)) {
 			throw new PreconditionsFailedException("Circling analysis must be completed before straight phase analysis");
 		}
 	}

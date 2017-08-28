@@ -67,7 +67,7 @@ public class TestCirclingAnalysis {
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
-		CirclingAnalysis ca = new CirclingAnalysis();
+		CirclesAnalysis ca = new CirclesAnalysis();
 		f = ca.performAnalysis(f);
 		
 		//Check # of turns
@@ -113,7 +113,7 @@ public class TestCirclingAnalysis {
 		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110303308788S01911014EA016880178900309"));
 		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110343308821S01911072EA016930179500309"));		
 		
-		CirclingAnalysis ca = new CirclingAnalysis();
+		CirclesAnalysis ca = new CirclesAnalysis();
 		f = ca.performAnalysis(f);
 		
 		assertEquals("number of turns", 0, f.circles.size());
@@ -121,7 +121,7 @@ public class TestCirclingAnalysis {
 
 	@Test
 	public void testHasBeenRun() throws AnalysisException {
-		CirclingAnalysis ca = new CirclingAnalysis();
+		CirclesAnalysis ca = new CirclesAnalysis();
 		Flight f = new FlightTestFacade(new ArrayList<GNSSPoint>());
 		f.is_circling_analysis_complete = false;
 		assertFalse(ca.hasBeenRun(f));
@@ -150,7 +150,7 @@ public class TestCirclingAnalysis {
 		
 		String[] circle_start_timestamp_expected = {"10:43:06", "10:43:29"};
 		
-		CirclingAnalysis ca = new CirclingAnalysis();
+		CirclesAnalysis ca = new CirclesAnalysis();
 		ca.performAnalysis(f);
 		ArrayList<Circle> circles = f.circles;
 		
@@ -205,7 +205,7 @@ public class TestCirclingAnalysis {
 
 		String[] circle_start_timestamp_expected = { "10:40:02", "10:40:17", "10:40:27", "10:40:37" };
 
-		CirclingAnalysis ca = new CirclingAnalysis();
+		CirclesAnalysis ca = new CirclesAnalysis();
 		ca.performAnalysis(f);
 		ArrayList<Circle> circles = f.circles;
 		
@@ -256,7 +256,7 @@ public class TestCirclingAnalysis {
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
-		f = new CirclingAnalysis().performAnalysis(f);
+		f = new CirclesAnalysis().performAnalysis(f);
 		f = new ThermalAnalysis().performAnalysis(f);
 		
 		assertEquals(2, f.thermals.size());

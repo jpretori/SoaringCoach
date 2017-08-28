@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import soaringcoach.analysis.AnalysisException;
-import soaringcoach.analysis.CirclingAnalysis;
+import soaringcoach.analysis.CirclesAnalysis;
 import soaringcoach.analysis.GNSSPoint;
 import soaringcoach.analysis.ThermalAnalysis;
 
@@ -66,7 +66,7 @@ public class TestThermalAnalysis {
 		}
 		assertTrue(got_exception);
 		
-		CirclingAnalysis ca = new CirclingAnalysis();
+		CirclesAnalysis ca = new CirclesAnalysis();
 		ca.analyse(f);
 		ta.analyse(f);
 		

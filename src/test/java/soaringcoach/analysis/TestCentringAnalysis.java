@@ -71,7 +71,7 @@ public class TestCentringAnalysis {
 				"src/test/resources/testCorrectionDetectionBearingChanged.igc");
 		Flight f = new FlightTestFacade(igc_points);
 		
-		CirclingAnalysis circ_a = new CirclingAnalysis();
+		CirclesAnalysis circ_a = new CirclesAnalysis();
 		f = circ_a.performAnalysis(f);
 		
 		Thermal t = new Thermal();

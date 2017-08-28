@@ -42,7 +42,7 @@ import soaringcoach.FlightAnalyser.FlightMode;
  * @author johanpretorius
  *
  */
-public class CirclingAnalysis extends AAnalysis {
+public class CirclesAnalysis extends AAnalysis {
 	private static final long MAX_CENTERING_STRAIGHTEN_TIME = 10;
 	// TURN_RATE_THRESHOLD is in degrees per second.  Turning faster than this constitutes making a thermal turn.
 	private final int TURN_RATE_THRESHOLD = 6; 
