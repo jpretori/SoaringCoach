@@ -34,7 +34,6 @@ import java.util.ArrayList;
 
 import soaringcoach.Circle;
 import soaringcoach.Flight;
-import soaringcoach.FlightAnalyser;
 import soaringcoach.FlightAnalyser.FlightMode;
 
 /**
@@ -50,11 +49,6 @@ public class CirclingAnalysis extends AAnalysis {
 
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
-		
-		if (flight.igc_points == null) {
-			//null points array probably means the Flight has not been initialised properly for some reason.
-			throw new AnalysisException("no GPS fixes - Flight object is not initialized properly");
-		}
 		
 		ArrayList<Circle> circles = new ArrayList<Circle>();
 		
@@ -155,4 +149,10 @@ public class CirclingAnalysis extends AAnalysis {
 		return flight.is_circling_analysis_complete;
 	}
 
+	@Override
+	protected void checkPreconditions(Flight f)  throws PreconditionsFailedException {
+		if (f.igc_points == null) {  
+			throw new PreconditionsFailedException("No GPS fixes - Flight object is not initialized properly");
+		}
+	}
 }

@@ -70,11 +70,13 @@ public class StraightPhasesAnalysis extends AAnalysis {
 			t1 = t2;
 		}
 			
-		//Add the final glide starting after the last thermal through to the last point in the flight.
-		Thermal lastThermal = flight.thermals.get(flight.thermals.size() - 1);
-		GNSSPoint flightLastPoint = flight.igc_points.get(flight.igc_points.size() - 1);
-		s = new StraightPhase(lastThermal.endPoint, flightLastPoint);
-		flight.straight_phases.addAll(splitIntoSections(s, flight));
+		if (flight.thermals.size() > 0) {
+			//Add the final glide starting after the last thermal through to the last point in the flight.
+			Thermal lastThermal = flight.thermals.get(flight.thermals.size() - 1);
+			GNSSPoint flightLastPoint = flight.igc_points.get(flight.igc_points.size() - 1);
+			s = new StraightPhase(lastThermal.endPoint, flightLastPoint);
+			flight.straight_phases.addAll(splitIntoSections(s, flight));
+		}
 		
 		flight.is_short_straight_phases_analysis_complete = true;
 		return flight;
