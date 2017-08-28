@@ -188,7 +188,7 @@ public class TestCentringAnalysis {
 		c = new Circle(p1, p2, FlightMode.TURNING_LEFT);
 		f.circles.add(c);
 		
-		f.is_circling_analysis_complete = true;
+		f.is_circles_analysis_complete = true;
 		
 		Thermal t = new Thermal();
 		t.circles = f.circles;

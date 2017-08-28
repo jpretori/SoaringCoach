@@ -51,7 +51,7 @@ public class Flight {
 	public boolean is_distance_analysis_complete = false;
 	public double total_track_distance = 0;
 	
-	public boolean is_circling_analysis_complete = false;
+	public boolean is_circles_analysis_complete = false;
 	public ArrayList<Circle> circles;
 	
 	public boolean is_wind_analysis_complete = false;
@@ -68,6 +68,10 @@ public class Flight {
 
 	public boolean isFlightSummaryAnalysisComplete = false;
 	public FlightSummary flightSummary;
+
+	public boolean is_circles_percentage_analysis_complete = false;
+
+	public double percentageTimeCircling = -1.0;
 	
 	/**
 	 * Creates a new Flight object, initialised with the fixes provided - ready for analysis

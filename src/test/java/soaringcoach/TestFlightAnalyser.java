@@ -87,7 +87,7 @@ public class TestFlightAnalyser {
 		assertNotNull(flight.igc_points);
 		
 		assertTrue(flight.is_centring_analysis_complete);
-		assertTrue(flight.is_circling_analysis_complete);
+		assertTrue(flight.is_circles_analysis_complete);
 		assertTrue(flight.is_distance_analysis_complete);
 		assertTrue(flight.is_thermal_analysis_complete);
 		assertTrue(flight.is_wind_analysis_complete);

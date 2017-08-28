@@ -107,7 +107,7 @@ public class CirclesAnalysis extends AAnalysis {
 		
 		flight.circles = circles;
 		
-		flight.is_circling_analysis_complete = true;
+		flight.is_circles_analysis_complete = true;
 		return flight;
 	}
 
@@ -146,7 +146,7 @@ public class CirclesAnalysis extends AAnalysis {
 
 	@Override
 	public boolean hasBeenRun(Flight flight) {
-		return flight.is_circling_analysis_complete;
+		return flight.is_circles_analysis_complete;
 	}
 
 	@Override

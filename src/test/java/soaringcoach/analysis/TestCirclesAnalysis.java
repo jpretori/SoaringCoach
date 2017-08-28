@@ -123,9 +123,9 @@ public class TestCirclesAnalysis {
 	public void testHasBeenRun() throws AnalysisException {
 		CirclesAnalysis ca = new CirclesAnalysis();
 		Flight f = new FlightTestFacade(new ArrayList<GNSSPoint>());
-		f.is_circling_analysis_complete = false;
+		f.is_circles_analysis_complete = false;
 		assertFalse(ca.hasBeenRun(f));
-		f.is_circling_analysis_complete = true;
+		f.is_circles_analysis_complete = true;
 		assertTrue(ca.hasBeenRun(f));
 	}
 	
