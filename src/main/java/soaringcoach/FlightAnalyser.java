@@ -48,6 +48,7 @@ import org.beanio.StreamFactory;
 import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.CentringAnalysis;
 import soaringcoach.analysis.CirclesAnalysis;
+import soaringcoach.analysis.CirclingPercentageAnalysis;
 import soaringcoach.analysis.DistanceAnalysis;
 import soaringcoach.analysis.FlightSummaryAnalysis;
 import soaringcoach.analysis.GNSSPoint;
@@ -190,6 +191,7 @@ public class FlightAnalyser {
 	 */
 	private Flight analyse(Flight f) throws AnalysisException {
 		f = new CirclesAnalysis().analyse(f);
+		f = new CirclingPercentageAnalysis().analyse(f);
 		f = new ThermalAnalysis().analyse(f);
 		f = new WindAnalysis().analyse(f);
 		f = new CentringAnalysis().analyse(f);
