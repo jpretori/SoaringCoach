@@ -46,7 +46,7 @@ import soaringcoach.FlightAnalyserTestFacade;
 import soaringcoach.FlightTestFacade;
 import soaringcoach.Thermal;
 
-public class TestCirclingAnalysis {
+public class TestCirclesAnalysis {
 
 	
 	/**
