@@ -25,7 +25,7 @@ public class TestCirclingPercentageAnalysis {
 		f = new CirclesAnalysis().analyse(f);
 		f = new CirclingPercentageAnalysis().analyse(f);
 		
-		assertEquals(73.0, f.percentageTimeCircling, 5.0);
+		assertEquals(63.0, f.percentageTimeCircling, 5.0);
 	}
 
 	@Test

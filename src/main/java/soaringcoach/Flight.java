@@ -88,8 +88,4 @@ public class Flight {
 	protected Flight() {
 		this.igc_points = new ArrayList<>();
 	}
-	
-	public long getDuration() {
-		return 0;
-	}
 }
