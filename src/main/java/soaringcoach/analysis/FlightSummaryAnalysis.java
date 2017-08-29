@@ -14,6 +14,8 @@ public class FlightSummaryAnalysis extends AAnalysis {
 		fs.pilotName = flight.pilot_name;
 		
 		flight.flightSummary = fs;
+		
+		flight.isFlightSummaryAnalysisComplete = true;
 		return flight;
 	}
 
