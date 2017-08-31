@@ -14,7 +14,7 @@ These are not all implemented yet, the list is intended to give you a general se
 * Allow pilot profiles. One use case is a pilot who flies in real life, but also flies using Condor soaring simulator - since the two situations are quite different, it will be useful to be able to separate them out.
 
 ##Getting a build & getting started
-* Versioned builds can be downloaded here: https://drive.google.com/drive/folders/0B1brSOdfA_OtZFdQUnZ5clBaR00
+* Versioned builds can be downloaded from the releases tab in Github.
 * Run using java -jar SoaringCoach-x.y.z.jar.  This starts up the embedded Tomcat, and will listen on port 8080.
 * Send it an IGC file in a POST request, and it should respond with a JSON structure with the results of the analysis.
 
