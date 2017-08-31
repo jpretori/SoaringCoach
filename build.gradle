@@ -15,7 +15,8 @@ apply plugin: 'spring-boot'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-version = '1.0'
+group 'soaringcoach'
+version = '1.0.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Soaring Coach',
@@ -48,8 +49,6 @@ task copyToLib(type: Copy) {
     into "$buildDir/output/lib"
     from configurations.runtime
 }
-group 'com.polymorph.soaringcoach'
-version '1.0-SNAPSHOT'
 
 test {
     testLogging {
