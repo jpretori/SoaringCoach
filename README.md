@@ -13,8 +13,13 @@ These are not all implemented yet, the list is intended to give you a general se
 * Architect the code such that it is reasonably easy to add and remove code for specific metrics. Through use of the app, we will discover new things to measure and that some things matter less than we thought.
 * Allow pilot profiles. One use case is a pilot who flies in real life, but also flies using Condor soaring simulator - since the two situations are quite different, it will be useful to be able to separate them out.
 
+##Getting a build & getting started
+* Versioned builds can be downloaded here: https://drive.google.com/drive/folders/0B1brSOdfA_OtZFdQUnZ5clBaR00
+* Run using java -jar SoaringCoach-x.y.z.jar.  This starts up the embedded Tomcat, and will listen on port 8080.
+* Send it an IGC file in a POST request, and it should respond with a JSON structure with the results of the analysis.
+
 ## Metrics
-Again - these are not all implemented yet, the intent is to give some idea of what metrics could be useful in the app.
+Again - these are not all implemented yet, the intent is to give some idea of what metrics could be useful.
 * Bottom-to-top climb rate (BTT) for each thermal
 * BTT average across the task (TTA, or Total Task Average)
 * Visually contrast BTT for each thermal against TTA, on a timeline. Highlight best vs. worst BTT for the flight.

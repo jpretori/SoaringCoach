@@ -15,8 +15,9 @@ apply plugin: 'spring-boot'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-group 'soaringcoach'
+archivesBaseName = 'SoaringCoach'
 version = '1.0.1'
+group 'soaringcoach'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Soaring Coach',
