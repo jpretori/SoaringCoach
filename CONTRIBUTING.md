@@ -65,7 +65,7 @@ In short, the minimum expected are:
 * Put a blank line after the commit summary line
 * Unless it's blindingly obvious, add an explanatory paragraph(s) to detail the WHAT and WHY of your change.  Wrap this at 72 characters.
 * Do not combine fixes for various issues in one commit: instead, break them out and make one focused commit per issue that you're fixing
-* Mention the issue number your commit addresses in the commit message somewhere, so Github can link it up
+* Mention the issue number your commit addresses in the merge commit message somewhere, so Github can link it up
 
 ## Links that have proven useful
 These resources have been extensively helpful during early development.
