@@ -50,7 +50,7 @@ import soaringcoach.analysis.CentringAnalysis;
 import soaringcoach.analysis.CirclesAnalysis;
 import soaringcoach.analysis.CirclingPercentageAnalysis;
 import soaringcoach.analysis.DistanceAnalysis;
-import soaringcoach.analysis.FlightSummaryAnalysis;
+import soaringcoach.analysis.FlightDebriefingAnalysis;
 import soaringcoach.analysis.GNSSPoint;
 import soaringcoach.analysis.StraightPhasesAnalysis;
 import soaringcoach.analysis.ThermalAnalysis;
@@ -137,7 +137,7 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 * @throws IOException 
 	 */
-	private Flight readIgcFileBeanIO(Reader file, Flight f) throws AnalysisException, IOException {
+	protected Flight readIgcFileBeanIO(Reader file, Flight f) throws AnalysisException, IOException {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		System.out.println(df.format(LocalDateTime.now()) + " Parsing IGC");
 		
@@ -197,7 +197,7 @@ public class FlightAnalyser {
 		f = new CentringAnalysis().analyse(f);
 		f = new StraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);
-		f = new FlightSummaryAnalysis().analyse(f);
+		f = new FlightDebriefingAnalysis().analyse(f);
 		
 		return f;
 	}
