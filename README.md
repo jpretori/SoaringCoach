@@ -13,7 +13,7 @@ These are not all implemented yet, the list is intended to give you a general se
 * Architect the code such that it is reasonably easy to add and remove code for specific metrics. Through use of the app, we will discover new things to measure and that some things matter less than we thought.
 * Allow pilot profiles. One use case is a pilot who flies in real life, but also flies using Condor soaring simulator - since the two situations are quite different, it will be useful to be able to separate them out.
 
-##Getting a build & getting started
+## Getting a build & getting started
 * Versioned builds can be downloaded from the releases tab in Github.
 * Run using java -jar SoaringCoach-x.y.z.jar.  This starts up the embedded Tomcat, and will listen on port 8080.
 * Send it an IGC file in a POST request, and it should respond with a JSON structure with the results of the analysis.
