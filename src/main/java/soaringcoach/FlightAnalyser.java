@@ -65,11 +65,11 @@ public class FlightAnalyser {
 		CRUISING
 	}
 	
-	public ArrayList<FlightSummary> getAllFlights() {
+	public ArrayList<FlightDebriefing> getAllFlights() {
 		throw new RuntimeException("Not implemented yet");
 	}
 	
-	public Flight getFlightDetail(FlightSummary f) {
+	public Flight getFlightDetail(FlightDebriefing f) {
 		throw new RuntimeException("Not implemented yet");
 	}
 	

@@ -67,7 +67,7 @@ public class Flight {
 	public ArrayList<StraightPhase> straight_phases;
 
 	public boolean isFlightSummaryAnalysisComplete = false;
-	public FlightSummary flightSummary;
+	public FlightDebriefing flightSummary;
 
 	public boolean is_circles_percentage_analysis_complete = false;
 

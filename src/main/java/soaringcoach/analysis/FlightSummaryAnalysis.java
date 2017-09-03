@@ -1,13 +1,13 @@
 package soaringcoach.analysis;
 
 import soaringcoach.Flight;
-import soaringcoach.FlightSummary;
+import soaringcoach.FlightDebriefing;
 
 public class FlightSummaryAnalysis extends AAnalysis {
 
 	@Override
 	protected Flight performAnalysis(Flight flight) throws AnalysisException {
-		FlightSummary fs = new FlightSummary();
+		FlightDebriefing fs = new FlightDebriefing();
 		
 		fs.id = flight.id;
 		fs.total_track_distance = flight.total_track_distance;

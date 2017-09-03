@@ -38,7 +38,7 @@ package soaringcoach;
  * @author johanpretorius
  *
  */
-public class FlightSummary {
+public class FlightDebriefing {
 	/**
 	 * Uniquely identifies the flight
 	 */
@@ -52,12 +52,12 @@ public class FlightSummary {
 	public String pilotName;
 	
 	
-	protected FlightSummary(long id, double total_track_distance) {
+	protected FlightDebriefing(long id, double total_track_distance) {
 		this.id = id;
 		this.total_track_distance = total_track_distance;
 	}
 
 
-	public FlightSummary() {
+	public FlightDebriefing() {
 	}
 }
