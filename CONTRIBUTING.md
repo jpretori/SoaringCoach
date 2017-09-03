@@ -1,7 +1,6 @@
+:smile: First off, thanks for taking the time to contribute!  I'm glad to see you here. :airplane:
 
-:airplane: First off, thanks for taking the time to contribute!
-
-:airplane: I'll try to keep this as simple and logical as possible.
+:smile: I'll try to keep this as simple and logical as possible. :airplane:
 
 # Report a problem
 If you just want to report a bug or suggest a feature, please submit an issue: https://github.com/jpretori/SoaringCoach/issues/new.
@@ -36,7 +35,7 @@ If you haven't contributed to a GitHub project before, this article may help you
 Soaring Coach uses Gradle Wrapper to build, so you should be able to create a build by simply running `./gradlew` or `gradle.bat` from the source root.
 
 Before starting development on your chosen feature / bug,set things up so you can run it all locally.  The steps to achieve this are:
-- Get both repositories using Git.
+- Get both repositories using Git
 - Install Java if you don't have it already
 - **Build the backend.**  In the `SoaringCoach` folder, run `./gradlew bootRepackage`
 - **Run the server.**  Change directory to `build/libs` - then run `java -Dserver.port=9876 -jar SoaringCoach-z.y.z.jar`
@@ -75,7 +74,7 @@ These resources have been extensively helpful during early development.
 * Ian Forster-Lewis' dev guide to the IGC file format: http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/igc_format_2008.html
 * Visualising and hand-drawing GPS traces (for testing) at http://www.gpsvisualizer.com/draw/
 * Math to calculate bearings, great-circle distances, etc: http://www.movable-type.co.uk/scripts/latlong.html.  This is also very helpful to check conversions between different lat/long encoding schemes, which can save hours when debugging certain issues.
-* IGC File Viewer: http://www.glidingweb.org/igcWebview/  The sources for this is on Github: https://github.com/GlidingWeb/IgcWebview2
+* IGC File Viewer: http://www.glidingweb.org/igcWebview/  The sources for this is on Github: https://github.com/GlidingWeb/IgcWebview2.  It may be an option to pull this in as a display component, to show flight tracks and barograph traces.
 
 ## Links that might be useful
 These are provided just in case they are helpful to you.
