@@ -75,6 +75,7 @@ These resources have been extensively helpful during early development.
 * Visualising and hand-drawing GPS traces (for testing) at http://www.gpsvisualizer.com/draw/
 * Math to calculate bearings, great-circle distances, etc: http://www.movable-type.co.uk/scripts/latlong.html.  This is also very helpful to check conversions between different lat/long encoding schemes, which can save hours when debugging certain issues.
 * IGC File Viewer: http://www.glidingweb.org/igcWebview/  The sources for this is on Github: https://github.com/GlidingWeb/IgcWebview2.  It may be an option to pull this in as a display component, to show flight tracks and barograph traces.
+* Bean.IO is used to parse IGC files into Java objects. Reference documentation is here: http://beanio.org/2.1/docs/reference/index.html
 
 ## Links that might be useful
 These are provided just in case they are helpful to you.
