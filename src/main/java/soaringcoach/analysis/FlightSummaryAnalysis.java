@@ -13,7 +13,7 @@ public class FlightSummaryAnalysis extends AAnalysis {
 		fs.total_track_distance = flight.total_track_distance;
 		fs.pilotName = flight.pilot_name;
 		
-		flight.flightSummary = fs;
+		flight.flightDebriefing = fs;
 		
 		flight.isFlightSummaryAnalysisComplete = true;
 		return flight;
