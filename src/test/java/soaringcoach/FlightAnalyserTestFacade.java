@@ -31,12 +31,10 @@
 package soaringcoach;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.FileReader;
+import java.io.IOException;
 
-import soaringcoach.Circle;
-import soaringcoach.FlightAnalyser;
+import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.GNSSPoint;
 
 public class FlightAnalyserTestFacade extends FlightAnalyser {
@@ -53,23 +51,14 @@ public class FlightAnalyserTestFacade extends FlightAnalyser {
 		return FlightAnalyser.calcBearingChange(crs1, crs2);
 	}
 	
-	public static ArrayList<GNSSPoint> loadFromFile(String filename) throws FileNotFoundException {
-		ArrayList<GNSSPoint> igc_points = new ArrayList<>();
+	public static Flight loadFromFile(String filename) throws AnalysisException, IOException {
 		
-		for (Scanner sc = new Scanner(new File(filename)); sc.hasNext();) {
-			String line = sc.nextLine();
-			
-			GNSSPoint pt = GNSSPoint.createGNSSPoint(filename, line);
-			if (pt != null) {
-				igc_points.add(pt);
-			}
-		}
+		Flight f = new Flight();
 		
-		return igc_points;
-	}
-
-	public ArrayList<Circle> determineCircleStartValues() {
-		// TODO Auto-generated method stub
-		return null;
+		FileReader file = new FileReader(new File(filename));
+		
+		f = new FlightAnalyser().readIgcFileBeanIO(file, f);
+		
+		return f;
 	}
 }

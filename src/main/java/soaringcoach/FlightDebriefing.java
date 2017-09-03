@@ -30,6 +30,8 @@
 
 package soaringcoach;
 
+import java.util.ArrayList;
+
 /**
  * Provides basic information about a flight. Allows for efficiently
  * transporting a list of flights to a UI, such that one can be selected and
@@ -38,26 +40,23 @@ package soaringcoach;
  * @author johanpretorius
  *
  */
-public class FlightSummary {
-	/**
-	 * Uniquely identifies the flight
-	 */
-	public long id = 0;
-	
+public class FlightDebriefing {	
 	/**
 	 * Total track distance over ground
 	 */
-	public double total_track_distance = 0;
+	public double totalGroundTrackDistance = 0;
 
 	public String pilotName;
 	
-	
-	protected FlightSummary(long id, double total_track_distance) {
-		this.id = id;
-		this.total_track_distance = total_track_distance;
+	public ArrayList<StraightPhase> straightPhases;
+
+	public double percentageTimeCircling = -1.0;
+
+	protected FlightDebriefing(long id, double total_track_distance) {
+		this.totalGroundTrackDistance = total_track_distance;
 	}
 
 
-	public FlightSummary() {
+	public FlightDebriefing() {
 	}
 }

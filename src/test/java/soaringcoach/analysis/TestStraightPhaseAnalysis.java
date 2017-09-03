@@ -33,7 +33,7 @@ package soaringcoach.analysis;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -46,9 +46,9 @@ import soaringcoach.StraightPhase;
 public class TestStraightPhaseAnalysis {
 
 	@Test
-	public void testSplitIntoSectionsDegenerate() throws FileNotFoundException, AnalysisException {
+	public void testSplitIntoSectionsDegenerate() throws IOException, AnalysisException {
 		FlightTestFacade f = new FlightTestFacade(
-				FlightAnalyserTestFacade.loadFromFile("src/test/resources/small_valid.igc"));
+				FlightAnalyserTestFacade.loadFromFile("src/test/resources/small_valid.igc").igc_points);
 		
 		StraightPhaseAnalysisTestFacade spa = new StraightPhaseAnalysisTestFacade();
 		ArrayList<StraightPhase> phases = spa.splitIntoSections(
@@ -61,9 +61,9 @@ public class TestStraightPhaseAnalysis {
 	}
 
 	@Test
-	public void testSplitIntoSectionsOnlyOne() throws FileNotFoundException, AnalysisException {
+	public void testSplitIntoSectionsOnlyOne() throws IOException, AnalysisException {
 		FlightTestFacade f = new FlightTestFacade(
-				FlightAnalyserTestFacade.loadFromFile("src/test/resources/slow_movement_north.igc"));
+				FlightAnalyserTestFacade.loadFromFile("src/test/resources/slow_movement_north.igc").igc_points);
 		
 		StraightPhaseAnalysisTestFacade spa = new StraightPhaseAnalysisTestFacade();
 		ArrayList<StraightPhase> phases = spa.splitIntoSections(
@@ -76,9 +76,9 @@ public class TestStraightPhaseAnalysis {
 	}
 
 	@Test
-	public void testSplitIntoTwoSections() throws FileNotFoundException, AnalysisException {
+	public void testSplitIntoTwoSections() throws IOException, AnalysisException {
 		FlightTestFacade f = new FlightTestFacade(
-				FlightAnalyserTestFacade.loadFromFile("src/test/resources/TwoStraightSections.igc"));
+				FlightAnalyserTestFacade.loadFromFile("src/test/resources/TwoStraightSections.igc").igc_points);
 		
 		StraightPhaseAnalysisTestFacade spa = new StraightPhaseAnalysisTestFacade();
 		
@@ -95,9 +95,9 @@ public class TestStraightPhaseAnalysis {
 	}
 
 	@Test
-	public void testSplitIntoSectionsLongSlowTurn() throws FileNotFoundException, AnalysisException {
+	public void testSplitIntoSectionsLongSlowTurn() throws IOException, AnalysisException {
 		FlightTestFacade f = new FlightTestFacade(
-				FlightAnalyserTestFacade.loadFromFile("src/test/resources/SlowCurve.igc"));
+				FlightAnalyserTestFacade.loadFromFile("src/test/resources/SlowCurve.igc").igc_points);
 		
 		StraightPhaseAnalysisTestFacade spa = new StraightPhaseAnalysisTestFacade();
 		
@@ -131,7 +131,7 @@ public class TestStraightPhaseAnalysis {
 	}
 
 	@Test
-	public void testPerformAnalysisNoStraightSections() throws FileNotFoundException, AnalysisException {
+	public void testPerformAnalysisNoStraightSections() throws IOException, AnalysisException {
 		FlightAnalyserTestFacade fa = new FlightAnalyserTestFacade();
 		Flight f = fa.addAndAnalyseFlight(new File("src/test/resources/DetermineCircleStartNoWind.igc"));
 				

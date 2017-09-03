@@ -35,9 +35,6 @@ import java.util.Date;
 
 import javax.vecmath.Point3d;
 
-import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
-import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
-
 import soaringcoach.FlightAnalyser;
 import soaringcoach.analysis.parsing.GNSSPointData;
 
@@ -186,82 +183,7 @@ public class GNSSPoint extends Point3d {
 		
 		return pt;
 	}
-	
-	/**
-	 * Takes input as received from IGC file (like
-	 * "B0948523340100S01925448EA00261002670080041315512952118-0065-7300100")
-	 * and parses it
-	 * 
-	 * @param filename The name of the file, used to link this point to a particular flight for later retrieval of the flight.
-	 * @param file_line A line from the file
-	 * @return properly initialised GNSSPoint instance, or null if there was a
-	 *         problem with the input (e.g. if the input isn't a B record)
-	 */
-	public static GNSSPoint createGNSSPoint(String filename, String file_line) {
-		GNSSPointData pt_data = null;
-		GNSSPoint pt = null;
-		
-		if (isValidBRecord(file_line)) {
-			
-			//Run fixedFormat4J to parse the line
-			FixedFormatManager manager = new FixedFormatManagerImpl();
-			pt_data = manager.load(GNSSPointData.class, file_line);
-			double decimalized_lat = -1000; //init to impossible values
-			double decimalized_lon = -1000;
-		
-			if (isValidGpsFix(pt_data)) {
-				
-				// It's a GPS fix record, so we can convert it.
-				pt_data.setFilename(filename);
-				
-				decimalized_lat = decimalizeDegrees(
-						pt_data.latitude_degrees, 
-						pt_data.latitude_minutes, 
-						pt_data.latitudeEquatorRef);
-				
-				decimalized_lon = decimalizeDegrees(
-						pt_data.longitude_degrees, 
-						pt_data.longitude_minutes, 
-						pt_data.longitude_greenwich_ref);
-				
-				pt = GNSSPoint.createGNSSPoint(
-						filename,
-						pt_data.timestamp, 
-						decimalized_lat, 
-						decimalized_lon, 
-						pt_data.altitudeOk, 
-						pt_data.pressure_altitude, 
-						pt_data.gnss_altitude, 
-						pt_data.other);
-				
-				pt.data = pt_data;
-				
-			} else {
-				System.out.println("Discarded line: [" + file_line + "]");
-			} 
-		} else {
-			System.out.println("Discarded line: [" + file_line + "]");
-		}
 
-		return pt;
-	}
-
-	protected static boolean isValidBRecord(String file_input) {
-		//Chuck out nulls to avoid falling over ungracefully
-		if (file_input == null) {
-			System.err.println("GNSSPoint.isValidBRecord() - entire row was null");
-			return false;
-		}
-		
-		//Is it a "Body" record, i.e. tagged as a GPS fix
-		if (!"B".equals(file_input.substring(0, 1))) {
-			System.out.println("Not a 'B' record");
-			return false;
-		}
-		
-		//All checks passed
-		return true;
-	}
 	/**
 	 * Takes e.g. Latitude (as given in IGC file, i.e. 521234N for 52*1.234'N) and 
 	 * converts it to decimal format e.g. 52.10571

@@ -52,7 +52,8 @@ public class TestThermalAnalysis {
 	 */
 	@Test
 	public void testThermalDetectionPositive() throws Exception {
-		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile("src/test/resources/thermal_detection_positive_test.igc");
+		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/thermal_detection_positive_test.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(igc_points);
 		

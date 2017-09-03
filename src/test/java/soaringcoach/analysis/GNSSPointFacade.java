@@ -45,8 +45,4 @@ public class GNSSPointFacade extends GNSSPoint {
 			String coordinate_ref) {
 		return GNSSPoint.decimalizeDegrees(degrees, decimalized_minutes, coordinate_ref);
 	}
-	
-	public static boolean isValidBRecord(String file_input) {
-		return GNSSPoint.isValidBRecord(file_input);
-	}
 }

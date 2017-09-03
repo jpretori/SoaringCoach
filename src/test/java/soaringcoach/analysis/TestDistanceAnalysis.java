@@ -35,6 +35,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -53,11 +54,11 @@ public class TestDistanceAnalysis {
 	 * @throws FileNotFoundException
 	 */
 	@Test
-	public void testCalcDistanceBypassingThermals() throws AnalysisException, FileNotFoundException {
+	public void testCalcDistanceBypassingThermals() throws AnalysisException, IOException {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
 		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/distance_has_thermal.igc");
+				"src/test/resources/distance_has_thermal.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(points);
 		
@@ -70,11 +71,11 @@ public class TestDistanceAnalysis {
 	}
 	
 	@Test
-	public void testCalcTotalDistanceManyPointsCloseTogether() throws AnalysisException, FileNotFoundException {
+	public void testCalcTotalDistanceManyPointsCloseTogether() throws AnalysisException, IOException {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
 		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/slow_movement_north.igc");
+				"src/test/resources/slow_movement_north.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(points);
 		

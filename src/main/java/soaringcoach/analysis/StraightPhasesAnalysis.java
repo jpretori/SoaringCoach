@@ -78,8 +78,24 @@ public class StraightPhasesAnalysis extends AAnalysis {
 			flight.straight_phases.addAll(splitIntoSections(s, flight));
 		}
 		
+		flight.straight_phases = calculateSpeeds(flight.straight_phases);
+		
 		flight.is_short_straight_phases_analysis_complete = true;
 		return flight;
+	}
+
+	protected ArrayList<StraightPhase> calculateSpeeds(ArrayList<StraightPhase> straightPhases) {
+		for (StraightPhase straightPhase : straightPhases) {
+			double duration = 
+					straightPhase.end_point.data.getTimestamp().getTime() - 
+					straightPhase.start_point.data.getTimestamp().getTime();
+			
+			duration = duration / 1000; //convert to seconds
+			
+			straightPhase.groundSpeed = straightPhase.distance / duration; // meters per second
+		}
+		
+		return straightPhases;
 	}
 
 	/**

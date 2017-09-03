@@ -33,6 +33,8 @@ package soaringcoach;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -97,19 +99,26 @@ public class TestFlightAnalyser {
 	 * A set of points placed roughly in an octagon, with the first two points
 	 * creating a bearing of due north - allowing us to test the
 	 * <b>calculateTrackCourse</b> method in 8 major compass headings.
+	 * @throws IOException 
+	 * @throws AnalysisException 
 	 */
 	@Test
-	public void testCalculateTrackCourseTwoPoints() {
-		GNSSPoint p1 = GNSSPoint.createGNSSPoint("testfile", "B1106503311122S01912340EA0144601541Start");
-		GNSSPoint p2 = GNSSPoint.createGNSSPoint("testfile", "B1106523311022S01912340EA0144601541N");
-		GNSSPoint p3 = GNSSPoint.createGNSSPoint("testfile", "B1106543310922S01912470EA0144601541NE");
-		GNSSPoint p4 = GNSSPoint.createGNSSPoint("testfile", "B1106563310922S01912570EA0144601541E");
-		GNSSPoint p5 = GNSSPoint.createGNSSPoint("testfile", "B1106583311038S01912670EA0144601541SE");
-		GNSSPoint p6 = GNSSPoint.createGNSSPoint("testfile", "B1107003311138S01912670EA0144601541S");
-		GNSSPoint p7 = GNSSPoint.createGNSSPoint("testfile", "B1107023311238S01912550EA0144601541SW");
-		GNSSPoint p8 = GNSSPoint.createGNSSPoint("testfile", "B1107043311238S01912450EA0144601541W");
-		GNSSPoint p9 = GNSSPoint.createGNSSPoint("testfile", "B1107043311138S01912368EA0144601541NW");
+	public void testCalculateTrackCourseTwoPoints() throws AnalysisException, IOException {
+		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
+		points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/testCalculateTrackCourseTwoPoints.igc").igc_points;
+		
+		GNSSPoint p1 = points.get(0);
+		GNSSPoint p2 = points.get(1);
+		GNSSPoint p3 = points.get(2);
+		GNSSPoint p4 = points.get(3);
+		GNSSPoint p5 = points.get(4);
+		GNSSPoint p6 = points.get(5);
+		GNSSPoint p7 = points.get(6);
+		GNSSPoint p8 = points.get(7);
+		GNSSPoint p9 = points.get(8);
+
 		assertEquals(0.0, FlightAnalyserTestFacade.calculateTrackCourse(p1, p2), 0.1);
 		assertEquals(47.4, FlightAnalyserTestFacade.calculateTrackCourse(p2, p3), 0.1);
 		assertEquals(90.0, FlightAnalyserTestFacade.calculateTrackCourse(p3, p4), 0.1);
@@ -124,19 +133,26 @@ public class TestFlightAnalyser {
 	 * A set of points placed roughly in an octagon, with the first two points
 	 * creating a bearing of due north - allowing us to test the
 	 * <b>calculateTrackCourse</b> method in 8 major compass headings.
+	 * @throws IOException 
+	 * @throws AnalysisException 
 	 */
 	@Test
-	public void testCalculateTrackCourseCircleLatLong() {
-		GNSSPoint p1 = GNSSPoint.createGNSSPoint("testfile", "B1106503311122S01912340EA0144601541Start");
-		GNSSPoint p2 = GNSSPoint.createGNSSPoint("testfile", "B1106523311022S01912340EA0144601541N");
-		GNSSPoint p3 = GNSSPoint.createGNSSPoint("testfile", "B1106543310922S01912470EA0144601541NE");
-		GNSSPoint p4 = GNSSPoint.createGNSSPoint("testfile", "B1106563310922S01912570EA0144601541E");
-		GNSSPoint p5 = GNSSPoint.createGNSSPoint("testfile", "B1106583311038S01912670EA0144601541SE");
-		GNSSPoint p6 = GNSSPoint.createGNSSPoint("testfile", "B1107003311138S01912670EA0144601541S");
-		GNSSPoint p7 = GNSSPoint.createGNSSPoint("testfile", "B1107023311238S01912550EA0144601541SW");
-		GNSSPoint p8 = GNSSPoint.createGNSSPoint("testfile", "B1107043311238S01912450EA0144601541W");
-		GNSSPoint p9 = GNSSPoint.createGNSSPoint("testfile", "B1107043311138S01912368EA0144601541NW");
+	public void testCalculateTrackCourseCircleLatLong() throws AnalysisException, IOException {
+		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
+		points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/testCalculateTrackCourseCircleLatLong.igc").igc_points;
+		
+		GNSSPoint p1 = points.get(0);
+		GNSSPoint p2 = points.get(1);
+		GNSSPoint p3 = points.get(2);
+		GNSSPoint p4 = points.get(3);
+		GNSSPoint p5 = points.get(4);
+		GNSSPoint p6 = points.get(5);
+		GNSSPoint p7 = points.get(6);
+		GNSSPoint p8 = points.get(7);
+		GNSSPoint p9 = points.get(8);
+
 		assertEquals(0.0, FlightAnalyserTestFacade.calculateTrackCourse(
 				new Circle(p1, p1, FlightMode.CRUISING), p2.getLatitude(), p2.getLongitude()), 0.1);
 		assertEquals(47.4, FlightAnalyserTestFacade.calculateTrackCourse(

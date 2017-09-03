@@ -20,7 +20,7 @@
       <field name="altitudeOk" length="1"/>
       <field name="pressureAltitude" length="5"/>
       <field name="gnssAltitude" length="5"/>
-      <field name="other" length="unbounded"/>
+      <field name="other" minOccurs="0" length="unbounded"/>
     </record>
 
     <record name="default">

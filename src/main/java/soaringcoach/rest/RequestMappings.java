@@ -43,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import soaringcoach.Flight;
 import soaringcoach.FlightAnalyser;
+import soaringcoach.FlightDebriefing;
 import soaringcoach.analysis.AnalysisException;
 import soaringcoach.analysis.PolarVector;
 
@@ -52,14 +53,14 @@ public class RequestMappings {
 
 	@CrossOrigin
     @RequestMapping(name="/upload", method=RequestMethod.POST)
-    public @ResponseBody Flight handleFileUpload(@RequestParam(name="file") MultipartFile file) throws AnalysisException, IOException {
+    public @ResponseBody FlightDebriefing handleFileUpload(@RequestParam(name="file") MultipartFile file) throws AnalysisException, IOException {
     	FlightAnalyser fa = new FlightAnalyser();
     	
 		Flight f = fa.addAndAnalyseFlight(file.getInputStream());
     	
 		f.igc_points = new ArrayList<>();
 		
-        return f;
+        return f.flightDebriefing;
     }
     
 	@CrossOrigin
