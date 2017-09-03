@@ -36,6 +36,7 @@ public class StraightPhase implements Comparable<StraightPhase>{
 	public GNSSPoint start_point;
 	public GNSSPoint end_point;
 	public double distance;
+	public double groundSpeed;
 	
 	public StraightPhase(GNSSPoint start, GNSSPoint end) {
 		distance = end.distance(start);
