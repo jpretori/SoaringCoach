@@ -47,7 +47,7 @@ import soaringcoach.analysis.parsing.PICName;
 
 public class TestFileParsing {
 
-	private static final String IGC_MAPPING_FILE = "src/main/java/soaringcoach/analysis/igc_mapping.xml";
+	private static final String IGC_MAPPING_FILE = "src/main/resources/igc_mapping.xml";
 
 	/**
 	 * Tests that we can identify record types we're interested in, without breaking
