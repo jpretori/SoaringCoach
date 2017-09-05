@@ -42,6 +42,7 @@ import org.beanio.BeanReader;
 import org.beanio.StreamFactory;
 import org.junit.Test;
 
+import soaringcoach.analysis.parsing.FlightDate;
 import soaringcoach.analysis.parsing.GNSSPointData;
 import soaringcoach.analysis.parsing.PICName;
 
@@ -127,7 +128,7 @@ public class TestFileParsing {
 	 * Test header record parsing by checking that the pilot name comes through correctly
 	 */
 	@Test
-	public void testHeaderRecordParsing() {
+	public void testPICNameParsing() {
 		StreamFactory factory = StreamFactory.newInstance();
 		
 		factory.load(IGC_MAPPING_FILE);
@@ -135,13 +136,40 @@ public class TestFileParsing {
 		BeanReader br = factory.createReader("igc_file", new File("src/test/resources/minimal_parsable.igc"));;
 
 		try {
-			Object bean = br.read();
+			Object bean = null;
+			while (!(bean instanceof PICName)) {
+				bean = br.read();
+			}
+			
 			PICName pilot = (PICName) bean;
+			
 			assertEquals("Kevin Mitchell", pilot.picName);
 		} finally {
 			br.close();
 		}
-		
-		
 	}
+	
+	@Test
+	public void testFlightDateParsing() throws ParseException {
+		StreamFactory factory = StreamFactory.newInstance();
+		
+		factory.load(IGC_MAPPING_FILE);
+
+		BeanReader br = factory.createReader("igc_file", new File("src/test/resources/minimal_parsable.igc"));;
+
+		try {
+			Object bean = null;
+			while (!(bean instanceof FlightDate)) {
+				bean = br.read();
+			}
+			
+			FlightDate fd = (FlightDate) bean;
+			
+			assertEquals("2017-09-05", fd.getFlightDateString());
+			
+		} finally {
+			br.close();
+		}
+	}
+
 }
