@@ -52,6 +52,8 @@ public class FlightDebriefing {
 
 	public double percentageTimeCircling = -1.0;
 
+	public String flightDate;
+
 	protected FlightDebriefing(long id, double total_track_distance) {
 		this.totalGroundTrackDistance = total_track_distance;
 	}

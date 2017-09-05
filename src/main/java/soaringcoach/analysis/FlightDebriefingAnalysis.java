@@ -14,6 +14,7 @@ public class FlightDebriefingAnalysis extends AAnalysis {
 		fd.percentageTimeCircling = flight.percentageTimeCircling;
 		fd.totalGroundTrackDistance = flight.total_track_distance;
 		fd.straightPhases = flight.straight_phases;
+		fd.flightDate = flight.flightDate;
 		
 		flight.flightDebriefing = fd;
 		flight.isFlightDebriefingAnalysisComplete = true;

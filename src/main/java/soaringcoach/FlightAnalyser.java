@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import soaringcoach.analysis.GNSSPoint;
 import soaringcoach.analysis.StraightPhasesAnalysis;
 import soaringcoach.analysis.ThermalAnalysis;
 import soaringcoach.analysis.WindAnalysis;
+import soaringcoach.analysis.parsing.FlightDate;
 import soaringcoach.analysis.parsing.GNSSPointData;
 import soaringcoach.analysis.parsing.PICName;
 
@@ -164,10 +166,14 @@ public class FlightAnalyser {
 						}
 					} else if (bean instanceof PICName) {
 						f.pilot_name = ((PICName) bean).picName;
+					} else if (bean instanceof FlightDate) {
+						f.flightDate = ((FlightDate) bean).getFlightDateString();
 					}
 				}
 			} catch (BeanReaderException e) {
 				throw new IOException("Problem reading IGC Data", e);				
+			} catch (ParseException e) {
+				throw new IOException("Problem reading IGC Data", e);
 			}
 		} finally {
 			if (br != null) {

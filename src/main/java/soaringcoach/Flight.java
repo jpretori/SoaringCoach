@@ -72,6 +72,8 @@ public class Flight {
 	public boolean is_circles_percentage_analysis_complete = false;
 
 	public double percentageTimeCircling = -1.0;
+
+	public String flightDate;
 	
 	/**
 	 * Creates a new Flight object, initialised with the fixes provided - ready for analysis
