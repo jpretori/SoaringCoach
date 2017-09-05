@@ -23,6 +23,11 @@
       <field name="other" minOccurs="0" length="unbounded"/>
     </record>
 
+	<record name="FlightDate" minOccurs="1" maxOccurs="1" class="soaringcoach.analysis.parsing.FlightDate">
+      <field name="recordType" rid="true" literal="HFDTE" length="5" />
+      <field name="ddmmyy" length="6" />
+	</record>
+
     <record name="default">
       <field name="defaultRecordType" rid="true" regex="[A,C-G,I-Z]" length="1"/>
     </record>
