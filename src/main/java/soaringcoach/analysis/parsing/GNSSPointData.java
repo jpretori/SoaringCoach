@@ -32,12 +32,6 @@ package soaringcoach.analysis.parsing;
 
 import java.util.Date;
 
-import com.ancientprogramming.fixedformat4j.annotation.Align;
-import com.ancientprogramming.fixedformat4j.annotation.Field;
-import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
-import com.ancientprogramming.fixedformat4j.annotation.Record;
-
-@Record
 public class GNSSPointData {
 	public Date timestamp;
 	public String filename;
@@ -64,7 +58,6 @@ public class GNSSPointData {
 		this.filename = filename;
 	}
 	
-	@Field(offset=1, length=1)
 	public String getRecordType() {
 		return record_type;
 	}
@@ -72,8 +65,6 @@ public class GNSSPointData {
 		this.record_type = record_type;
 	}
 	
-	@Field(offset=2, length=6)
-	@FixedFormatPattern("HHmmss")
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -81,7 +72,6 @@ public class GNSSPointData {
 		this.timestamp = timestamp;
 	}
 	
-	@Field(offset=8, length=2, align=Align.RIGHT)
 	public String getLatitudeDegrees() {
 		return latitude_degrees;
 	}
@@ -89,7 +79,6 @@ public class GNSSPointData {
 		this.latitude_degrees = latitude_degrees;
 	}
 
-	@Field(offset=10, length=5, align=Align.RIGHT)
 	public String getLatitudeMinutes() {
 		return latitude_minutes;
 	}
@@ -97,7 +86,6 @@ public class GNSSPointData {
 		this.latitude_minutes = latitude_minutes;
 	}
 
-	@Field(offset=15, length=1)
 	public String getLatitudeEquatorRef() {
 		return latitudeEquatorRef;
 	}
@@ -105,7 +93,6 @@ public class GNSSPointData {
 		this.latitudeEquatorRef = latitude_equator_ref;
 	}
 
-	@Field(offset=16, length=3, align=Align.RIGHT)
 	public String getLongitudeDegrees() {
 		return longitude_degrees;
 	}
@@ -113,7 +100,6 @@ public class GNSSPointData {
 		this.longitude_degrees = longitude_degrees;
 	}
 
-	@Field(offset=19, length=5, align=Align.RIGHT)
 	public String getLongitudeMinutes() {
 		return longitude_minutes;
 	}
@@ -121,7 +107,6 @@ public class GNSSPointData {
 		this.longitude_minutes = longitude_minutes;
 	}
 
-	@Field(offset=24, length=1)
 	public String getLongitudeGreenwichRef() {
 		return longitude_greenwich_ref;
 	}
@@ -129,7 +114,6 @@ public class GNSSPointData {
 		this.longitude_greenwich_ref = longitude_greenwich_ref;
 	}
 
-	@Field(offset=25, length=1)
 	public String getAltitudeOK() {
 		return altitudeOk;
 	}
@@ -137,7 +121,6 @@ public class GNSSPointData {
 		this.altitudeOk = altitude_ok;
 	}
 	
-	@Field(offset=26, length=5, align=Align.RIGHT, paddingChar='0')
 	public int getPressureAltitude() {
 		return pressure_altitude;
 	}
@@ -145,7 +128,6 @@ public class GNSSPointData {
 		this.pressure_altitude = pressure_altitude;
 	}
 	
-	@Field(offset=31, length=5, align=Align.RIGHT, paddingChar='0')
 	public int getGnssAltitude() {
 		return gnss_altitude;
 	}
@@ -153,7 +135,6 @@ public class GNSSPointData {
 		this.gnss_altitude = gnss_altitude;
 	}
 	
-	@Field(offset=36, length=100)
 	public String getOther() {
 		return other;
 	}

@@ -13,7 +13,7 @@ These are not all implemented yet, the list is intended to give you a general se
 * Architect the code such that it is reasonably easy to add and remove code for specific metrics. Through use of the app, we will discover new things to measure and that some things matter less than we thought.
 * Allow pilot profiles. One use case is a pilot who flies in real life, but also flies using Condor soaring simulator - since the two situations are quite different, it will be useful to be able to separate them out.
 
-##Getting a build & getting started
+## Getting a build & getting started
 * Versioned builds can be downloaded from the releases tab in Github.
 * Run using java -jar SoaringCoach-x.y.z.jar.  This starts up the embedded Tomcat, and will listen on port 8080.
 * Send it an IGC file in a POST request, and it should respond with a JSON structure with the results of the analysis.
@@ -33,26 +33,8 @@ Again - these are not all implemented yet, the intent is to give some idea of wh
 * Some stats about the final glide - distance, duration, speed, consistency of speed, glide angle, last climb rate (BTT), some measure of how good a call was made to leave for final glide (altitude vs. speed-to-fly vs. BTT). Which of these are vanity metrics though?
 * After compensating for wind drift - how round are the circles you fly when thermalling? Contrasted between L-hand and R-hand thermals?
 
-
-## Some useful links
-* Ian Forster-Lewis introduction to the IGC format: http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/
-* FAI official spec - IGC Format for Waypoint Data 2000: http://www.fai.org/component/phocadownload/category/?download=3557:wpformat
-* Ian Forster-Lewis' dev guide to the IGC format: http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/igc_format_2008.html
-* MIT-licensed project on Github for a web-based IGC file analysis tool: https://github.com/alistairmgreen/jsigc. Very basic, but parsing & display logic may be useful. Live version: https://alistairmgreen.github.io/jsigc/
-* Visualising and hand-drawing GPS traces (for testing) at http://www.gpsvisualizer.com/draw/
-* Math to calculate bearings, great-circle distances, etc: http://www.movable-type.co.uk/scripts/latlong.html
-* Another IGC File Viewer: http://www.glidingweb.org/igcWebview/
-
 ## Contributing
-The project backlog is kept in Github issues, please look there for something you can usefully tackle.
-If you want, feel free to chat to me about what you intend to do before you start - I may be able to save you some time.
-If you haven't contributed to a GitHub project before, this article may help you: https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/
-
-Soaring Coach consists of two parts:
-* The front-end is Bootstrap based, kept in a separate Github repository and hosted using Github Pages
-* The backend does all the analysis, is kept in this repository and hosted on Heroku.  It can be accessed at https://protected-bayou-34428.herokuapp.com/upload using a POST request that uploads an IGC file.  The analysis results are returned as JSON (quite a LOT of JSON in fact)
-
-If you just want to report a bug or suggest a feature, please do so by submitting an issue in Github.
+Please see CONTRIBUTING.md in the project root.
 
 ### Deploying new backend versions
 * Make sure "master" branch is in deployable state (i.e. make sure all the tests pass)

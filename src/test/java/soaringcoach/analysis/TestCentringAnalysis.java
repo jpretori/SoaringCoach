@@ -68,7 +68,7 @@ public class TestCentringAnalysis {
 				new PolarVector(68.0, 194)};
 		
 		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/testCorrectionDetectionBearingChanged.igc");
+				"src/test/resources/testCorrectionDetectionBearingChanged.igc").igc_points;
 		Flight f = new FlightTestFacade(igc_points);
 		
 		CirclesAnalysis circ_a = new CirclesAnalysis();

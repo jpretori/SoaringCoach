@@ -28,21 +28,37 @@
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-package soaringcoach.analysis;
+package soaringcoach;
 
-import soaringcoach.analysis.parsing.GNSSPointData;
+import java.util.ArrayList;
 
-public class GNSSPointFacade extends GNSSPoint {
-	public GNSSPointFacade() {super();}
+/**
+ * Provides basic information about a flight. Allows for efficiently
+ * transporting a list of flights to a UI, such that one can be selected and
+ * more detail can be requested.
+ * 
+ * @author johanpretorius
+ *
+ */
+public class FlightDebriefing {	
+	/**
+	 * Total track distance over ground
+	 */
+	public double totalGroundTrackDistance = 0;
+
+	public String pilotName;
 	
-	public static boolean isValidGpsFix(GNSSPointData pt) {
-		return GNSSPoint.isValidGpsFix(pt);
+	public ArrayList<StraightPhase> straightPhases;
+
+	public double percentageTimeCircling = -1.0;
+
+	public String flightDate;
+
+	protected FlightDebriefing(long id, double total_track_distance) {
+		this.totalGroundTrackDistance = total_track_distance;
 	}
-	
-	public static Double decimalizeDegrees(
-			String degrees, 
-			String decimalized_minutes, 
-			String coordinate_ref) {
-		return GNSSPoint.decimalizeDegrees(degrees, decimalized_minutes, coordinate_ref);
+
+
+	public FlightDebriefing() {
 	}
 }

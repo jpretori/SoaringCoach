@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -50,11 +51,12 @@ import soaringcoach.analysis.CentringAnalysis;
 import soaringcoach.analysis.CirclesAnalysis;
 import soaringcoach.analysis.CirclingPercentageAnalysis;
 import soaringcoach.analysis.DistanceAnalysis;
-import soaringcoach.analysis.FlightSummaryAnalysis;
+import soaringcoach.analysis.FlightDebriefingAnalysis;
 import soaringcoach.analysis.GNSSPoint;
 import soaringcoach.analysis.StraightPhasesAnalysis;
 import soaringcoach.analysis.ThermalAnalysis;
 import soaringcoach.analysis.WindAnalysis;
+import soaringcoach.analysis.parsing.FlightDate;
 import soaringcoach.analysis.parsing.GNSSPointData;
 import soaringcoach.analysis.parsing.PICName;
 
@@ -65,11 +67,11 @@ public class FlightAnalyser {
 		CRUISING
 	}
 	
-	public ArrayList<FlightSummary> getAllFlights() {
+	public ArrayList<FlightDebriefing> getAllFlights() {
 		throw new RuntimeException("Not implemented yet");
 	}
 	
-	public Flight getFlightDetail(FlightSummary f) {
+	public Flight getFlightDetail(FlightDebriefing f) {
 		throw new RuntimeException("Not implemented yet");
 	}
 	
@@ -137,7 +139,7 @@ public class FlightAnalyser {
 	 * @throws AnalysisException
 	 * @throws IOException 
 	 */
-	private Flight readIgcFileBeanIO(Reader file, Flight f) throws AnalysisException, IOException {
+	protected Flight readIgcFileBeanIO(Reader file, Flight f) throws AnalysisException, IOException {
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		System.out.println(df.format(LocalDateTime.now()) + " Parsing IGC");
 		
@@ -164,10 +166,14 @@ public class FlightAnalyser {
 						}
 					} else if (bean instanceof PICName) {
 						f.pilot_name = ((PICName) bean).picName;
+					} else if (bean instanceof FlightDate) {
+						f.flightDate = ((FlightDate) bean).getFlightDateString();
 					}
 				}
 			} catch (BeanReaderException e) {
 				throw new IOException("Problem reading IGC Data", e);				
+			} catch (ParseException e) {
+				throw new IOException("Problem reading IGC Data", e);
 			}
 		} finally {
 			if (br != null) {
@@ -197,7 +203,7 @@ public class FlightAnalyser {
 		f = new CentringAnalysis().analyse(f);
 		f = new StraightPhasesAnalysis().analyse(f);
 		f = new DistanceAnalysis().analyse(f);
-		f = new FlightSummaryAnalysis().analyse(f);
+		f = new FlightDebriefingAnalysis().analyse(f);
 		
 		return f;
 	}

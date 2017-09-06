@@ -66,12 +66,14 @@ public class Flight {
 	public boolean is_short_straight_phases_analysis_complete = false;
 	public ArrayList<StraightPhase> straight_phases;
 
-	public boolean isFlightSummaryAnalysisComplete = false;
-	public FlightSummary flightSummary;
+	public boolean isFlightDebriefingAnalysisComplete = false;
+	public FlightDebriefing flightDebriefing;
 
 	public boolean is_circles_percentage_analysis_complete = false;
 
 	public double percentageTimeCircling = -1.0;
+
+	public String flightDate;
 	
 	/**
 	 * Creates a new Flight object, initialised with the fixes provided - ready for analysis

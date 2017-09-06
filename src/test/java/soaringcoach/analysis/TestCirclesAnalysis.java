@@ -63,7 +63,7 @@ public class TestCirclesAnalysis {
 	@Test
 	public void testCirclingAnalysisPositive() throws Exception {
 		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/circling_detection.igc");
+				"src/test/resources/circling_detection.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
@@ -93,25 +93,12 @@ public class TestCirclesAnalysis {
 	 */
 	@Test
 	public void testCirclingDetectionDiscard() throws Exception {
-		Flight f = new FlightTestFacade(new ArrayList<GNSSPoint>());
+		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109303308755S01911128EA016190171900308"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109343308702S01911090EA016310173200309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109383308653S01911048EA016440174100308"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109423308633S01910983EA016480174500309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109463308656S01910920EA016440174200309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109503308709S01910895EA016450174400309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109543308763S01910919EA016540175200309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1109583308800S01910973EA016570175800309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110023308849S01911007EA016660176900309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110063308901S01910995EA016840178700308"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110103308929S01910941EA016900179400309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110143308914S01910879EA016920179500309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110183308865S01910851EA016910179300309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110223308810S01910877EA016860178800308"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110263308782S01910943EA016860178700307"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110303308788S01911014EA016880178900309"));
-		f.igc_points.add(GNSSPoint.createGNSSPoint("testfile", "B1110343308821S01911072EA016930179500309"));		
+		points = FlightAnalyserTestFacade.loadFromFile(
+				"src/test/resources/testCirclingDetectionDiscard.igc").igc_points;
+		
+		Flight f = new FlightTestFacade(points); 
 		
 		CirclesAnalysis ca = new CirclesAnalysis();
 		f = ca.performAnalysis(f);
@@ -138,7 +125,7 @@ public class TestCirclesAnalysis {
 	 */
 	public void testDetermineCircleStartNoWind() throws Exception {
 		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/DetermineCircleStartNoWind.igc");
+				"src/test/resources/DetermineCircleStartNoWind.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
@@ -193,7 +180,7 @@ public class TestCirclesAnalysis {
 	 */
 	public void testDetermineCircleStartHowlingGale() throws Exception {
 		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/DetermineCircleStartHowlingGale.igc");
+				"src/test/resources/DetermineCircleStartHowlingGale.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(igc_points);
 		
@@ -252,7 +239,7 @@ public class TestCirclesAnalysis {
 	@Test
 	public void testCentringMoveIgnored() throws AnalysisException, IOException {
 		ArrayList<GNSSPoint> igc_points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/CenteringMoveTest.igc");
+				"src/test/resources/CenteringMoveTest.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(igc_points);
 		

@@ -2,7 +2,7 @@ package soaringcoach.analysis;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -14,11 +14,11 @@ import soaringcoach.FlightTestFacade;
 public class TestCirclingPercentageAnalysis {
 
 	@Test
-	public void testCirclingPercentageHigh() throws FileNotFoundException, AnalysisException {
+	public void testCirclingPercentageHigh() throws AnalysisException, IOException {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
 		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/CirclingPercentageHigh.igc");
+				"src/test/resources/CirclingPercentageHigh.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(points);
 		
@@ -29,11 +29,11 @@ public class TestCirclingPercentageAnalysis {
 	}
 
 	@Test
-	public void testCirclingPercentageNone() throws FileNotFoundException, AnalysisException {
+	public void testCirclingPercentageNone() throws IOException, AnalysisException {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
 		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/CirclingPercentage_none.igc");
+				"src/test/resources/CirclingPercentage_none.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(points);
 		
@@ -44,11 +44,11 @@ public class TestCirclingPercentageAnalysis {
 	}
 
 	@Test
-	public void testCirclingPercentageLow() throws FileNotFoundException, AnalysisException {
+	public void testCirclingPercentageLow() throws IOException, AnalysisException {
 		ArrayList<GNSSPoint> points = new ArrayList<>();
 		
 		points = FlightAnalyserTestFacade.loadFromFile(
-				"src/test/resources/CirclingPercentageLow.igc");
+				"src/test/resources/CirclingPercentageLow.igc").igc_points;
 		
 		Flight f = new FlightTestFacade(points);
 		

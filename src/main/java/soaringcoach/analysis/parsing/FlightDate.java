@@ -28,36 +28,41 @@
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-package soaringcoach;
+package soaringcoach.analysis.parsing;
 
-/**
- * Provides basic information about a flight. Allows for efficiently
- * transporting a list of flights to a UI, such that one can be selected and
- * more detail can be requested.
- * 
- * @author johanpretorius
- *
- */
-public class FlightSummary {
-	/**
-	 * Uniquely identifies the flight
-	 */
-	public long id = 0;
-	
-	/**
-	 * Total track distance over ground
-	 */
-	public double total_track_distance = 0;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-	public String pilotName;
+public class FlightDate {
+	public String recordType;
+	public String ddmmyy;
 	
-	
-	protected FlightSummary(long id, double total_track_distance) {
-		this.id = id;
-		this.total_track_distance = total_track_distance;
+	public String getRecordType() {
+		return recordType;
 	}
-
-
-	public FlightSummary() {
+	public void setRecordType(String recordType) {
+		this.recordType = recordType;
+	}
+	public String getddmmyy() {
+		return ddmmyy;
+	}
+	public void setddmmyy(String text) {
+		if (text != null) {
+			try {
+				this.ddmmyy = text.substring(text.indexOf(":") + 1);
+			} catch (IndexOutOfBoundsException e) {
+				this.ddmmyy = "";
+			}
+		} else {
+			this.ddmmyy = text;
+		}
+	}
+	
+	public String getFlightDateString() throws ParseException {
+		SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat parse = new SimpleDateFormat("ddMMyy");
+		Date date = parse.parse(ddmmyy);
+		return output.format(date);
 	}
 }
