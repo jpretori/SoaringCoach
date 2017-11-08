@@ -120,7 +120,7 @@ public class GNSSPoint extends Point3d {
 	
 		if (isValidGpsFix(pt_data)) {
 			
-			// It's a GPS fix record, so we can convert it.
+			// It's a valid GPS fix record, so we can convert it.
 			decimalized_lat = decimalizeDegrees(
 					pt_data.latitude_degrees, 
 					pt_data.latitude_minutes, 
@@ -214,14 +214,8 @@ public class GNSSPoint extends Point3d {
 	 * Checks if a line from the file is a valid GPS fix
 	 * @return
 	 */
-	protected static boolean isValidGpsFix(GNSSPointData pt) {
-		//Is it marked as a "valid" altitude
-		if (!("A".equals(pt.getAltitudeOK()) || "V".equals(pt.getAltitudeOK()))) {
-			System.out.println("Altitude validity flag not set to 'A' or 'V'");
-			return false;
-		}
-		
-		return true; //All checks passed
+	protected static boolean isValidGpsFix(GNSSPointData pt) {		
+		return "A".equals(pt.getAltitudeOK());
 	}
 	
 	/**
