@@ -1,5 +1,5 @@
 # SoaringCoach
-Soaring Coach aims to help pilots improve their soaring performance by intelligently analysing IGC files.
+Soaring Coach aims to help glider pilots improve their soaring performance by intelligently analysing IGC files and presenting the key results in an understandable, usable way.
 
 ## Vision
 An app that analyses IGC files and extracts key soaring performance metrics, allowing the pilot to learn maximally from each flight as well as from trends emerging in the history of flights.
